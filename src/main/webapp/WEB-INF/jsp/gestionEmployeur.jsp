@@ -21,7 +21,7 @@
                 <br>
                 <div class="form-group g-mb-25">
                     <label for="email" class="labelRequired"><spring:message code="employeur.mail"/></label>
-                    <input type="email" class="form-control form-control-md formUA" id="email" aria-describedby="emailHelp" placeholder="<spring:message code="employeur.mail"/>">
+                    <input type="email" class="form-control form-control-md formUA" id="email" aria-describedby="email" placeholder="<spring:message code="employeur.mail"/>">
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.ajouter"/></button>
             </form>

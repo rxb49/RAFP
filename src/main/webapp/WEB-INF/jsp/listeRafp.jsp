@@ -45,21 +45,21 @@
                         <td>${person.prenom}</td>
                         <td>${person.nom}</td>
                         <td>
-                            <form action="personList/pdf" method="post" target="_blank">
-                                <input type="hidden" value="${person.numero}" name="numero"/>
-                                <button type="submit" class="btn btn-tab" title="<spring:message code="imprimer" />"><i class="bi bi-arrow-clockwise"></i></button>
+                            <form action="listeRafp/update" method="post" target="_blank">
+                                <input type="hidden" value="${person.numero}" name="update"/>
+                                <button type="submit" class="btn btn-tab" title="<spring:message code="btn.modifier" />"><i class="bi bi-arrow-clockwise"></i></button>
                             </form>
                         </td>
                         <td>
-                            <form action="personList/pdf" method="post" target="_blank">
-                                <input type="hidden" value="${person.numero}" name="numero"/>
-                                <button type="submit" class="btn btn-tab" title="<spring:message code="imprimer" />"><i class="bi bi-plus"></i></button>
+                            <form action="listeRafp/add" method="post" target="_blank">
+                                <input type="hidden" value="${person.numero}" name="add"/>
+                                <button type="submit" class="btn btn-tab" title="<spring:message code="btn.ajouter" />"><i class="bi bi-plus"></i></button>
                             </form>
                         </td>
                         <td>
-                            <form action="personList/pdf" method="post" target="_blank">
-                                <input type="hidden" value="${person.numero}" name="numero"/>
-                                <button type="submit" class="btn btn-tab" title="<spring:message code="imprimer" />"><i class="bi bi-trash"></i></button>
+                            <form action="listeRafp/delete" method="post" target="_blank">
+                                <input type="hidden" value="${person.numero}" name="delete"/>
+                                <button type="submit" class="btn btn-tab" title="<spring:message code="btn.supprimer" />"><i class="bi bi-trash"></i></button>
                             </form>
                         </td>
                     </tr>

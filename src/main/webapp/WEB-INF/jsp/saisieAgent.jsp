@@ -15,6 +15,7 @@
             <form class="g-pa-30--md g-mb-30 mx-3">
                 <div class="form-row">
                     <div class="col-12">
+                    <%-- fontion search a faire pour recuperer la valeur de l'input pour chercher dans la table  --%>.
                         <div class="input-group input-group-sm mb-3">
                             <input id="searchFormInput" type="text" class="form-control formSearch" placeholder="<spring:message code="saisie.agent.rechercher" />" aria-label="<spring:message code="saisie.agent.rechercher" />" aria-describedby="searchForm" name="searchFormInput">
                         </div>
@@ -32,8 +33,8 @@
                     </div>
 
                 <div class="form-group g-mb-25">
-                    <label for="exampleInputEmail1" class="labelRequired"><spring:message code="saisie.agent.montant" /></label>
-                    <input type="number" class="form-control form-control-md formUA" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="<spring:message code="saisie.agent.montant" />">
+                    <label for="montant" class="labelRequired"><spring:message code="saisie.agent.montant" /></label>
+                    <input type="number" class="form-control form-control-md formUA" id="montant" aria-describedby="montant" placeholder="<spring:message code="saisie.agent.montant" />">
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.confirmer" /></button>
             </form>
