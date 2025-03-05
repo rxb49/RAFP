@@ -31,11 +31,14 @@ public class MenuFiltre implements Filter {
 
         //Menu de l'application
         Locale locale = LocaleContextHolder.getLocale();
-        Menu m1 = new Menu(messageSource.getMessage("titre.accueil", null, locale), "/", "bi-clock-fill");
-        Menu m2 = new Menu(messageSource.getMessage("titre.dev", null, locale), "/gestionEmployeur", "bi-person-fill");
-        Menu m3 = new Menu(messageSource.getMessage("titre.3", null, locale), "/hello", "bi-briefcase-fill");
+        Menu accueil = new Menu(messageSource.getMessage("titre.accueil", null, locale), "/", "bi-clock-fill");
+        Menu gestionEmployeur = new Menu(messageSource.getMessage("titre.employeur.gestion", null, locale), "/gestionEmployeur", "bi-person-fill");
+        Menu listeRafp = new Menu(messageSource.getMessage("titre.rafp", null, locale), "/listeRafp", "bi-briefcase-fill");
+        Menu saisieEmployeur = new Menu(messageSource.getMessage("saisie.employeur", null, locale), "/saisieEmployeur", "bi-briefcase-fill");
+        Menu saisieAgent = new Menu(messageSource.getMessage("saisie.agent", null, locale), "/saisieAgent", "bi-briefcase-fill");
+        Menu calculRafp = new Menu(messageSource.getMessage("rafp.calcul", null, locale), "/calculRafp", "bi-briefcase-fill");
 
-        List<Menu> leMenu = List.of(m1, m2, m3);
+        List<Menu> leMenu = List.of(accueil, gestionEmployeur, listeRafp, saisieEmployeur, saisieAgent, calculRafp);
         servletRequest.setAttribute("leMenu", leMenu);
 
         //On récupère l'object Menu en fonction de la page où on se trouve. Cela permet de récupérer le titreLong de la page s'il y en a un et l'icone.

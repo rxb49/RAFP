@@ -65,23 +65,28 @@ public class PersonnelController {
      * @param model : Model pour afficher la page
      * @return : Une page
      */
-    @GetMapping("/hello")
-    public String viewHello(HttpServletRequest request, Model model) {
-        logger.info("Controller qui retourne les informations pour le Personnel connecté via le login.");
-        String login = request.getRemoteUser().toLowerCase();
-        try {
-            Personnel lePersonnel = personnelService.info(login);
-            model.addAttribute("lePersonnel", lePersonnel);
-            return "personName";
-        }
-        catch (SQLException e) {
-            logger.error("Erreur BDD - viewHello - login : {} - Erreur : {}", login, e.getMessage(), e);
-            return "errorPage/errorBDD";
-        }
-        catch (Exception e) {
-            logger.error("Erreur - viewHello - login : {} - Erreur : {}", login, e.getMessage(), e);
-            return "errorPage/errorLoad";
-        }
+    @GetMapping("/listeRafp")
+    public String viewRafp(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "listeRafp";
+    }
+
+    @GetMapping("/saisieEmployeur")
+    public String viewSaisieEmployeur(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "saisieEmployeur";
+    }
+
+    @GetMapping("/saisieAgent")
+    public String viewSaisieAgent(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "saisieAgent";
+    }
+
+    @GetMapping("/calculRafp")
+    public String viewCalculRafp(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "calculRafp";
     }
 
 

@@ -14,14 +14,14 @@ import java.sql.SQLException;
 public class OracleConfiguration {
     private String username;
     private String password;
-    private String urlLocang;
+    private String urlHarpege;
 
     public void setUsername(String username) { this.username = username; }
     public void setPassword(String password) {
         this.password = password;
     }
-    public void setUrlLocang(String urlLocang) {
-        this.urlLocang = urlLocang;
+    public void setUrlHarpege(String urlHarpege) {
+        this.urlHarpege = urlHarpege;
     }
 
     @Bean
@@ -29,7 +29,7 @@ public class OracleConfiguration {
         OracleDataSource dataSource = new OracleDataSource();
         dataSource.setUser(username);
         dataSource.setPassword(password);
-        dataSource.setURL(urlLocang);
+        dataSource.setURL(urlHarpege);
         return dataSource;
     }
 }
