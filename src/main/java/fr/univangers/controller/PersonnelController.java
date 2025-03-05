@@ -47,6 +47,7 @@ public class PersonnelController {
         this.autorisationService = autorisationService;
     }
 
+
     @GetMapping("/personList")
     public String viewPersonList(Model model) {
         model.addAttribute("persons", persons);

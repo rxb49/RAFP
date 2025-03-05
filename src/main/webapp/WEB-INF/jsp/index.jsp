@@ -62,6 +62,7 @@
                 <i class="bi bi-chevron-right arrow-icon"></i>
             </span>
         </a>
+
     </div>
 
 </c:set>
