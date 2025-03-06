@@ -47,12 +47,11 @@ public class MainController {
                 List<RafpPrecedante> rafpPrecedantes = personnelService.getRafpPrecedante();
                 logger.info("Liste des agents Rafp_2023 " + rafpPrecedantes.toString());
                 for (RafpPrecedante rafp : rafpPrecedantes) {
-                    SihamIndividuPaye noInsee = personnelService.getNoInsee(rafp.getNo_individu());
 
                     RafpAgent ajoutAgent = new RafpAgent();
                     ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
-                    ajoutAgent.setNo_dossier_pers(String.valueOf(noInsee.getNo_individu()));
-                    ajoutAgent.setNo_insee(String.valueOf(noInsee.getNo_insee()));
+                    ajoutAgent.setNo_dossier_pers(String.valueOf(rafp.getNo_individu()));
+                    ajoutAgent.setNo_insee(String.valueOf(rafp.getNo_insee()));
                     ajoutAgent.setTbi(rafp.getTbi());
                     ajoutAgent.setIndemn(rafp.getIndemn());
                     ajoutAgent.setSeuil(rafp.getSeuil());

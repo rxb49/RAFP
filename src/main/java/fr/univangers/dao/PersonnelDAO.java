@@ -125,13 +125,16 @@ public class PersonnelDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " select no_individu, tbi, indemn, seuil, rafpp, retour, base_restante, base_retour_calculee from harp_adm.rafp_2023 where rownum <= 100";
+            String requete = " select distinct R.no_individu, S.no_insee, R.tbi, R.indemn, R.seuil, R.rafpp, R.retour, R.base_restante, R.base_retour_calculee " +
+                    "from harp_adm.rafp_2023 R INNER JOIN siham_adm.siham_individu_paye S " +
+                    "ON S.no_individu = R.no_individu where rownum <= 200";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
 
             while (rs.next()) {
                 RafpPrecedante vRetour = new RafpPrecedante();
                 vRetour.setNo_individu(rs.getInt("no_individu"));
+                vRetour.setNo_insee(rs.getString("no_insee"));
                 vRetour.setTbi(rs.getInt("tbi"));
                 vRetour.setIndemn(rs.getInt("indemn"));
                 vRetour.setSeuil(rs.getInt("seuil"));
@@ -153,46 +156,6 @@ public class PersonnelDAO {
         logger.info("Fin de la requete de récupération informations des agents rafp_2023");
 
         return resultList;
-    }
-
-    /**
-     * Récupère le no_insee et no_individu de la table sihame_individu_paye'
-     * @return : le no_insee et no_individu de la table sihame_individu_paye
-     * on fait pour le moment pour un seul agent matricule = 22445
-     * @throws SQLException : SQLException
-     */
-    public SihamIndividuPaye getNoInsee(int no_dossier) throws SQLException {
-
-        logger.info("Début de la requete de récupération du no_individu et no_insee");
-
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        SihamIndividuPaye vRetour = new SihamIndividuPaye();
-        try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-            //Récupération des informations de l'année
-            String requete = " select no_individu, no_insee from siham_adm.siham_individu where no_individu = ?";
-            cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, String.valueOf(no_dossier));
-            rs = cstmt.executeQuery();
-
-            while (rs.next()) {
-                vRetour.setNo_individu(rs.getInt("no_individu"));
-                vRetour.setNo_insee(rs.getString("no_insee"));
-            }
-            rs.close();
-            cstmt.close();
-        }
-        finally {
-            Sql.close(rs);
-            Sql.close(cstmt);
-            Sql.close(maConnexion);
-        }
-
-        logger.info("Fin de la requete de récupération du no_individu et no_insee");
-
-        return vRetour;
     }
 
     /**

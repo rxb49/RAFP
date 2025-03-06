@@ -35,10 +35,6 @@ public class PersonnelService {
         return dao.getRafpPrecedante();
     }
 
-    public SihamIndividuPaye getNoInsee(int no_dossier) throws SQLException {
-        return dao.getNoInsee(no_dossier);
-    }
-
     public RafpAgent insertAgent(RafpAgent agent) throws SQLException {
         return dao.insertAgent(agent);
     }

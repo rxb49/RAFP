@@ -3,6 +3,7 @@ package fr.univangers.classes;
 public class RafpPrecedante {
 
     private int no_individu;
+    private String no_insee;
     private String nom_usuel;
     private String prenom;
     private int tbi;
@@ -20,6 +21,14 @@ public class RafpPrecedante {
 
     public void setNo_individu(int no_individu) {
         this.no_individu = no_individu;
+    }
+
+    public String getNo_insee() {
+        return no_insee;
+    }
+
+    public void setNo_insee(String no_insee) {
+        this.no_insee = no_insee;
     }
 
     public String getNom_usuel() {
