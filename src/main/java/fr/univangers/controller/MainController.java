@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Calendar;
 import java.sql.SQLException;
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -26,13 +27,6 @@ public class MainController {
         this.personnelService = personnelService;
     }
 
-    /*@GetMapping(value = {"/", "/index"})
-    public String index(Model model) {
-        logger.info("Page index ..");
-        String message = "Bienvenue sur votre application Spring Boot + JSP";
-        model.addAttribute("message", message);
-        return "index";
-    }*/
 
     @GetMapping(value = {"/", "/index"})
     public String index(Model model) throws SQLException {
@@ -45,39 +39,29 @@ public class MainController {
             logger.info("Annee recuperer "+ anneeMax.getAnnee());
 
             if (difference == 1) {
+                logger.info("Annee difference "+ difference);
                 String message = "Bienvenue sur votre application Spring Boot + JSP";
-                model.addAttribute("annee", anneeMax);
+                model.addAttribute("annee", annee);
                 return "index";
             } else {
-                RafpPrecedante getRafpPrecdante = personnelService.getRafpPrecedante();
-                logger.info("Agent recupérér "+ getRafpPrecdante.getNo_individu());
-                SihamIndividuPaye noInsee = personnelService.getNoInsee();
-                logger.info("No Insee recupérer "+ noInsee.getNo_insee());
-                logger.info("No individu "+ noInsee.getNo_individu());
+                List<RafpPrecedante> rafpPrecedantes = personnelService.getRafpPrecedante();
+                logger.info("Liste des agents Rafp_2023 " + rafpPrecedantes.toString());
+                for (RafpPrecedante rafp : rafpPrecedantes) {
+                    SihamIndividuPaye noInsee = personnelService.getNoInsee(rafp.getNo_individu());
 
-                RafpAgent ajoutAgent = new RafpAgent();
-                ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
-                ajoutAgent.setNo_dossier_pers(String.valueOf(noInsee.getNo_individu()));
-                ajoutAgent.setNo_insee(String.valueOf(noInsee.getNo_insee()));
-                ajoutAgent.setTbi(getRafpPrecdante.getTbi());
-                ajoutAgent.setIndemn(getRafpPrecdante.getIndemn());
-                ajoutAgent.setSeuil(getRafpPrecdante.getSeuil());
-                ajoutAgent.setRafpp(getRafpPrecdante.getRafpp());
-                ajoutAgent.setTotal_Retour(getRafpPrecdante.getRetour());
-                ajoutAgent.setBase_Restante(getRafpPrecdante.getBase_Restante());
-                ajoutAgent.setBase_retour_recalculee(getRafpPrecdante.getBase_Retour_Calculee());
-                logger.info(" Ajout Agent Annee "+ ajoutAgent.getAnnee());
-                logger.info(" Ajout Agent No dossier pers "+ ajoutAgent.getNo_dossier_pers());
-                logger.info(" Ajout Agent No insee "+ ajoutAgent.getNo_insee());
-                logger.info(" Ajout Agent Tbi "+ ajoutAgent.getTbi());
-                logger.info(" Ajout Agent Indemn "+ ajoutAgent.getIndemn());
-                logger.info(" Ajout Agent seuil "+ ajoutAgent.getSeuil());
-                logger.info(" Ajout Agent rafpp "+ ajoutAgent.getRafpp());
-                logger.info(" Ajout Agent total retour "+ ajoutAgent.getTotal_Retour());
-                logger.info(" Ajout Agent base restante "+ ajoutAgent.getBase_Restante());
-                logger.info(" Ajout Agent retour recalculee "+ ajoutAgent.getBase_Retour_Recalculee());
-
-                RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
+                    RafpAgent ajoutAgent = new RafpAgent();
+                    ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
+                    ajoutAgent.setNo_dossier_pers(String.valueOf(noInsee.getNo_individu()));
+                    ajoutAgent.setNo_insee(String.valueOf(noInsee.getNo_insee()));
+                    ajoutAgent.setTbi(rafp.getTbi());
+                    ajoutAgent.setIndemn(rafp.getIndemn());
+                    ajoutAgent.setSeuil(rafp.getSeuil());
+                    ajoutAgent.setRafpp(rafp.getRafpp());
+                    ajoutAgent.setTotal_Retour(rafp.getRetour());
+                    ajoutAgent.setBase_Restante(rafp.getBase_Restante());
+                    ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
+                    RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
+                }
                 return "index";
 
 
@@ -86,6 +70,7 @@ public class MainController {
             throw new SQLException("Erreur lors de l'accès à la base de données", e);
         }
     }
+
 
 
 

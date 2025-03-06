@@ -7,7 +7,7 @@
 </c:set>
 <c:set var="contenuSpec">
     <div class="flex-column">
-
+        <h2 class="mb-1">RAFP de l'année : ${annee}</h2>
         <a href="${pageContext.request.contextPath}/gestionEmployeur" class="card card-custom d-flex flex-row pe-4 mb-3">
             <span class="icon-container me-3 m-2"><i class="bi bi-person"></i></span>
             <div class="flex-grow-1 cadre-info my-3">

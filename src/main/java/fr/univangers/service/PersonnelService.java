@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class PersonnelService {
@@ -30,12 +31,12 @@ public class PersonnelService {
         return dao.initialisation();
     }
 
-    public RafpPrecedante getRafpPrecedante() throws SQLException {
+    public List<RafpPrecedante> getRafpPrecedante() throws SQLException {
         return dao.getRafpPrecedante();
     }
 
-    public SihamIndividuPaye getNoInsee() throws SQLException {
-        return dao.getNoInsee();
+    public SihamIndividuPaye getNoInsee(int no_dossier) throws SQLException {
+        return dao.getNoInsee(no_dossier);
     }
 
     public RafpAgent insertAgent(RafpAgent agent) throws SQLException {

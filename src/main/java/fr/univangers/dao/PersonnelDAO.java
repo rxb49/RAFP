@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class PersonnelDAO {
@@ -112,22 +114,23 @@ public class PersonnelDAO {
      * on fait pour le moment pour un seul agent matricule = 22445
      * @throws SQLException : SQLException
      */
-    public RafpPrecedante getRafpPrecedante() throws SQLException {
+    public List<RafpPrecedante> getRafpPrecedante() throws SQLException {
 
-        logger.info("Début de la requete de récupération des informations de l'année");
+        logger.info("Début de la requete de récupération des informations des agents rafp_2023");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        RafpPrecedante vRetour = new RafpPrecedante();
+        List<RafpPrecedante> resultList = new ArrayList<>();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " select no_individu, tbi, indemn, seuil, rafpp, retour, base_restante, base_retour_calculee from harp_adm.rafp_2023 where no_individu = 22445";
+            String requete = " select no_individu, tbi, indemn, seuil, rafpp, retour, base_restante, base_retour_calculee from harp_adm.rafp_2023 where rownum <= 100";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
 
             while (rs.next()) {
+                RafpPrecedante vRetour = new RafpPrecedante();
                 vRetour.setNo_individu(rs.getInt("no_individu"));
                 vRetour.setTbi(rs.getInt("tbi"));
                 vRetour.setIndemn(rs.getInt("indemn"));
@@ -136,7 +139,7 @@ public class PersonnelDAO {
                 vRetour.setRetour(rs.getInt("retour"));
                 vRetour.setBase_Restante(rs.getInt("base_restante"));
                 vRetour.setBase_Retour_Calculee(rs.getInt("base_retour_calculee"));
-
+                resultList.add(vRetour);
             }
             rs.close();
             cstmt.close();
@@ -147,9 +150,9 @@ public class PersonnelDAO {
             Sql.close(maConnexion);
         }
 
-        logger.info("Fin de la requete de récupération des informations de l'année");
+        logger.info("Fin de la requete de récupération informations des agents rafp_2023");
 
-        return vRetour;
+        return resultList;
     }
 
     /**
@@ -158,7 +161,7 @@ public class PersonnelDAO {
      * on fait pour le moment pour un seul agent matricule = 22445
      * @throws SQLException : SQLException
      */
-    public SihamIndividuPaye getNoInsee() throws SQLException {
+    public SihamIndividuPaye getNoInsee(int no_dossier) throws SQLException {
 
         logger.info("Début de la requete de récupération du no_individu et no_insee");
 
@@ -169,8 +172,9 @@ public class PersonnelDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " select no_individu, no_insee from siham_adm.siham_individu where no_individu = 22445";
+            String requete = " select no_individu, no_insee from siham_adm.siham_individu where no_individu = ?";
             cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, String.valueOf(no_dossier));
             rs = cstmt.executeQuery();
 
             while (rs.next()) {
@@ -186,7 +190,7 @@ public class PersonnelDAO {
             Sql.close(maConnexion);
         }
 
-        logger.info("Fin de la requete de récupération des informations de l'année");
+        logger.info("Fin de la requete de récupération du no_individu et no_insee");
 
         return vRetour;
     }
