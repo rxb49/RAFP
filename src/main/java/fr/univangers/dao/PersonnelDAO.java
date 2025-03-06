@@ -59,8 +59,8 @@ public class PersonnelDAO {
             cstmt.close();
         }
         finally {
-//            Sql.close(rs);
-//            Sql.close(cstmt);
+            Sql.close(rs);
+            Sql.close(cstmt);
             Sql.close(maConnexion);
         }
 
@@ -96,8 +96,8 @@ public class PersonnelDAO {
             cstmt.close();
         }
         finally {
-//            Sql.close(rs);
-//            Sql.close(cstmt);
+            Sql.close(rs);
+            Sql.close(cstmt);
             Sql.close(maConnexion);
         }
 
@@ -142,8 +142,8 @@ public class PersonnelDAO {
             cstmt.close();
         }
         finally {
-//            Sql.close(rs);
-//            Sql.close(cstmt);
+            Sql.close(rs);
+            Sql.close(cstmt);
             Sql.close(maConnexion);
         }
 
@@ -181,8 +181,8 @@ public class PersonnelDAO {
             cstmt.close();
         }
         finally {
-//            Sql.close(rs);
-//            Sql.close(cstmt);
+            Sql.close(rs);
+            Sql.close(cstmt);
             Sql.close(maConnexion);
         }
 
@@ -245,8 +245,9 @@ public class PersonnelDAO {
                 Sql.close(maConnexion);
             }
         }
-        logger.info("Fin de la requête de récupération des informations de l'année");
+        logger.info("Fin de la requête d'insertion de l'agents");
         return ajouterAgent;
     }
+
 
 }
