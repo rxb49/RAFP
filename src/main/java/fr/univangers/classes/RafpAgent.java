@@ -2,16 +2,16 @@ package fr.univangers.classes;
 
 public class RafpAgent {
 
-    private String annee;
-    private String no_dossier_pers;
-    private String no_insee;
-    private int tbi;
-    private int indemn;
-    private int seuil;
-    private int rafpp;
-    private int base_restante;
-    private int total_retour;
-    private int base_retour_recalculee;
+    private String annee; // completer avec n-1
+    private String no_dossier_pers; // rafp2023 RafpPrecedante
+    private String no_insee; // Siham_adm.siham_individu_paye
+    private int tbi; // rafp 2023 RafpPrecedante
+    private int indemn;// rafp 2023 RafpPrecedante
+    private int seuil;// rafp 2023 RafpPrecedante
+    private int rafpp;// rafp 2023 RafpPrecedante
+    private int total_retour;// rafp 2023 RafpPrecedante
+    private int base_restante;// rafp 2023 RafpPrecedante
+    private int base_retour_recalculee;// rafp 2023 RafpPrecedante
 
 
     public String getAnnee() {

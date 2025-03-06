@@ -2,6 +2,8 @@ package fr.univangers.controller;
 
 import fr.univangers.classes.Personnel;
 import fr.univangers.classes.RafpAgent;
+import fr.univangers.classes.RafpPrecedante;
+import fr.univangers.classes.SihamIndividuPaye;
 import fr.univangers.service.PersonnelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,13 +43,44 @@ public class MainController {
             int anneeActuelle = Calendar.getInstance().get(Calendar.YEAR);
             int difference = anneeActuelle - annee;
             logger.info("Annee recuperer "+ anneeMax.getAnnee());
+
             if (difference == 1) {
-                logger.info("Page index ..");
                 String message = "Bienvenue sur votre application Spring Boot + JSP";
                 model.addAttribute("annee", anneeMax);
                 return "index";
             } else {
-                return "initialisation";
+                RafpPrecedante getRafpPrecdante = personnelService.getRafpPrecedante();
+                logger.info("Agent recupérér "+ getRafpPrecdante.getNo_individu());
+                SihamIndividuPaye noInsee = personnelService.getNoInsee();
+                logger.info("No Insee recupérer "+ noInsee.getNo_insee());
+                logger.info("No individu "+ noInsee.getNo_individu());
+
+                RafpAgent ajoutAgent = new RafpAgent();
+                ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
+                ajoutAgent.setNo_dossier_pers(String.valueOf(noInsee.getNo_individu()));
+                ajoutAgent.setNo_insee(String.valueOf(noInsee.getNo_insee()));
+                ajoutAgent.setTbi(getRafpPrecdante.getTbi());
+                ajoutAgent.setIndemn(getRafpPrecdante.getIndemn());
+                ajoutAgent.setSeuil(getRafpPrecdante.getSeuil());
+                ajoutAgent.setRafpp(getRafpPrecdante.getRafpp());
+                ajoutAgent.setTotal_Retour(getRafpPrecdante.getRetour());
+                ajoutAgent.setBase_Restante(getRafpPrecdante.getBase_Restante());
+                ajoutAgent.setBase_retour_recalculee(getRafpPrecdante.getBase_Retour_Calculee());
+                logger.info(" Ajout Agent Annee "+ ajoutAgent.getAnnee());
+                logger.info(" Ajout Agent No dossier pers "+ ajoutAgent.getNo_dossier_pers());
+                logger.info(" Ajout Agent No insee "+ ajoutAgent.getNo_insee());
+                logger.info(" Ajout Agent Tbi "+ ajoutAgent.getTbi());
+                logger.info(" Ajout Agent Indemn "+ ajoutAgent.getIndemn());
+                logger.info(" Ajout Agent seuil "+ ajoutAgent.getSeuil());
+                logger.info(" Ajout Agent rafpp "+ ajoutAgent.getRafpp());
+                logger.info(" Ajout Agent total retour "+ ajoutAgent.getTotal_Retour());
+                logger.info(" Ajout Agent base restante "+ ajoutAgent.getBase_Restante());
+                logger.info(" Ajout Agent retour recalculee "+ ajoutAgent.getBase_Retour_Recalculee());
+
+                RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
+                return "index";
+
+
             }
         }catch (SQLException e){
             throw new SQLException("Erreur lors de l'accès à la base de données", e);
