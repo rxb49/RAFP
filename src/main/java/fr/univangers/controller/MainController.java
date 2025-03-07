@@ -46,7 +46,7 @@ public class MainController {
             if (difference == 1) {
                 logger.info("Annee difference "+ difference);
                 String message = "Bienvenue sur votre application Spring Boot + JSP";
-                model.addAttribute("annee", annee);
+                model.addAttribute("anneeActuelle", anneeActuelle -1);
                 return "index";
             } else {
                 List<RafpPrecedante> rafpPrecedantes = personnelService.getRafpPrecedante();
@@ -66,7 +66,7 @@ public class MainController {
                     ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
                     RafpAgent insertAgent = agentService.insertAgent(ajoutAgent);
                 }
-                model.addAttribute("annee", annee);
+                model.addAttribute("anneeActuelle", anneeActuelle-1);
                 return "index";
 
 
