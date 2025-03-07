@@ -21,8 +21,6 @@ public class PersonnelService {
         this.dao = dao;
     }
 
-    //Lors d'un vrai projet : les méthodes delete(), insert() et update() il appelle les méthodes dans la DAO.
-
     public Personnel info(String login ) throws SQLException {
         return dao.info(login);
     }
@@ -33,10 +31,6 @@ public class PersonnelService {
 
     public List<RafpPrecedante> getRafpPrecedante() throws SQLException {
         return dao.getRafpPrecedante();
-    }
-
-    public RafpAgent insertAgent(RafpAgent agent) throws SQLException {
-        return dao.insertAgent(agent);
     }
 
     public boolean delete(String valeur) throws SQLException {
