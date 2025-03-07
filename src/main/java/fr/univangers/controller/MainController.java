@@ -4,6 +4,7 @@ import fr.univangers.classes.Personnel;
 import fr.univangers.classes.RafpAgent;
 import fr.univangers.classes.RafpPrecedante;
 import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.service.AgentService;
 import fr.univangers.service.PersonnelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,9 +23,13 @@ import java.util.List;
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private final PersonnelService personnelService;
+    private final AgentService agentService;
 
-    public MainController(PersonnelService personnelService) {
+
+    public MainController(PersonnelService personnelService, AgentService agentService) {
         this.personnelService = personnelService;
+        this.agentService = agentService;
+
     }
 
 
@@ -41,7 +46,7 @@ public class MainController {
             if (difference == 1) {
                 logger.info("Annee difference "+ difference);
                 String message = "Bienvenue sur votre application Spring Boot + JSP";
-                model.addAttribute("annee", annee);
+                model.addAttribute("anneeActuelle", anneeActuelle -1);
                 return "index";
             } else {
                 List<RafpPrecedante> rafpPrecedantes = personnelService.getRafpPrecedante();
@@ -59,9 +64,9 @@ public class MainController {
                     ajoutAgent.setTotal_Retour(rafp.getRetour());
                     ajoutAgent.setBase_Restante(rafp.getBase_Restante());
                     ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
-                    RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
+                    RafpAgent insertAgent = agentService.insertAgent(ajoutAgent);
                 }
-                model.addAttribute("annee", annee);
+                model.addAttribute("anneeActuelle", anneeActuelle-1);
                 return "index";
 
 
