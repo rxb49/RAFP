@@ -94,8 +94,6 @@ public class PersonnelDAO {
             }
             rs.close();
             cstmt.close();
-        } catch (SQLException e) {
-            logger.error("message d'erreur initiallisation",e);
         }
         finally {
             Sql.close(maConnexion);
@@ -144,8 +142,6 @@ public class PersonnelDAO {
             }
             rs.close();
             cstmt.close();
-        } catch (SQLException e) {
-            logger.error("message d'erreur getRafpPrecedante",e);
         }
         finally {
             Sql.close(maConnexion);

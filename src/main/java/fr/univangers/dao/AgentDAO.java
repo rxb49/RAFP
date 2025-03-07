@@ -68,9 +68,8 @@ public class AgentDAO {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
             Sql.close(cstmt);
-        } catch (SQLException e) {
-            logger.error("message d'erreur insertAgent agent {}", agent ,e);
-        } finally {
+        }
+        finally {
             Sql.close(maConnexion);
         }
         logger.info("Fin de la requête d'insertion de l'agents");
