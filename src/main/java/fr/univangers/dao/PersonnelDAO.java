@@ -123,7 +123,9 @@ public class PersonnelDAO {
             //Récupération des informations de l'année
             String requete = " select distinct R.no_individu, S.no_insee, R.tbi, R.indemn, R.seuil, R.rafpp, R.retour, R.base_restante, R.base_retour_calculee " +
                     "from harp_adm.rafp_2023 R INNER JOIN siham_adm.siham_individu_paye S " +
-                    "ON S.no_individu = R.no_individu where rownum <= 200";
+                    "ON S.no_individu = R.no_individu " +
+                    "where S.periode_paie like '2024%'" +
+                    "and S.l_statut = 'Titulaire'";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
 
