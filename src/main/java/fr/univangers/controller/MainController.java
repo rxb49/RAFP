@@ -61,6 +61,7 @@ public class MainController {
                     ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
                     RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
                 }
+                model.addAttribute("annee", annee);
                 return "index";
 
 

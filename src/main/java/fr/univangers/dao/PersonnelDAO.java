@@ -96,6 +96,8 @@ public class PersonnelDAO {
             }
             rs.close();
             cstmt.close();
+        } catch (SQLException e) {
+            logger.error("message d'erreur initiallisation",e);
         }
         finally {
             Sql.close(rs);
@@ -146,6 +148,8 @@ public class PersonnelDAO {
             }
             rs.close();
             cstmt.close();
+        } catch (SQLException e) {
+            logger.error("message d'erreur getRafpPrecedante",e);
         }
         finally {
             Sql.close(rs);
@@ -197,20 +201,10 @@ public class PersonnelDAO {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            logger.error("Erreur lors de l'insertion en base de donnée", e);
+            logger.error("message d'erreur insertAgent agent {}", agent ,e);
         } finally {
-            // Fermeture des ressources
-            if (cstmt != null) {
-                try {
-                    cstmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (maConnexion != null) {
-                Sql.close(maConnexion);
-            }
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
         }
         logger.info("Fin de la requête d'insertion de l'agents");
         return ajouterAgent;
