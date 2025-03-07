@@ -1,5 +1,10 @@
 package fr.univangers.controller;
 
+import fr.univangers.classes.Personnel;
+import fr.univangers.classes.RafpAgent;
+import fr.univangers.classes.RafpPrecedante;
+import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.service.PersonnelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -9,18 +14,65 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.util.Calendar;
+import java.sql.SQLException;
+import java.util.List;
 
 @Controller
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+    private final PersonnelService personnelService;
+
+    public MainController(PersonnelService personnelService) {
+        this.personnelService = personnelService;
+    }
+
 
     @GetMapping(value = {"/", "/index"})
-    public String index(Model model) {
-        logger.info("Page index ..");
-        String message = "Bienvenue sur votre application Spring Boot + JSP";
-        model.addAttribute("message", message);
-        return "index";
+    public String index(Model model) throws SQLException {
+        try {
+            RafpAgent anneeMax = personnelService.initialisation();
+
+            int annee = Integer.parseInt(anneeMax.getAnnee());
+            int anneeActuelle = Calendar.getInstance().get(Calendar.YEAR);
+            int difference = anneeActuelle - annee;
+            logger.info("Annee recuperer "+ anneeMax.getAnnee());
+
+            if (difference == 1) {
+                logger.info("Annee difference "+ difference);
+                String message = "Bienvenue sur votre application Spring Boot + JSP";
+                model.addAttribute("annee", annee);
+                return "index";
+            } else {
+                List<RafpPrecedante> rafpPrecedantes = personnelService.getRafpPrecedante();
+                logger.info("Liste des agents Rafp_2023 " + rafpPrecedantes.toString());
+                for (RafpPrecedante rafp : rafpPrecedantes) {
+
+                    RafpAgent ajoutAgent = new RafpAgent();
+                    ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
+                    ajoutAgent.setNo_dossier_pers(String.valueOf(rafp.getNo_individu()));
+                    ajoutAgent.setNo_insee(String.valueOf(rafp.getNo_insee()));
+                    ajoutAgent.setTbi(rafp.getTbi());
+                    ajoutAgent.setIndemn(rafp.getIndemn());
+                    ajoutAgent.setSeuil(rafp.getSeuil());
+                    ajoutAgent.setRafpp(rafp.getRafpp());
+                    ajoutAgent.setTotal_Retour(rafp.getRetour());
+                    ajoutAgent.setBase_Restante(rafp.getBase_Restante());
+                    ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
+                    RafpAgent insertAgent = personnelService.insertAgent(ajoutAgent);
+                }
+                model.addAttribute("annee", annee);
+                return "index";
+
+
+            }
+        }catch (SQLException e){
+            throw new SQLException("Erreur lors de l'accès à la base de données", e);
+        }
     }
+
+
+
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
