@@ -26,8 +26,8 @@ public class EmployeurDAO {
 
     public RafpEmployeur insertEmployeur(String nomEmployeur, String mailEmployeur) throws SQLException {
         logger.info("Début de la requête d'insertion de l'employeur");
-        if (nomEmployeur == null || mailEmployeur == null) {
-            throw new IllegalArgumentException("Le nom et l'email de l'employeur ne peuvent pas être nuls");
+        if (nomEmployeur == null || mailEmployeur == null || nomEmployeur == "" || mailEmployeur == "") {
+            throw new SQLException("Le nom et l'email de l'employeur ne peuvent pas être null");
         }
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
@@ -44,13 +44,23 @@ public class EmployeurDAO {
             if (resultSet.getInt(1) > 0) {
                 throw new SQLException("L'employeur existe déjà.");
             }
+
+            // Obtenir l'id maximum existant
+            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employeur";
+            PreparedStatement maxIdStmt = maConnexion.prepareStatement(maxIdQuery);
+            ResultSet maxIdResultSet = maxIdStmt.executeQuery();
+            maxIdResultSet.next();
+            int maxId = maxIdResultSet.getInt(1);
+            int newId = maxId + 1;
+
             // Insertion de l'agent
-            String requete = "INSERT INTO harp_adm.rafp_employeur (lib_emp, mail_emp) VALUES (?, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_employeur (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
             // Définir les valeurs des paramètres avant l'exécution
-            cstmt.setString(1, ajouterEmployeur.setLib_emp(nomEmployeur));
-            cstmt.setString(2, ajouterEmployeur.setMail_emp(mailEmployeur));
+            cstmt.setInt(1, newId);
+            cstmt.setString(2, ajouterEmployeur.setLib_emp(nomEmployeur));
+            cstmt.setString(3, ajouterEmployeur.setMail_emp(mailEmployeur));
             // Exécuter la requête d'insertion
 
             int rowsInserted = cstmt.executeUpdate();
@@ -65,8 +75,11 @@ public class EmployeurDAO {
             Sql.close(cstmt);
         }
         finally {
+            Sql.close(cstmt);
             Sql.close(maConnexion);
         }
+        Sql.close(cstmt);
+        Sql.close(maConnexion);
         logger.info("Fin de la requête d'insertion de l'employeur");
         return ajouterEmployeur;
     }

@@ -71,8 +71,13 @@ public class EmployeurController {
         } catch (Exception e) {
             if ("L'employeur existe déjà.".equals(e.getMessage())) {
                 model.addAttribute("errorMessage", "L'employeur existe déjà.");
-            }else {
-                logger.error("Erreur - insertEmployeur - employeur : {} ", employeur.getLib_emp(), e.getMessage(), e);
+                return "gestionEmployeur";
+            }
+            if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
+                model.addAttribute("errorMessage", "Le nom et l'email de l'employeur ne peuvent pas être null");
+
+            } else {
+                logger.error("Erreur - insertEmployeur - employeur : {} ", employeur, e.getMessage(), e);
                 model.addAttribute("errorMessage", "Une erreur est survenue lors de l'ajout de l'employeur. Veuillez réessayer.");
                 return "error.errorBDD";
             }
