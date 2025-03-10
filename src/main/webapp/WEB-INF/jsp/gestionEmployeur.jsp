@@ -40,30 +40,43 @@
 
             <form class="g-pa-30--md g-mb-30 mx-3">
                 <div class="form-group g-mb-25">
-                    <label for="exampleSelect1"><spring:message code="saisie.employeur.nomEmployeur" /></label>
+                    <label for="employeurs"><spring:message code="saisie.employeur.nomEmployeur" /></label>
                     <div class="formfield-select--container">
-                        <select class="form-control rounded-0 formUA" id="exampleSelect1">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                        <select class="form-control rounded-0 formUA" id="employeurs" name="employeurs" onchange="updateEmployerDetails()">
+                            <c:forEach var="employeur" items="${employeurs}">
+                                <option value="${employeur.id_emp}" data-name="${employeur.lib_emp}" data-email="${employeur.mail_emp}">
+                                    ${employeur.lib_emp} - ${employeur.mail_emp}
+                                </option>
+                            </c:forEach>
                         </select>
                     </div>
                 </div><br>
                 <div class="form-group g-mb-25">
-                    <label for="nomEmployeur" class="labelRequired"><spring:message code="employeur.nom"/></label>
+                    <label for="nameEmployeur" class="labelRequired"><spring:message code="employeur.nom"/></label>
                     <input type="text" class="form-control form-control-md formUA" id="nameEmployeur" aria-describedby="nom" placeholder="<spring:message code="employeur.nom"/>">
                 </div>
                 <br>
                 <div class="form-group g-mb-25">
-                    <label for="email" class="labelRequired"><spring:message code="employeur.mail"/></label>
+                    <label for="emailEmployeur" class="labelRequired"><spring:message code="employeur.mail"/></label>
                     <input type="email" class="form-control form-control-md formUA" id="emailEmployeur" aria-describedby="emailHelp" placeholder="<spring:message code="employeur.mail"/>">
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.modifier"/></button>
             </form>
-        </div>
+       </div>
     </div>
+<script type="text/javascript">
+    function updateEmployerDetails() {
+        var select = document.getElementById("employeurs");
+        var selectedOption = select.options[select.selectedIndex];
+        var name = selectedOption.getAttribute("data-name");
+        var email = selectedOption.getAttribute("data-email");
+
+        document.getElementById("nameEmployeur").value = name;
+        document.getElementById("emailEmployeur").value = email;
+    }
+ </script>
+
+
 </c:set>
 <c:set var="jsSpec">
 </c:set>

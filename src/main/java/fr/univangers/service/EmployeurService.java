@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class EmployeurService {
@@ -19,6 +20,10 @@ public class EmployeurService {
 
     public RafpEmployeur insertEmployeur(String nomEmployeur, String mailEmployeur) throws SQLException {
         return dao.insertEmployeur(nomEmployeur, mailEmployeur);
+    }
+
+    public List<RafpEmployeur> getEmployeur() throws SQLException {
+        return dao.getEmployeur();
     }
 
 

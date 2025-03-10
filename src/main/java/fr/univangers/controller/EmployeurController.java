@@ -52,8 +52,10 @@ public class EmployeurController {
 
 
     @GetMapping("/gestionEmployeur")
-    public String viewGestionEmployeur(Model model) {
+    public String viewGestionEmployeur(Model model) throws SQLException {
+        List<RafpEmployeur> employeurs = employeurService.getEmployeur();
         model.addAttribute("persons", persons);
+        model.addAttribute("employeurs", employeurs);
         return "gestionEmployeur";
     }
 
