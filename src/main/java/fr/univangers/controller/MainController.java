@@ -5,6 +5,7 @@ import fr.univangers.classes.RafpAgent;
 import fr.univangers.classes.RafpPrecedante;
 import fr.univangers.classes.SihamIndividuPaye;
 import fr.univangers.service.AgentService;
+import fr.univangers.service.CalculService;
 import fr.univangers.service.PersonnelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,12 +25,13 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private final PersonnelService personnelService;
     private final AgentService agentService;
+    private final CalculService calculService;
 
 
-    public MainController(PersonnelService personnelService, AgentService agentService) {
+    public MainController(PersonnelService personnelService, AgentService agentService, CalculService calculService) {
         this.personnelService = personnelService;
         this.agentService = agentService;
-
+        this.calculService = calculService;
     }
 
 
@@ -66,6 +68,13 @@ public class MainController {
                     ajoutAgent.setBase_retour_recalculee(rafp.getBase_Retour_Calculee());
                     RafpAgent insertAgent = agentService.insertAgent(ajoutAgent);
                 }
+                calculService.setTBI();
+                calculService.setIndemn();
+                calculService.setRafpp();
+                calculService.setSeuil();
+
+
+
                 model.addAttribute("anneeActuelle", anneeActuelle-1);
                 return "index";
 

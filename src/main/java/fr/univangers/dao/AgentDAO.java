@@ -54,7 +54,7 @@ public class AgentDAO {
             cstmt.setInt(4, agent.getTbi());
             cstmt.setInt(5, agent.getIndemn());
             cstmt.setInt(6, agent.getSeuil());
-            cstmt.setInt(7, agent.getRafpp());
+            cstmt.setInt(7, 0);
             cstmt.setInt(8, agent.getBase_Restante());
             cstmt.setInt(9, agent.getTotal_Retour());
             cstmt.setInt(10, agent.getBase_Retour_Recalculee());
@@ -68,9 +68,8 @@ public class AgentDAO {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
             Sql.close(cstmt);
-        } catch (SQLException e) {
-            logger.error("message d'erreur insertAgent agent {}", agent ,e);
-        } finally {
+        }
+        finally {
             Sql.close(maConnexion);
         }
         logger.info("Fin de la requête d'insertion de l'agents");
