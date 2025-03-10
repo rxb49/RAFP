@@ -26,5 +26,9 @@ public class EmployeurService {
         return dao.getEmployeur();
     }
 
+    public void updateEmployeur(int idEmployeur, String libEmployeur, String mailEmployeur) throws SQLException {
+        dao.updateEmployeur(idEmployeur, libEmployeur, mailEmployeur);
+    }
+
 
 }

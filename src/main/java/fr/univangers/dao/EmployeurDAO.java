@@ -105,7 +105,6 @@ public class EmployeurDAO {
                 employeur.setLib_emp(rs.getString("lib_emp"));
                 employeur.setMail_emp(rs.getString("mail_emp"));
                 employeurs.add(employeur);
-                logger.info(employeur.getLib_emp());
             }
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -115,5 +114,46 @@ public class EmployeurDAO {
         Sql.close(maConnexion);
         }
         return employeurs;
+    }
+
+    public void updateEmployeur(int idEmployeur, String libEmployeur, String mailEmployeur) throws SQLException {
+        logger.info("Début de la requête de modification d'un employeur");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            // Exécuter la requête d'insertion
+
+            cstmt.setString(1, libEmployeur);
+            cstmt.setString(2, mailEmployeur);
+            cstmt.setInt(3, idEmployeur);
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("La mise à jour de l'employeur a échoué, aucune ligne affectée.");
+            }
+            logger.info("La mise à jour de l'employeur a été effectuée avec succès.");
+        } catch (SQLException e) {
+            logger.error("Erreur lors de la mise à jour de l'employeur : ", e);
+            throw e;
+        } finally {
+            if (cstmt != null) {
+                try {
+                    cstmt.close();
+                } catch (SQLException e) {
+                    logger.error("Erreur lors de la fermeture de PreparedStatement : ", e);
+                }
+            }
+            if (maConnexion != null) {
+                try {
+                    maConnexion.close();
+                } catch (SQLException e) {
+                    logger.error("Erreur lors de la fermeture de la connexion : ", e);
+                }
+            }
+        }
     }
 }

@@ -38,7 +38,7 @@
                 <h2 class="mb-1"><spring:message code="employeur.modifier" /></h2>
             </div>
 
-            <form class="g-pa-30--md g-mb-30 mx-3">
+            <form class="g-pa-30--md g-mb-30 mx-3" method="post" action="gestionEmployeur/update">
                 <div class="form-group g-mb-25">
                     <label for="employeurs"><spring:message code="saisie.employeur.nomEmployeur" /></label>
                     <div class="formfield-select--container">
@@ -53,12 +53,12 @@
                 </div><br>
                 <div class="form-group g-mb-25">
                     <label for="nameEmployeur" class="labelRequired"><spring:message code="employeur.nom"/></label>
-                    <input type="text" class="form-control form-control-md formUA" id="nameEmployeur" aria-describedby="nom" placeholder="<spring:message code="employeur.nom"/>">
+                    <input type="text" class="form-control form-control-md formUA" name="nomEmployeurUpdate" id="nameEmployeur" aria-describedby="nom" placeholder="<spring:message code='employeur.nom'/>">
                 </div>
                 <br>
                 <div class="form-group g-mb-25">
                     <label for="emailEmployeur" class="labelRequired"><spring:message code="employeur.mail"/></label>
-                    <input type="email" class="form-control form-control-md formUA" id="emailEmployeur" aria-describedby="emailHelp" placeholder="<spring:message code="employeur.mail"/>">
+                    <input type="email" class="form-control form-control-md formUA" name="mailEmployeurUpdate" id="emailEmployeur" aria-describedby="emailHelp" placeholder="<spring:message code='employeur.mail'/>">
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.modifier"/></button>
             </form>

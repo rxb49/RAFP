@@ -125,7 +125,8 @@ public class PersonnelDAO {
                     "from harp_adm.rafp_2023 R INNER JOIN siham_adm.siham_individu_paye S " +
                     "ON S.no_individu = R.no_individu " +
                     "where S.periode_paie like '2024%'" +
-                    "and S.l_statut = 'Titulaire'";
+                    "and S.l_statut = 'Titulaire'" +
+                    "and rownum <= 200";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
 
