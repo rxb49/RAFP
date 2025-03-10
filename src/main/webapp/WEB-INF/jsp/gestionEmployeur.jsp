@@ -13,18 +13,24 @@
                 <h2 class="mb-1"><spring:message code="employeur.ajouter" /></h2>
             </div>
 
-            <form class="g-pa-30--md g-mb-30 mx-3">
+            <form class="g-pa-30--md g-mb-30 mx-3" action="${pageContext.request.contextPath}/gestionEmployeur/add">
                 <div class="form-group g-mb-25">
                     <label for="nomEmployeur" class="labelRequired"><spring:message code="employeur.nom"/></label>
-                    <input type="text" class="form-control form-control-md formUA" id="nomEmployeur" aria-describedby="nom" placeholder="<spring:message code="employeur.nom"/>">
+                    <input type="text" required="required" class="form-control form-control-md formUA" name="nomEmployeur" id="nomEmployeur" aria-describedby="nomEmployeur" placeholder="<spring:message code="employeur.nom"/>">
                 </div>
                 <br>
                 <div class="form-group g-mb-25">
-                    <label for="email" class="labelRequired"><spring:message code="employeur.mail"/></label>
-                    <input type="email" class="form-control form-control-md formUA" id="email" aria-describedby="email" placeholder="<spring:message code="employeur.mail"/>">
+                    <label for="mailEmployeur" class="labelRequired"><spring:message code="employeur.mail"/></label>
+                    <input type="email" required="required" class="form-control form-control-md formUA" name="mailEmployeur" id="mailEmployeur" aria-describedby="mailEmployeur" placeholder="<spring:message code="employeur.mail"/>">
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.ajouter"/></button>
             </form>
+            <c:if test="${not empty message}">
+                <div style="color: green;">${message}</div>
+            </c:if>
+            <c:if test="${not empty errorMessage}">
+                <div style="color: red;">${errorMessage}</div>
+            </c:if>
         </div>
 
         <div class="card mb-4" id="cadre1">
