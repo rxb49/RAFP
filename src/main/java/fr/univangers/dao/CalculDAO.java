@@ -43,14 +43,14 @@ public class CalculDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " update harp_adm.rafp_agent R set TBI=(\n" +
-                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H\n" +
-                    "   where periode_paie like '2024%'\n" +
-                    "     and R.no_dossier_pers=H.no_individu\n" +
-                    "     and type_element='BR'\n" +
-                    "     and montant <>0\n" +
-                    "     and tem_rafp is null\n" +
-                    "     and r.annee = '2024' ) \n" +
+            String requete = " update harp_adm.rafp_agent R set TBI=(" +
+                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
+                    "   where periode_paie like '2024%'" +
+                    "     and R.no_dossier_pers=H.no_individu" +
+                    "     and type_element='BR'" +
+                    "     and montant <>0" +
+                    "     and tem_rafp is null" +
+                    "     and r.annee = '2024' ) " +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -77,14 +77,14 @@ public class CalculDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " update harp_adm.rafp_agent R set Indemn=(\n" +
-                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H\n" +
-                    "   where periode_paie like '2024%'\n" +
-                    "     and R.no_dossier_pers=H.no_individu\n" +
-                    "     and type_element='BR'\n" +
-                    "     and montant <>0\n" +
-                    "     and tem_rafp='O'\n" +
-                    "     and r.annee = '2024') \n" +
+            String requete = " update harp_adm.rafp_agent R set Indemn=(" +
+                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
+                    "   where periode_paie like '2024%'" +
+                    "     and R.no_dossier_pers=H.no_individu" +
+                    "     and type_element='BR'" +
+                    "     and montant <>0" +
+                    "     and tem_rafp='O'" +
+                    "     and r.annee = '2024')" +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -111,14 +111,14 @@ public class CalculDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " update harp_adm.rafp_agent R set RAFPP=(\n" +
-                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H\n" +
-                    "  where periode_paie like '2024%'\n" +
-                    "     and R.no_dossier_pers=H.no_individu\n" +
-                    "     and type_element='CO'\n" +
-                    "     and compte_comptable='64535100'\n" +
-                    "     and r.annee = '2024'\n" +
-                    "      )  \n" +
+            String requete = " update harp_adm.rafp_agent R set RAFPP=(" +
+                    "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
+                    "  where periode_paie like '2024%'" +
+                    "     and R.no_dossier_pers=H.no_individu" +
+                    "     and type_element='CO'" +
+                    "     and compte_comptable='64535100'" +
+                    "     and r.annee = '2024'" +
+                    "      )  " +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
