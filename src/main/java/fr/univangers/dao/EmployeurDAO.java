@@ -42,6 +42,7 @@ public class EmployeurDAO {
             ResultSet resultSet = verificationStmt.executeQuery();
             resultSet.next();
             if (resultSet.getInt(1) > 0) {
+                logger.info("L'employeur existe déjà");
                 throw new SQLException("L'employeur existe déjà.");
             }
 

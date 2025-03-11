@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import javax.naming.NamingException;
@@ -60,30 +61,31 @@ public class EmployeurController {
     }
 
     @PostMapping("/gestionEmployeur/add")
-    public String addEmployeur(HttpServletRequest request, Model model) throws SQLException {
+    public String addEmployeur(HttpServletRequest request, RedirectAttributes redirectAttributes) throws SQLException {
         RafpEmployeur employeur = new RafpEmployeur();
         try {
             String nomEmployeur = request.getParameter("nomEmployeur");
             String mailEmployeur = request.getParameter("mailEmployeur");
             logger.info(" Nom Employeur " + nomEmployeur);
             employeur = employeurService.insertEmployeur(nomEmployeur, mailEmployeur);
-            model.addAttribute("employeur", employeur);
-            model.addAttribute("message", "L'employeur a été ajouté avec succès !");
+            redirectAttributes.addFlashAttribute("employeur", employeur);
+            redirectAttributes.addFlashAttribute("message", "L'employeur a été ajouté avec succès !");
+            return "redirect:/gestionEmployeur";
         } catch (Exception e) {
             if ("L'employeur existe déjà.".equals(e.getMessage())) {
-                model.addAttribute("errorMessage", "L'employeur existe déjà.");
+                redirectAttributes.addFlashAttribute("errorMessage", "L'employeur existe déjà.");
             } else if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
-                model.addAttribute("errorMessage", "Le nom et l'email de l'employeur ne peuvent pas être null");
+                redirectAttributes.addFlashAttribute("errorMessage", "Le nom et l'email de l'employeur ne peuvent pas être null");
             } else {
                 logger.error("Erreur - insertEmployeur - employeur : {} ", employeur, e.getMessage(), e);
-                model.addAttribute("errorMessage", "Une erreur est survenue lors de l'ajout de l'employeur. Veuillez réessayer.");
+                redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue lors de l'ajout de l'employeur. Veuillez réessayer.");
             }
+            return "redirect:/gestionEmployeur";
         }
-        return "gestionEmployeur";
-        }
+    }
 
     @PostMapping("/gestionEmployeur/update")
-    public String updateEmployeur(HttpServletRequest request, Model model) throws SQLException {
+    public String updateEmployeur(HttpServletRequest request, RedirectAttributes redirectAttributes) throws SQLException {
         List<RafpEmployeur> employeurs = employeurService.getEmployeur();
         int idEmployeur = Integer.parseInt(request.getParameter("employeurs"));
         String nomEmployeur = request.getParameter("nomEmployeurUpdate");
@@ -96,28 +98,28 @@ public class EmployeurController {
 
         // Ajoutez une validation simple
         if (nomEmployeur == null || nomEmployeur.isEmpty() || mailEmployeur == null || mailEmployeur.isEmpty()) {
-            model.addAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
-            model.addAttribute("employeurs", employeurs);
-            return "gestionEmployeur";
+            redirectAttributes.addFlashAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
+            redirectAttributes.addFlashAttribute("employeurs", employeurs);
+            return "redirect:/gestionEmployeur";
         }
 
         try {
             employeurService.updateEmployeur(idEmployeur, nomEmployeur, mailEmployeur);
-            model.addAttribute("employeurs", employeurs);
-            model.addAttribute("messageUpdate", "L'employeur a été modifié avec succès !");
+            redirectAttributes.addFlashAttribute("employeurs", employeurs);
+            redirectAttributes.addFlashAttribute("messageUpdate", "L'employeur a été modifié avec succès !");
             return "redirect:/gestionEmployeur";
         } catch (Exception e) {
             if ("L'employeur existe déjà.".equals(e.getMessage())) {
-                model.addAttribute("errorMessageUpdate", "L'employeur existe déjà.");
-                return "gestionEmployeur";
+                redirectAttributes.addFlashAttribute("errorMessageUpdate", "L'employeur existe déjà.");
+                return "redirect:/gestionEmployeur";
             } else if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
-                model.addAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
+                redirectAttributes.addFlashAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
             } else {
                 logger.error("Erreur - updateEmployeur - employeur : {} ", e.getMessage(), e);
-                model.addAttribute("errorMessageUpdate", "Une erreur est survenue lors de la modification de l'employeur. Veuillez réessayer.");
+                redirectAttributes.addFlashAttribute("errorMessageUpdate", "Une erreur est survenue lors de la modification de l'employeur. Veuillez réessayer.");
                 return "error.errorBDD";
             }
         }
-        return "gestionEmployeur";
+        return "redirect:/gestionEmployeur";
     }
 }
