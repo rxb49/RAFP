@@ -59,7 +59,7 @@ public class EmployeurController {
         return "gestionEmployeur";
     }
 
-    @GetMapping("/gestionEmployeur/add")
+    @PostMapping("/gestionEmployeur/add")
     public String addEmployeur(HttpServletRequest request, Model model) throws SQLException {
         RafpEmployeur employeur = new RafpEmployeur();
         try {
@@ -69,50 +69,52 @@ public class EmployeurController {
             employeur = employeurService.insertEmployeur(nomEmployeur, mailEmployeur);
             model.addAttribute("employeur", employeur);
             model.addAttribute("message", "L'employeur a été ajouté avec succès !");
-            return "redirect:/gestionEmployeur";
-        } catch (Exception e) {
-            if ("L'employeur existe déjà.".equals(e.getMessage())) {
-                model.addAttribute("errorMessage", "L'employeur existe déjà.");
-                return "gestionEmployeur";
-            }
-            if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
-                model.addAttribute("errorMessage", "Le nom et l'email de l'employeur ne peuvent pas être null");
-
-            } else {
-                logger.error("Erreur - insertEmployeur - employeur : {} ", employeur, e.getMessage(), e);
-                model.addAttribute("errorMessage", "Une erreur est survenue lors de l'ajout de l'employeur. Veuillez réessayer.");
-                return "error.errorBDD";
-            }
-        }
-        return "gestionEmployeur";
-    }
-
-    @PostMapping("/gestionEmployeur/update")
-    public String updateEmployeur(HttpServletRequest request, Model model) throws SQLException {
-        List<RafpEmployeur> employeurs = employeurService.getEmployeur();
-        try {
-            int idEmployeur = Integer.parseInt(request.getParameter("employeurs"));
-            String nomEmployeur = request.getParameter("nomEmployeurUpdate");
-            String mailEmployeur = request.getParameter("mailEmployeurUpdate");
-
-            // Vérifiez les valeurs récupérées pour débogage
-            logger.info("ID Employeur : " + idEmployeur);
-            logger.info("Nom Employeur : " + nomEmployeur);
-            logger.info("Mail Employeur : " + mailEmployeur);
-
-            // Appel du service pour mettre à jour l'employeur
-            employeurService.updateEmployeur(idEmployeur, nomEmployeur, mailEmployeur);
-            model.addAttribute("employeurs", employeurs);
-            model.addAttribute("message", "L'employeur a été modifié avec succès !");
-            return "redirect:/gestionEmployeur";
         } catch (Exception e) {
             if ("L'employeur existe déjà.".equals(e.getMessage())) {
                 model.addAttribute("errorMessage", "L'employeur existe déjà.");
             } else if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
                 model.addAttribute("errorMessage", "Le nom et l'email de l'employeur ne peuvent pas être null");
             } else {
+                logger.error("Erreur - insertEmployeur - employeur : {} ", employeur, e.getMessage(), e);
+                model.addAttribute("errorMessage", "Une erreur est survenue lors de l'ajout de l'employeur. Veuillez réessayer.");
+            }
+        }
+        return "gestionEmployeur";
+        }
+
+    @PostMapping("/gestionEmployeur/update")
+    public String updateEmployeur(HttpServletRequest request, Model model) throws SQLException {
+        List<RafpEmployeur> employeurs = employeurService.getEmployeur();
+        int idEmployeur = Integer.parseInt(request.getParameter("employeurs"));
+        String nomEmployeur = request.getParameter("nomEmployeurUpdate");
+        String mailEmployeur = request.getParameter("mailEmployeurUpdate");
+
+        // Vérifiez les valeurs récupérées pour débogage
+        logger.info("ID Employeur : " + idEmployeur);
+        logger.info("Nom Employeur : " + nomEmployeur);
+        logger.info("Mail Employeur : " + mailEmployeur);
+
+        // Ajoutez une validation simple
+        if (nomEmployeur == null || nomEmployeur.isEmpty() || mailEmployeur == null || mailEmployeur.isEmpty()) {
+            model.addAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
+            model.addAttribute("employeurs", employeurs);
+            return "gestionEmployeur";
+        }
+
+        try {
+            employeurService.updateEmployeur(idEmployeur, nomEmployeur, mailEmployeur);
+            model.addAttribute("employeurs", employeurs);
+            model.addAttribute("messageUpdate", "L'employeur a été modifié avec succès !");
+            return "redirect:/gestionEmployeur";
+        } catch (Exception e) {
+            if ("L'employeur existe déjà.".equals(e.getMessage())) {
+                model.addAttribute("errorMessageUpdate", "L'employeur existe déjà.");
+                return "gestionEmployeur";
+            } else if ("Le nom et l'email de l'employeur ne peuvent pas être null".equals(e.getMessage())) {
+                model.addAttribute("errorMessageUpdate", "Le nom et l'email de l'employeur ne peuvent pas être null");
+            } else {
                 logger.error("Erreur - updateEmployeur - employeur : {} ", e.getMessage(), e);
-                model.addAttribute("errorMessage", "Une erreur est survenue lors de la modification de l'employeur. Veuillez réessayer.");
+                model.addAttribute("errorMessageUpdate", "Une erreur est survenue lors de la modification de l'employeur. Veuillez réessayer.");
                 return "error.errorBDD";
             }
         }

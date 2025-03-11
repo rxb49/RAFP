@@ -85,7 +85,7 @@ public class EmployeurDAO {
     }
 
     public List<RafpEmployeur> getEmployeur() throws SQLException {
-        logger.info("Début de la requête d'insertion de l'employeur");
+        logger.info("Début de la requête de récuperation des employeurs");
 
         List<RafpEmployeur> employeurs = new ArrayList<>();
         Connection maConnexion = null;
@@ -113,16 +113,31 @@ public class EmployeurDAO {
         }finally {
         Sql.close(maConnexion);
         }
+        logger.info("Fin de la requête de récuperation des employeurs");
         return employeurs;
     }
 
     public void updateEmployeur(int idEmployeur, String libEmployeur, String mailEmployeur) throws SQLException {
         logger.info("Début de la requête de modification d'un employeur");
-
+        if (libEmployeur == null || mailEmployeur == null || libEmployeur == "" || mailEmployeur == "") {
+            logger.info("Le nom et l'email de l'employeur ne peuvent pas être null");
+            throw new SQLException("Le nom et l'email de l'employeur ne peuvent pas être null");
+        }
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            //Vérifier si l'employeur existe déjà
+            String verificationQuery = "SELECT COUNT(*) FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
+            verificationStmt.setString(1, libEmployeur);
+            verificationStmt.setString(2, mailEmployeur);
+            ResultSet resultSet = verificationStmt.executeQuery();
+            resultSet.next();
+            if (resultSet.getInt(1) > 0) {
+                throw new SQLException("L'employeur existe déjà.");
+            }
 
             String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);

@@ -13,7 +13,7 @@
                 <h2 class="mb-1"><spring:message code="employeur.ajouter" /></h2>
             </div>
 
-            <form class="g-pa-30--md g-mb-30 mx-3" action="${pageContext.request.contextPath}/gestionEmployeur/add">
+            <form class="g-pa-30--md g-mb-30 mx-3" method="post" action="${pageContext.request.contextPath}/gestionEmployeur/add">
                 <div class="form-group g-mb-25">
                     <label for="nomEmployeur" class="labelRequired"><spring:message code="employeur.nom"/></label>
                     <input type="text" required="required" class="form-control form-control-md formUA" name="nomEmployeur" id="nomEmployeur" aria-describedby="nomEmployeur" placeholder="<spring:message code="employeur.nom"/>">
@@ -33,12 +33,13 @@
             </c:if>
         </div>
 
+
         <div class="card mb-4" id="cadre1">
             <div class="flex-grow-1 cadre-info my-3 mx-3">
                 <h2 class="mb-1"><spring:message code="employeur.modifier" /></h2>
             </div>
 
-            <form class="g-pa-30--md g-mb-30 mx-3" method="post" action="gestionEmployeur/update">
+            <form class="g-pa-30--md g-mb-30 mx-3" method="post" action="${pageContext.request.contextPath}/gestionEmployeur/update">
                 <div class="form-group g-mb-25">
                     <label for="employeurs"><spring:message code="saisie.employeur.nomEmployeur" /></label>
                     <div class="formfield-select--container">
@@ -62,6 +63,12 @@
                 </div><br>
                 <button type="submit" class="btn btn-md btn-primary"><spring:message code="btn.modifier"/></button>
             </form>
+            <c:if test="${not empty messageUpdate}">
+                <div style="color: green;">${messageUpdate}</div>
+            </c:if>
+            <c:if test="${not empty errorMessageUpdate}">
+                <div style="color: red;">${errorMessageUpdate}</div>
+            </c:if>
        </div>
     </div>
 <script type="text/javascript">
