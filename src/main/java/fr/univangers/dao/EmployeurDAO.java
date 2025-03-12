@@ -1,6 +1,7 @@
 package fr.univangers.dao;
 
 import fr.univangers.classes.*;
+import fr.univangers.exceptions.UAException;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -24,27 +25,29 @@ public class EmployeurDAO {
         this.oracleConfiguration = oracleConfiguration;
     }
 
-    public RafpEmployeur insertEmployeur(String nomEmployeur, String mailEmployeur) throws SQLException {
+    public boolean insertEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion de l'employeur");
-        if (nomEmployeur == null || mailEmployeur == null || nomEmployeur == "" || mailEmployeur == "") {
-            throw new SQLException("Le nom et l'email de l'employeur ne peuvent pas être null");
+        if (employeur.getLib_emp() == null || employeur.getMail_emp() == null || employeur.getLib_emp().isEmpty() || employeur.getMail_emp().isEmpty()) {
+            throw new UAException("Le nom et l'email de l'employeur ne peuvent pas être null");
         }
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
-        RafpEmployeur ajouterEmployeur = new RafpEmployeur();
+        boolean result = false;
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(*) FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
-            verificationStmt.setString(1, nomEmployeur);
-            verificationStmt.setString(2, mailEmployeur);
+            verificationStmt.setString(1, employeur.getLib_emp());
+            verificationStmt.setString(2, employeur.getMail_emp());
             ResultSet resultSet = verificationStmt.executeQuery();
-            resultSet.next();
-            if (resultSet.getInt(1) > 0) {
-                logger.info("L'employeur existe déjà");
-                throw new SQLException("L'employeur existe déjà.");
+            if (resultSet.next()) {
+                if (resultSet.getInt("nb") > 0) {
+                    logger.info("L'employeur existe déjà");
+                    throw new UAException("L'employeur existe déjà.");
+                }
             }
+            Sql.close(resultSet);
 
             // Obtenir l'id maximum existant
             String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employeur";
@@ -60,29 +63,26 @@ public class EmployeurDAO {
 
             // Définir les valeurs des paramètres avant l'exécution
             cstmt.setInt(1, newId);
-            cstmt.setString(2, ajouterEmployeur.setLib_emp(nomEmployeur));
-            cstmt.setString(3, ajouterEmployeur.setMail_emp(mailEmployeur));
+            cstmt.setString(2, employeur.getLib_emp());
+            cstmt.setString(3, employeur.getMail_emp());
             // Exécuter la requête d'insertion
 
             int rowsInserted = cstmt.executeUpdate();
             if (rowsInserted > 0) {
                 logger.info("Insertion en base de donnée réussie !");
-                ajouterEmployeur.setLib_emp(nomEmployeur);
-                ajouterEmployeur.setMail_emp(mailEmployeur);
-
+                result = true;
             } else {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
-            Sql.close(cstmt);
+
         }
         finally {
             Sql.close(cstmt);
             Sql.close(maConnexion);
         }
-        Sql.close(cstmt);
-        Sql.close(maConnexion);
+
         logger.info("Fin de la requête d'insertion de l'employeur");
-        return ajouterEmployeur;
+        return result;
     }
 
     public List<RafpEmployeur> getEmployeur() throws SQLException {
@@ -95,10 +95,10 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select * from harp_adm.rafp_employeur";
+            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
-            // Exécuter la requête d'insertion
+            // Exécuter la requête de récuperation
 
             while (rs.next()) {
                 RafpEmployeur employeur = new RafpEmployeur();
@@ -118,58 +118,50 @@ public class EmployeurDAO {
         return employeurs;
     }
 
-    public void updateEmployeur(int idEmployeur, String libEmployeur, String mailEmployeur) throws SQLException {
+    public boolean updateEmployeur(RafpEmployeur rafpEmployeur) throws SQLException, UAException {
         logger.info("Début de la requête de modification d'un employeur");
-        if (libEmployeur == null || mailEmployeur == null || libEmployeur == "" || mailEmployeur == "") {
+        logger.info(rafpEmployeur.getLib_emp());
+        if (rafpEmployeur.getLib_emp() == null || rafpEmployeur.getMail_emp() == null || rafpEmployeur.getLib_emp().isEmpty() || rafpEmployeur.getMail_emp().isEmpty()) {
             logger.info("Le nom et l'email de l'employeur ne peuvent pas être null");
-            throw new SQLException("Le nom et l'email de l'employeur ne peuvent pas être null");
+            throw new UAException("Le nom et l'email de l'employeur ne peuvent pas être null");
         }
+        boolean result = false;
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(*) FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
-            verificationStmt.setString(1, libEmployeur);
-            verificationStmt.setString(2, mailEmployeur);
+            verificationStmt.setString(1, rafpEmployeur.getMail_emp());
+            verificationStmt.setString(2, rafpEmployeur.getLib_emp());
             ResultSet resultSet = verificationStmt.executeQuery();
             resultSet.next();
-            if (resultSet.getInt(1) > 0) {
-                throw new SQLException("L'employeur existe déjà.");
+            if (resultSet.getInt("nb") > 0) {
+                logger.info("L'employeur existe déjà.");
+                throw new UAException("L'employeur existe déjà.");
             }
+            Sql.close(resultSet);
 
             String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
             // Exécuter la requête d'insertion
 
-            cstmt.setString(1, libEmployeur);
-            cstmt.setString(2, mailEmployeur);
-            cstmt.setInt(3, idEmployeur);
+            cstmt.setString(1, rafpEmployeur.getMail_emp());
+            cstmt.setString(2, rafpEmployeur.getLib_emp());
+            cstmt.setInt(3, rafpEmployeur.getId_emp());
             int rowsAffected = cstmt.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("La mise à jour de l'employeur a échoué, aucune ligne affectée.");
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne insérée en base de donnée.");
             }
-            logger.info("La mise à jour de l'employeur a été effectuée avec succès.");
-        } catch (SQLException e) {
-            logger.error("Erreur lors de la mise à jour de l'employeur : ", e);
-            throw e;
         } finally {
-            if (cstmt != null) {
-                try {
-                    cstmt.close();
-                } catch (SQLException e) {
-                    logger.error("Erreur lors de la fermeture de PreparedStatement : ", e);
-                }
-            }
-            if (maConnexion != null) {
-                try {
-                    maConnexion.close();
-                } catch (SQLException e) {
-                    logger.error("Erreur lors de la fermeture de la connexion : ", e);
-                }
-            }
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
         }
+        logger.info("Fin de la requête de modification d'un employeur");
+        return result;
     }
 }

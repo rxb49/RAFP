@@ -2,6 +2,7 @@ package fr.univangers.service;
 
 import fr.univangers.classes.*;
 import fr.univangers.dao.EmployeurDAO;
+import fr.univangers.exceptions.UAException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +19,16 @@ public class EmployeurService {
         this.dao = dao;
     }
 
-    public RafpEmployeur insertEmployeur(String nomEmployeur, String mailEmployeur) throws SQLException {
-        return dao.insertEmployeur(nomEmployeur, mailEmployeur);
+    public boolean insertEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
+        return dao.insertEmployeur(employeur);
     }
 
     public List<RafpEmployeur> getEmployeur() throws SQLException {
         return dao.getEmployeur();
     }
 
-    public void updateEmployeur(int idEmployeur, String libEmployeur, String mailEmployeur) throws SQLException {
-        dao.updateEmployeur(idEmployeur, libEmployeur, mailEmployeur);
+    public boolean updateEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
+        return dao.updateEmployeur(employeur);
     }
 
 

@@ -1,10 +1,26 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<c:set var="titrePage"><spring:message code="label.welcome" /></c:set>
-<c:set var="cssSpec"></c:set>
+<c:set var="titrePage"><i class="bi ${titrePage.icone} pe-2"></i>${titrePage.nomPage}</c:set>
+<c:set var="cssSpec">
+    <style>
+        #chargement {
+            display: block;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+</c:set>
 <c:set var="contenuSpec">
+
     <div class="flex-column">
 
         <div id="chargement" class="ajax-loading">
@@ -72,57 +88,44 @@
             </span>
         </a>
     </div>
+
 </c:set>
+<c:set var="jsSpec">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<style>
-    #chargement {
-        display: block;
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+    <script>
+        $(document).ready(function() {
+            $('#chargement').show();
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            function loadData() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/myServlet',
+                    data: {
+                        name: $('#name').val()
+                    },
+                    beforeSend: function() {
+                        $('#chargement').show();
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $('#chargement').hide();
+                    },
+                    error: function() {
+                        console.error('Erreur de requête.');
+                        $('#chargement').hide();
+                    }
+                });
+            }
 
-<script>
-    $(document).ready(function() {
-        $('#chargement').show();
+            loadData();
 
-        function loadData() {
-            $.ajax({
-                type: 'POST',
-                url: '/myServlet',
-                data: {
-                    name: $('#name').val()
-                },
-                beforeSend: function() {
-                    $('#chargement').show();
-                },
-                success: function(data) {
-                    console.log(data);
+            $(window).on('load', function() {
+                setTimeout(function() {
                     $('#chargement').hide();
-                },
-                error: function() {
-                    console.error('Erreur de requête.');
-                    $('#chargement').hide();
-                }
+                }, 0);
             });
-        }
-
-        loadData();
-
-        $(window).on('load', function() {
-            setTimeout(function() {
-                $('#chargement').hide();
-            }, 0);
         });
-    });
-</script>
-
+    </script>
+</c:set>
 <%@ include file="templatePageSansMenuV.jsp" %>
