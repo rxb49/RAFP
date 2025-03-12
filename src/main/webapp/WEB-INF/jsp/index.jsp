@@ -4,34 +4,10 @@
 
 <c:set var="titrePage"><i class="bi ${titrePage.icone} pe-2"></i>${titrePage.nomPage}</c:set>
 <c:set var="cssSpec">
-    <style>
-        #chargement {
-            display: block;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
-
 </c:set>
 <c:set var="contenuSpec">
 
     <div class="flex-column">
-
-        <div id="chargement" class="ajax-loading">
-            <div id="contentLoader">
-                <div id="contentLoaderImg">
-                    <img src="/images/images/blockLoader.gif" class="img-fluid" alt="Administration des formulaires">
-                </div>
-                <div id="contentLoaderTxt">Chargement en cours...</div>
-            </div>
-        </div>
-
         <h2 class="mb-1">RAFP de l'année : <span id="anneeActuelle">${anneeActuelle}</span></h2>
         <a href="${pageContext.request.contextPath}/gestionEmployeur" class="card card-custom d-flex flex-row pe-4 mb-3">
             <span class="icon-container me-3 m-2"><i class="bi bi-person"></i></span>
@@ -91,41 +67,5 @@
 
 </c:set>
 <c:set var="jsSpec">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('#chargement').show();
-
-            function loadData() {
-                $.ajax({
-                    type: 'POST',
-                    url: '/myServlet',
-                    data: {
-                        name: $('#name').val()
-                    },
-                    beforeSend: function() {
-                        $('#chargement').show();
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        $('#chargement').hide();
-                    },
-                    error: function() {
-                        console.error('Erreur de requête.');
-                        $('#chargement').hide();
-                    }
-                });
-            }
-
-            loadData();
-
-            $(window).on('load', function() {
-                setTimeout(function() {
-                    $('#chargement').hide();
-                }, 0);
-            });
-        });
-    </script>
 </c:set>
 <%@ include file="templatePageSansMenuV.jsp" %>

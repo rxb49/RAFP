@@ -94,11 +94,11 @@ public class EmployeurController {
             logger.error("Erreur UA - updateEmployeur - rafpEmployeur : {} - Erreur : {}", rafpEmployeur, e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (SQLException e) {
-            logger.error("Erreur BDD - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", request.getParameter("idEmployeurs"), request.getParameter("nomEmployeurUpdate"), request.getParameter("mailEmployeurUpdate"), e.getMessage());
+            logger.error("Erreur BDD - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", rafpEmployeur.getId_emp(), rafpEmployeur.getLib_emp(), rafpEmployeur.getMail_emp(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            logger.error("Erreur - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", request.getParameter("idEmployeurs"), request.getParameter("nomEmployeur"), request.getParameter("mailEmployeur"), e.getMessage());
+            logger.error("Erreur - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", rafpEmployeur.getId_emp(), rafpEmployeur.getLib_emp(), rafpEmployeur.getMail_emp(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

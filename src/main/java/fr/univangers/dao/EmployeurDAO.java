@@ -74,7 +74,7 @@ public class EmployeurDAO {
             } else {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
-
+            Sql.close(maxIdResultSet);
         }
         finally {
             Sql.close(cstmt);
@@ -96,8 +96,6 @@ public class EmployeurDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
             // Exécuter la requête de récuperation
 
             while (rs.next()) {
