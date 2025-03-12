@@ -54,11 +54,7 @@ public class PersonnelController {
         return "personList";
     }
 
-    @GetMapping("/gestionEmployeur")
-    public String viewGestionEmployeur(Model model) {
-        model.addAttribute("persons", persons);
-        return "gestionEmployeur";
-    }
+
 
     /**
      * Exemple d'appel de controller

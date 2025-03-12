@@ -1,0 +1,165 @@
+package fr.univangers.dao;
+
+import fr.univangers.classes.*;
+import fr.univangers.exceptions.UAException;
+import fr.univangers.sql.OracleConfiguration;
+import fr.univangers.sql.Sql;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class EmployeurDAO {
+    private final Logger logger = LoggerFactory.getLogger(EmployeurDAO.class);
+
+    private final OracleConfiguration oracleConfiguration;
+
+    public EmployeurDAO(OracleConfiguration oracleConfiguration) {
+        this.oracleConfiguration = oracleConfiguration;
+    }
+
+    public boolean insertEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
+        logger.info("Début de la requête d'insertion de l'employeur");
+        if (employeur.getLib_emp() == null || employeur.getMail_emp() == null || employeur.getLib_emp().isEmpty() || employeur.getMail_emp().isEmpty()) {
+            throw new UAException("Le nom et l'email de l'employeur ne peuvent pas être null");
+        }
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            //Vérifier si l'employeur existe déjà
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
+            verificationStmt.setString(1, employeur.getLib_emp());
+            verificationStmt.setString(2, employeur.getMail_emp());
+            ResultSet resultSet = verificationStmt.executeQuery();
+            if (resultSet.next()) {
+                if (resultSet.getInt("nb") > 0) {
+                    logger.info("L'employeur existe déjà");
+                    throw new UAException("L'employeur existe déjà.");
+                }
+            }
+            Sql.close(resultSet);
+
+            // Obtenir l'id maximum existant
+            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employeur";
+            PreparedStatement maxIdStmt = maConnexion.prepareStatement(maxIdQuery);
+            ResultSet maxIdResultSet = maxIdStmt.executeQuery();
+            maxIdResultSet.next();
+            int maxId = maxIdResultSet.getInt(1);
+            int newId = maxId + 1;
+
+            // Insertion de l'agent
+            String requete = "INSERT INTO harp_adm.rafp_employeur (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            // Définir les valeurs des paramètres avant l'exécution
+            cstmt.setInt(1, newId);
+            cstmt.setString(2, employeur.getLib_emp());
+            cstmt.setString(3, employeur.getMail_emp());
+            // Exécuter la requête d'insertion
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+            Sql.close(maxIdResultSet);
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête d'insertion de l'employeur");
+        return result;
+    }
+
+    public List<RafpEmployeur> getEmployeur() throws SQLException {
+        logger.info("Début de la requête de récuperation des employeurs");
+
+        List<RafpEmployeur> employeurs = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
+            // Exécuter la requête de récuperation
+
+            while (rs.next()) {
+                RafpEmployeur employeur = new RafpEmployeur();
+                employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setLib_emp(rs.getString("lib_emp"));
+                employeur.setMail_emp(rs.getString("mail_emp"));
+                employeurs.add(employeur);
+            }
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            rs.close();
+            cstmt.close();
+        }finally {
+        Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation des employeurs");
+        return employeurs;
+    }
+
+    public boolean updateEmployeur(RafpEmployeur rafpEmployeur) throws SQLException, UAException {
+        logger.info("Début de la requête de modification d'un employeur");
+        logger.info(rafpEmployeur.getLib_emp());
+        if (rafpEmployeur.getLib_emp() == null || rafpEmployeur.getMail_emp() == null || rafpEmployeur.getLib_emp().isEmpty() || rafpEmployeur.getMail_emp().isEmpty()) {
+            logger.info("Le nom et l'email de l'employeur ne peuvent pas être null");
+            throw new UAException("Le nom et l'email de l'employeur ne peuvent pas être null");
+        }
+        boolean result = false;
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            //Vérifier si l'employeur existe déjà
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
+            verificationStmt.setString(1, rafpEmployeur.getMail_emp());
+            verificationStmt.setString(2, rafpEmployeur.getLib_emp());
+            ResultSet resultSet = verificationStmt.executeQuery();
+            resultSet.next();
+            if (resultSet.getInt("nb") > 0) {
+                logger.info("L'employeur existe déjà.");
+                throw new UAException("L'employeur existe déjà.");
+            }
+            Sql.close(resultSet);
+
+            String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            // Exécuter la requête d'insertion
+
+            cstmt.setString(1, rafpEmployeur.getMail_emp());
+            cstmt.setString(2, rafpEmployeur.getLib_emp());
+            cstmt.setInt(3, rafpEmployeur.getId_emp());
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+        } finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de modification d'un employeur");
+        return result;
+    }
+}

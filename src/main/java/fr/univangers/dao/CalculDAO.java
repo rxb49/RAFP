@@ -45,13 +45,14 @@ public class CalculDAO {
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent R set TBI=(" +
                     "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
-                    "   where periode_paie like '2024%'" +
+                    "   where H.periode_paie like '2024%'" +
                     "     and R.no_dossier_pers=H.no_individu" +
-                    "     and type_element='BR'" +
-                    "     and montant <>0" +
-                    "     and tem_rafp is null" +
-                    "     and r.annee = '2024' ) " +
+                    "     and H.type_element='BR'" +
+                    "     and H.montant <>0" +
+                    "     and H.tem_rafp is null" +
+                    "     and R.annee = '2024' ) " +
                     ")";
+
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             rs.close();
@@ -84,7 +85,7 @@ public class CalculDAO {
                     "     and type_element='BR'" +
                     "     and montant <>0" +
                     "     and tem_rafp='O'" +
-                    "     and r.annee = '2024')" +
+                    "     and r.annee = '2024') " +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
