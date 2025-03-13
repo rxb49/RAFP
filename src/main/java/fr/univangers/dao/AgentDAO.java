@@ -1,9 +1,6 @@
 package fr.univangers.dao;
 
-import fr.univangers.classes.Personnel;
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpPrecedante;
-import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.classes.*;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -74,6 +71,40 @@ public class AgentDAO {
         }
         logger.info("Fin de la requête d'insertion de l'agents");
         return ajouterAgent;
+    }
+
+
+    public List<RafpAgent> getAgent() throws SQLException {
+        logger.info("Début de la requête de récuperation des agents");
+
+        List<RafpAgent> agents = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select annee, no_dossier_pers, no_insee, tbi, indemn, seuil, rafpp from harp_adm.rafp_agent where annee = '2024' order by no_dossier_pers ASC ";
+            // Exécuter la requête de récuperation
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpAgent agent = new RafpAgent();
+                agent.setNo_dossier_pers(rs.getString("no_dossier_pers"));
+                agent.setNo_insee(rs.getString("no_insee"));
+                agent.setTbi(rs.getInt("tbi"));
+                agent.setIndemn(rs.getInt("indemn"));
+                agent.setSeuil(rs.getInt("seuil"));
+                agent.setRafpp(rs.getInt("rafpp"));
+                agents.add(agent);
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation des agents");
+        return agents;
     }
 
 

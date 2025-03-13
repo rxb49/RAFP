@@ -97,7 +97,8 @@ public class EmployeurDAO {
 
             String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
             // Exécuter la requête de récuperation
-
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
             while (rs.next()) {
                 RafpEmployeur employeur = new RafpEmployeur();
                 employeur.setId_emp(rs.getInt("id_emp"));
@@ -105,8 +106,6 @@ public class EmployeurDAO {
                 employeur.setMail_emp(rs.getString("mail_emp"));
                 employeurs.add(employeur);
             }
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();
         }finally {

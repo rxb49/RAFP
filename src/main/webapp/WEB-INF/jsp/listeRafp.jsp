@@ -11,31 +11,22 @@
 
         <div class="row">
             <div class="col">
-                <a href="#!" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="liste.agent"/></a>
-                <a href="#!" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="liste.employeur"/></a>
+                <button type="button" onclick="getAgents('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15" id="listeAgent"><spring:message code="liste.agent"/></button>
+                <button type="button" onclick="getEmployeur('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15" id="listeEmployeur"><spring:message code="liste.employeur"/></button>
             </div>
         </div><br>
-            <label for="exampleSelect2"><spring:message code="saisie.agent.rechercher" /></label>
+            <label for="listeAgentEmployeur"><spring:message code="saisie.agent.rechercher" /></label>
                 <div class="formfield-select--container">
-                    <select class="form-control rounded-0 formUA" id="exampleSelect2">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <select class="form-control rounded-0 formUA" id="listeAgentEmployeur">
+
                     </select>
                 </div><br>
 
         <div class="container g-z-index-1 g-py-20" >
         <div class="table-responsive">
-            <table class="table">
+            <table id="dataTable" class="table">
                 <thead>
-                    <tr>
-                        <th scope="col"><spring:message code="prenom" /></th>
-                        <th scope="col"><spring:message code="nom" /></th>
-                        <th scope="col"><spring:message code="btn.modifier" /></th>
-                        <th scope="col"><spring:message code="btn.ajouter" /></th>
-                        <th scope="col"><spring:message code="btn.supprimer" /></th>
+                    <tr id="nomColonne">
 
                     </tr>
                 </thead>
@@ -74,5 +65,7 @@
 
 </c:set>
 <c:set var="jsSpec">
+    <script src="${pageContext.request.contextPath}/JS/getInfoEmployeur.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>

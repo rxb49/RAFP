@@ -105,3 +105,72 @@ function updateEmployeur(path){
             });
         });
 }
+
+function getEmployeur(path) {
+    console.log("Passage dans getEmployeur");
+    const url = path + '/listeRafp/employeurs';
+    console.log("URL:", url);
+    fetch(url, {
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); // data should be a List<RafpEmployeur>
+            const select = document.getElementById('listeAgentEmployeur');
+            select.innerHTML = ''; // Clear any existing options
+
+            data.forEach(employeur => {
+                const option = document.createElement('option');
+                option.value = employeur.id_emp;
+                option.text = `${employeur.lib_emp} - ${employeur.mail_emp}`;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.log("Erreur dans le fetch:", error);
+            Swal.fire({
+                icon: "error",
+                title: 'Erreur lors de la récupération des employeurs : ' + error,
+            });
+        });
+}
+
+
+function getAgents(path) {
+    console.log("Passage dans getAgents");
+    const url = path + '/listeRafp/agents';
+    console.log("URL:", url);
+    fetch(url, {
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            const select = document.getElementById('listeAgentEmployeur');
+            select.innerHTML = '';
+
+            data.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent.no_insee;
+                option.text = `${agent.no_dossier_pers} - ${agent.tbi}`;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.log("Erreur dans le fetch:", error);
+            Swal.fire({
+                icon: "error",
+                title: 'Erreur lors de la récupération des agents : ' + error,
+            });
+        });
+}
+
+

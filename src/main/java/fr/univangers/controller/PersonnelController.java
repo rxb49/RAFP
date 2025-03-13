@@ -1,9 +1,8 @@
 package fr.univangers.controller;
 
-import fr.univangers.classes.Person;
-import fr.univangers.classes.Personnel;
-import fr.univangers.classes.User;
+import fr.univangers.classes.*;
 import fr.univangers.exceptions.NonAutorisationException;
+import fr.univangers.service.AgentService;
 import fr.univangers.service.AppelExterne;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.PersonnelService;
@@ -41,10 +40,13 @@ public class PersonnelController {
         persons.add(new Person(20637, "Depauw", "Yann"));
     }
 
-    public PersonnelController(PersonnelService personnelService, AppelExterne appelExterne, AutorisationService autorisationService) {
+    private final AgentService agentService;
+
+    public PersonnelController(PersonnelService personnelService, AppelExterne appelExterne, AutorisationService autorisationService, AgentService agentService) {
         this.personnelService = personnelService;
         this.appelExterne = appelExterne;
         this.autorisationService = autorisationService;
+        this.agentService = agentService;
     }
 
 

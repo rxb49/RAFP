@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -102,4 +103,23 @@ public class EmployeurController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/listeRafp/employeurs")
+    public ResponseEntity<List<RafpEmployeur>> viewListEmployeurs() {
+        try {
+            logger.info("Passage dans le controller");
+            List<RafpEmployeur> employeurs = employeurService.getEmployeur();
+            logger.info("Liste des employeurs: " + employeurs);
+            if (employeurs == null || employeurs.isEmpty()) {
+                return ResponseEntity.ok(employeurs);
+            }
+            return ResponseEntity.ok(employeurs);
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Erreur - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
+        }
+        return ResponseEntity.ok(List.of());
+    }
+
 }
