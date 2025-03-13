@@ -17,7 +17,7 @@
         </div><br>
             <label for="listeAgentEmployeur"><spring:message code="saisie.agent.rechercher" /></label>
                 <div class="formfield-select--container">
-                    <select class="form-control rounded-0 formUA" id="listeAgentEmployeur">
+                    <select class="form-control rounded-0 formUA" id="listeAgentEmployeur" onchange="getAgentByEmployeur('${pageContext.request.contextPath}')">
 
                     </select>
                 </div><br>

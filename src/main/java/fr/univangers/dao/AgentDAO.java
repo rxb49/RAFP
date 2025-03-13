@@ -74,28 +74,31 @@ public class AgentDAO {
     }
 
 
-    public List<RafpAgent> getAgent() throws SQLException {
-        logger.info("Début de la requête de récuperation des agents");
+    public List<RafpAgentEmployeur> getAgent() throws SQLException {
+        logger.info("Début de la requête de récuperation des agents avec employeurs");
 
-        List<RafpAgent> agents = new ArrayList<>();
+        List<RafpAgentEmployeur> agents = new ArrayList<>();
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select annee, no_dossier_pers, no_insee, tbi, indemn, seuil, rafpp from harp_adm.rafp_agent where annee = '2024' order by no_dossier_pers ASC ";
+            String requete = "select distinct E.lib_emp, S.nom_usuel, S.prenom ,R.insee, R.mnt_retour, R.base_retour_recalculee_emp from harp_adm.rafp_retour R" +
+                    "                    INNER JOIN harp_adm.rafp_employeur E ON E.id_emp = R.id_emp" +
+                    "                    INNER JOIN siham_adm.siham_individu_paye S ON S.no_insee = R.insee" +
+                    "                    where s.periode_paie like '2023%'";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             while (rs.next()) {
-                RafpAgent agent = new RafpAgent();
-                agent.setNo_dossier_pers(rs.getString("no_dossier_pers"));
-                agent.setNo_insee(rs.getString("no_insee"));
-                agent.setTbi(rs.getInt("tbi"));
-                agent.setIndemn(rs.getInt("indemn"));
-                agent.setSeuil(rs.getInt("seuil"));
-                agent.setRafpp(rs.getInt("rafpp"));
+                RafpAgentEmployeur agent = new RafpAgentEmployeur();
+                agent.setLib_emp(rs.getString("lib_emp"));
+                agent.setNom_usuel(rs.getString("nom_usuel"));
+                agent.setPrenom(rs.getString("prenom"));
+                agent.setNo_insee(rs.getString("insee"));
+                agent.setMnt_retour(rs.getInt("mnt_retour"));
+                agent.setBase_retour_recalculee_emp(rs.getInt("base_retour_recalculee_emp"));
                 agents.add(agent);
             }
             rs.close();
@@ -103,7 +106,7 @@ public class AgentDAO {
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requête de récuperation des agents");
+        logger.info("Fin de la requête de récuperation des agents avec employeurs");
         return agents;
     }
 

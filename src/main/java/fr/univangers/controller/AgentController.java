@@ -1,6 +1,7 @@
 package fr.univangers.controller;
 
 import fr.univangers.classes.RafpAgent;
+import fr.univangers.classes.RafpAgentEmployeur;
 import fr.univangers.classes.RafpEmployeur;
 import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AgentService;
@@ -31,9 +32,9 @@ public class AgentController {
 
 
     @GetMapping("/listeRafp/agents")
-    public ResponseEntity<List<RafpAgent>> viewListEmployeurs() {
+    public ResponseEntity<List<RafpAgentEmployeur>> viewListEmployeurs() {
         try {
-            List<RafpAgent> agents = agentService.getAgent();
+            List<RafpAgentEmployeur> agents = agentService.getAgent();
             if (agents == null || agents.isEmpty()) {
                 return ResponseEntity.ok(agents);
             }

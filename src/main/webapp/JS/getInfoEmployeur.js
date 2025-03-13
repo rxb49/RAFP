@@ -160,6 +160,40 @@ function getAgents(path) {
             data.forEach(agent => {
                 const option = document.createElement('option');
                 option.value = agent.no_insee;
+                option.text = `${agent.nom_usuel} - ${agent.prenom}`;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.log("Erreur dans le fetch:", error);
+            Swal.fire({
+                icon: "error",
+                title: 'Erreur lors de la récupération des agents : ' + error,
+            });
+        });
+}
+
+
+function getAgentByEmployeur(path) {
+    console.log("Passage dans getAgentByEmployeur");
+    const url = path + '/listeRafp/agentByEmployeur';
+    console.log("URL:", url);
+    fetch(url, {
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            const select = document.getElementById('listeAgentEmployeur');
+            select.innerHTML = '';
+
+            data.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent.no_insee;
                 option.text = `${agent.no_dossier_pers} - ${agent.tbi}`;
                 select.appendChild(option);
             });
