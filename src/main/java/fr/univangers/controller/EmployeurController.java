@@ -104,22 +104,4 @@ public class EmployeurController {
         }
     }
 
-    @GetMapping("/listeRafp/employeurs")
-    public ResponseEntity<List<RafpEmployeur>> viewListEmployeurs() {
-        try {
-            logger.info("Passage dans le controller");
-            List<RafpEmployeur> employeurs = employeurService.getEmployeur();
-            logger.info("Liste des employeurs: " + employeurs);
-            if (employeurs == null || employeurs.isEmpty()) {
-                return ResponseEntity.ok(employeurs);
-            }
-            return ResponseEntity.ok(employeurs);
-        } catch (SQLException e) {
-            logger.error("Erreur BDD - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
-        } catch (Exception e) {
-            logger.error("Erreur - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
-        }
-        return ResponseEntity.ok(List.of());
-    }
-
 }

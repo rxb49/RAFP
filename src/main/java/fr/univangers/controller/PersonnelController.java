@@ -6,20 +6,15 @@ import fr.univangers.service.AgentService;
 import fr.univangers.service.AppelExterne;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.PersonnelService;
-import fr.univangers.utils.ExportPDF;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apereo.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 
 
-import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,22 +59,17 @@ public class PersonnelController {
      * @param model : Model pour afficher la page
      * @return : Une page
      */
-    @GetMapping("/listeRafp")
-    public String viewRafp(HttpServletRequest request, Model model) {
+
+    @GetMapping("/donneesEmployeur")
+    public String viewDonneesEmployeur(HttpServletRequest request, Model model) {
         model.addAttribute("persons", persons);
-        return "listeRafp";
+        return "donneesEmployeur";
     }
 
-    @GetMapping("/saisieEmployeur")
-    public String viewSaisieEmployeur(HttpServletRequest request, Model model) {
+    @GetMapping("/donneesAgent")
+    public String viewDonneesAgent(HttpServletRequest request, Model model) {
         model.addAttribute("persons", persons);
-        return "saisieEmployeur";
-    }
-
-    @GetMapping("/saisieAgent")
-    public String viewSaisieAgent(HttpServletRequest request, Model model) {
-        model.addAttribute("persons", persons);
-        return "saisieAgent";
+        return "donneesAgent";
     }
 
     @GetMapping("/calculRafp")

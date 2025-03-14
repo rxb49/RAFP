@@ -1,0 +1,78 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="titrePage"><i class="bi ${titrePage.icone} pe-2"></i>${titrePage.nomPage}</c:set>
+<c:set var="cssSpec">
+</c:set>
+<c:set var="contenuSpec">
+    <div class="flex-column">
+        <div class="container text-center">
+
+           <div class="form-group g-mb-25">
+                <div class="formfield-select--container">
+                    <select class="form-control rounded-0 formUA" id="exampleSelect1">
+                    <option value="" disabled selected>Rechercher un employeur</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    </select>
+                </div>
+            </div><br>
+            <div class="d-flex align-items-center">
+                <h2 class="fw-bold my-2 me-5">Employeur</h2>
+                <h2 class="fw-bold my-2 ">Montant retour total</h2>
+            </div>
+
+
+            <!-- Tableau des agents -->
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Nom de l’agent</th>
+                        <th>Montant retour total</th>
+                        <th>Modifier</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Agent 1</td>
+                        <td>Montant retour(table rafp_retour)</td>
+                        <td>
+                            <a href="#" class="text-primary">Modifier</a>
+                        </td>
+                        <td>
+                            <a href="#" class="text-danger" onclick="confirmDelete('Agent 1')">Supprimer</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Agent 2</td>
+                        <td>Montant retour(table rafp_retour)</td>
+                        <td>
+                            <a href="#" class="text-primary">Modifier</a>
+                        </td>
+                        <td>
+                            <a href="#" class="text-danger" onclick="confirmDelete('Agent 2')">Supprimer</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Bouton Ajouter un agent -->
+            <button class="btn btn-secondary" disabled>Ajouter un agent</button>
+        </div>
+
+    </div>
+</c:set>
+<c:set var="jsSpec">
+
+        <script>
+            function confirmDelete(agent) {
+                alert("Voulez-vous vraiment supprimer " + agent + " ?");
+            }
+        </script>
+</c:set>
+<%@ include file="templatePageAvecMenuV.jsp"%>

@@ -31,20 +31,5 @@ public class AgentController {
     }
 
 
-    @GetMapping("/listeRafp/agents")
-    public ResponseEntity<List<RafpAgentEmployeur>> viewListEmployeurs() {
-        try {
-            List<RafpAgentEmployeur> agents = agentService.getAgent();
-            if (agents == null || agents.isEmpty()) {
-                return ResponseEntity.ok(agents);
-            }
-            return ResponseEntity.ok(agents);
-        } catch (SQLException e) {
-            logger.error("Erreur BDD - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
-        } catch (Exception e) {
-            logger.error("Erreur - viewListEmployeurs - Erreur : {}", e.getMessage(), e);
-        }
-        return ResponseEntity.ok(List.of());
-    }
-
 }
+
