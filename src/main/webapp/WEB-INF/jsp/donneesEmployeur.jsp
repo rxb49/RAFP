@@ -14,24 +14,22 @@
                 </div>
                <div class="form-group g-mb-25">
                     <div class="formfield-select--container">
-                        <select class="form-control rounded-0 formUA" id="exampleSelect1">
-                        <option value="" disabled selected>Rechercher un employeur</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                        <select class="form-control rounded-0 formUA" id="idEmployeurs" name="idEmployeurs" onchange="getAgentByEmployeur('${pageContext.request.contextPath}')">
+                            <c:forEach var="employeur" items="${employeurs}">
+                                <option value="${employeur.id_emp}" data-name="${employeur.lib_emp}" data-email="${employeur.mail_emp}">
+                                    ${employeur.lib_emp} - ${employeur.mail_emp}
+                                </option>
+                            </c:forEach>
                         </select>
                     </div>
                 </div><br>
                 <div class="d-flex align-items-center">
                     <h2 class="fw-bold my-2 me-5">Employeur</h2>
-                    <h2 class="fw-bold my-2 ">Montant retour total</h2>
+                    <h2 class="fw-bold my-2">Montant retour total</h2>
                 </div>
 
-
                 <!-- Tableau des agents -->
-                <table class="table table-bordered text-center">
+                <table class="table table-bordered text-center" id="agentsTable">
                     <thead>
                         <tr>
                             <th>Nom de l’agent</th>
@@ -41,36 +39,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Agent 1</td>
-                            <td>Montant retour(table rafp_retour)</td>
-                            <td>
-                                <a href="${pageContext.request.contextPath}/modifierAgent" class="text-primary">Modifier</a>
-                            </td>
-                            <td>
-                                <a href="#" class="text-danger" onclick="confirmDelete('Agent 1')">Supprimer</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Agent 2</td>
-                            <td>Montant retour(table rafp_retour)</td>
-                            <td>
-                                <a href="${pageContext.request.contextPath}/modifierAgent" class="text-primary">Modifier</a>
-                            </td>
-                            <td>
-                                <a href="#" class="text-danger" onclick="confirmDelete('Agent 2')">Supprimer</a>
-                            </td>
-                        </tr>
+                        <!-- Les lignes seront ajoutées ici dynamiquement -->
                     </tbody>
                 </table>
 
                 <!-- Bouton Ajouter un agent -->
-                <a href="${pageContext.request.contextPath}/ajoutAgent" class="btn btn-secondary" >Ajouter un agent</a>
+                <a href="${pageContext.request.contextPath}/ajoutAgent" class="btn btn-secondary">Ajouter un agent</a>
+
             </div>
         </div>
     </div>
 </c:set>
 <c:set var="jsSpec">
+<script src="${pageContext.request.contextPath}/JS/getAgentByEmployeur.js"></script>
 
         <script>
             function confirmDelete(agent) {
