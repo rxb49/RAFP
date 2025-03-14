@@ -72,6 +72,18 @@ public class PersonnelController {
         return "donneesAgent";
     }
 
+    @GetMapping("/ajoutAgent")
+    public String viewAjoutAgent(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "ajoutAgent";
+    }
+
+    @GetMapping("/ajoutEmployeur")
+    public String viewAjoutEmployeur(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "ajoutEmployeur";
+    }
+
     @GetMapping("/calculRafp")
     public String viewCalculRafp(HttpServletRequest request, Model model) {
         model.addAttribute("persons", persons);

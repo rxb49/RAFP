@@ -7,64 +7,67 @@
 </c:set>
 <c:set var="contenuSpec">
     <div class="flex-column">
-        <div class="container text-center">
-
-           <div class="form-group g-mb-25">
-                <div class="formfield-select--container">
-                    <select class="form-control rounded-0 formUA" id="exampleSelect1">
-                    <option value="" disabled selected>Rechercher un employeur</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    </select>
+        <div class="card mb-4" id="cadre">
+            <div class="container text-center">
+                <div class="flex-grow-1 cadre-info my-3 mx-3">
+                    <h2 class="mb-1">Données employeur</h2>
                 </div>
-            </div><br>
-            <div class="d-flex align-items-center">
-                <h2 class="fw-bold my-2 me-5">Employeur</h2>
-                <h2 class="fw-bold my-2 ">Montant retour total</h2>
+               <div class="form-group g-mb-25">
+                    <div class="formfield-select--container">
+                        <select class="form-control rounded-0 formUA" id="exampleSelect1">
+                        <option value="" disabled selected>Rechercher un employeur</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        </select>
+                    </div>
+                </div><br>
+                <div class="d-flex align-items-center">
+                    <h2 class="fw-bold my-2 me-5">Employeur</h2>
+                    <h2 class="fw-bold my-2 ">Montant retour total</h2>
+                </div>
+
+
+                <!-- Tableau des agents -->
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Nom de l’agent</th>
+                            <th>Montant retour total</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Agent 1</td>
+                            <td>Montant retour(table rafp_retour)</td>
+                            <td>
+                                <a href="#" class="text-primary">Modifier</a>
+                            </td>
+                            <td>
+                                <a href="#" class="text-danger" onclick="confirmDelete('Agent 1')">Supprimer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Agent 2</td>
+                            <td>Montant retour(table rafp_retour)</td>
+                            <td>
+                                <a href="#" class="text-primary">Modifier</a>
+                            </td>
+                            <td>
+                                <a href="#" class="text-danger" onclick="confirmDelete('Agent 2')">Supprimer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Bouton Ajouter un agent -->
+                <a href="${pageContext.request.contextPath}/ajoutAgent" class="btn btn-secondary" >Ajouter un agent</a>
             </div>
-
-
-            <!-- Tableau des agents -->
-            <table class="table table-bordered text-center">
-                <thead>
-                    <tr>
-                        <th>Nom de l’agent</th>
-                        <th>Montant retour total</th>
-                        <th>Modifier</th>
-                        <th>Supprimer</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Agent 1</td>
-                        <td>Montant retour(table rafp_retour)</td>
-                        <td>
-                            <a href="#" class="text-primary">Modifier</a>
-                        </td>
-                        <td>
-                            <a href="#" class="text-danger" onclick="confirmDelete('Agent 1')">Supprimer</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Agent 2</td>
-                        <td>Montant retour(table rafp_retour)</td>
-                        <td>
-                            <a href="#" class="text-primary">Modifier</a>
-                        </td>
-                        <td>
-                            <a href="#" class="text-danger" onclick="confirmDelete('Agent 2')">Supprimer</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Bouton Ajouter un agent -->
-            <button class="btn btn-secondary" disabled>Ajouter un agent</button>
         </div>
-
     </div>
 </c:set>
 <c:set var="jsSpec">
