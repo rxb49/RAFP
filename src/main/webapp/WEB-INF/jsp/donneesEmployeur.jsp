@@ -45,7 +45,7 @@
                             <td>Agent 1</td>
                             <td>Montant retour(table rafp_retour)</td>
                             <td>
-                                <a href="#" class="text-primary">Modifier</a>
+                                <a href="${pageContext.request.contextPath}/modifierAgent" class="text-primary">Modifier</a>
                             </td>
                             <td>
                                 <a href="#" class="text-danger" onclick="confirmDelete('Agent 1')">Supprimer</a>
@@ -55,7 +55,7 @@
                             <td>Agent 2</td>
                             <td>Montant retour(table rafp_retour)</td>
                             <td>
-                                <a href="#" class="text-primary">Modifier</a>
+                                <a href="${pageContext.request.contextPath}/modifierAgent" class="text-primary">Modifier</a>
                             </td>
                             <td>
                                 <a href="#" class="text-danger" onclick="confirmDelete('Agent 2')">Supprimer</a>

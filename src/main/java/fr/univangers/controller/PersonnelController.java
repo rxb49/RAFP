@@ -77,11 +77,22 @@ public class PersonnelController {
         model.addAttribute("persons", persons);
         return "ajoutAgent";
     }
+    @GetMapping("/modifierAgent")
+    public String viewModifierAgent(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "modifierAgent";
+    }
 
     @GetMapping("/ajoutEmployeur")
     public String viewAjoutEmployeur(HttpServletRequest request, Model model) {
         model.addAttribute("persons", persons);
         return "ajoutEmployeur";
+    }
+
+    @GetMapping("/modifierEmployeur")
+    public String viewModifierEmployeur(HttpServletRequest request, Model model) {
+        model.addAttribute("persons", persons);
+        return "modifierEmployeur";
     }
 
     @GetMapping("/calculRafp")

@@ -57,7 +57,7 @@
                         <td>Employeur 1</td>
                         <td>Montant retour(table rafp_retour)</td>
                         <td>
-                                <a href="#" class="text-primary">Modifier</a>
+                                <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
                         </td>
                         <td>
                             <a href="#" class="text-danger" onclick="confirmDelete('Employeur 1')">Supprimer</a>
@@ -67,7 +67,7 @@
                         <td>Employeur 2</td>
                         <td>Montant retour(table rafp_retour)</td>
                         <td>
-                                <a href="#" class="text-primary">Modifier</a>
+                                <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
                         </td>
                         <td>
                             <a href="#" class="text-danger" onclick="confirmDelete('Employeur 2')">Supprimer</a>
