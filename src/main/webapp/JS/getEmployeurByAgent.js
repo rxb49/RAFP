@@ -19,26 +19,23 @@ function getInfoAgent(path) {
     })
         .then(response => {
             if (!response.ok) {
-                // Vérifie si la réponse est un succès
                 return response.text().then(text => {
                     throw new Error("Erreur serveur: " + text);
                 });
             }
             return response.text().then(text => {
                 if (text) {
-                    return JSON.parse(text);  // Si la réponse est non vide, on parse le JSON
+                    return JSON.parse(text);
                 }
                 throw new Error("Réponse vide du serveur");
             });
         })
         .then(agent => {
             var tbody = document.getElementById("agentsTable").getElementsByTagName("tbody")[0];
-            tbody.innerHTML = "";  // Vider le tableau avant d'ajouter les nouvelles données
+            tbody.innerHTML = "";
 
-            // Créer une nouvelle ligne pour afficher les informations de l'agent
             var row = document.createElement("tr");
 
-            // Ajouter les informations de l'agent dans les cellules du tableau
             var cellNom = document.createElement("td");
             cellNom.textContent = nomUsuel || "Non disponible";
             row.appendChild(cellNom);
@@ -71,12 +68,10 @@ function getInfoAgent(path) {
             cellBaseRetourRecalcule.textContent = agent.base_Retour_Recalculee + " €" || "Non disponible";
             row.appendChild(cellBaseRetourRecalcule);
 
-            // Ajouter la ligne au tableau
             tbody.appendChild(row);
         })
         .catch(error => {
             console.error("Erreur lors de la requête :", error);
-            // Affichage d'un message d'erreur si nécessaire, par exemple
             alert("Une erreur est survenue lors de la récupération des informations de l'agent.");
         });
 }
@@ -94,25 +89,22 @@ function getEmployeur(path) {
     })
         .then(response => {
             if (!response.ok) {
-                // Vérifie si la réponse est un succès
                 return response.text().then(text => {
                     throw new Error("Erreur serveur: " + text);
                 });
             }
             return response.text().then(text => {
                 if (text) {
-                    return JSON.parse(text);  // Si la réponse est non vide, on parse le JSON
+                    return JSON.parse(text);
                 }
                 throw new Error("Réponse vide du serveur");
             });
         })
         .then(agents => {
-            console.log(agents);  // Vérifier les données reçues
 
             var tbody = document.getElementById("employeursTable").getElementsByTagName("tbody")[0];
             tbody.innerHTML = "";  // Vider le tableau
 
-            // Vérifie si agents est bien un tableau
             if (!Array.isArray(agents) || agents.length === 0) {
                 var row = document.createElement("tr");
                 var cell = document.createElement("td");
@@ -123,7 +115,6 @@ function getEmployeur(path) {
                 return;
             }
 
-            // Boucle sur chaque employeur et crée une ligne
             agents.forEach(agent => {
                 var row = document.createElement("tr");
 
@@ -155,7 +146,6 @@ function getEmployeur(path) {
                 cellSupprimer.appendChild(linkSupprimer);
                 row.appendChild(cellSupprimer);
 
-                // Ajouter la ligne au tableau
                 tbody.appendChild(row);
             });
         })
