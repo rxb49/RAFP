@@ -14,7 +14,7 @@
                 </div>
                 <div class="form-group g-mb-25">
                     <div class="formfield-select--container">
-                        <select class="form-control rounded-0 formUA" id="idAgents" name="idAgents" onchange="getAgentByEmployeur('${pageContext.request.contextPath}')">
+                        <select class="form-control rounded-0 formUA" id="idAgents" name="idAgents" onchange="getInfoAgent('${pageContext.request.contextPath}')">
                             <c:forEach var="agent" items="${agents}">
                                 <option value="${agent.no_insee}" data-nom="${agent.nom_usuel}" data-prenom="${agent.prenom}">
                                     ${agent.no_insee} - ${agent.nom_usuel} - ${agent.prenom}
@@ -23,65 +23,60 @@
                         </select>
                     </div>
                 </div><br>
-            <table class="table table-bordered text-center w-75 mx-auto">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>TBI</th>
-                        <th>Indemn</th>
-                        <th>Seuil</th>
-                        <th>Base Restant</th>
-                        <th>Total retour</th>
-                        <th>Base retour recalculé</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Nom</td>
-                        <td>Prénom</td>
-                        <td>Montant</td>
-                        <td>Montant</td>
-                        <td>Montant</td>
-                        <td>Montant</td>
-                        <td>Montant</td>
-                        <td>Montant</td>
-                    </tr>
-                </tbody>
-            </table>
 
-            <table class="table table-bordered text-center w-75 mx-auto">
-                <tbody>
-                    <tr>
-                        <td>Employeur 1</td>
-                        <td>Montant retour(table rafp_retour)</td>
-                        <td>
-                                <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
-                        </td>
-                        <td>
-                            <a href="#" class="text-danger" onclick="confirmDelete('Employeur 1')">Supprimer</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Employeur 2</td>
-                        <td>Montant retour(table rafp_retour)</td>
-                        <td>
-                                <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
-                        </td>
-                        <td>
-                            <a href="#" class="text-danger" onclick="confirmDelete('Employeur 2')">Supprimer</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Table to display agent data -->
+                <table class="table table-bordered text-center" id="agentsTable">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>TBI</th>
+                            <th>Indemn</th>
+                            <th>Seuil</th>
+                            <th>Base Restante</th>
+                            <th>Total retour</th>
+                            <th>Base retour recalculé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be added here via JavaScript -->
+                    </tbody>
+                </table>
+
+                <table class="table table-bordered text-center w-75 mx-auto">
+                    <tbody>
+                        <tr>
+                            <td>Employeur 1</td>
+                            <td>Montant retour(table rafp_retour)</td>
+                            <td>
+                                    <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
+                            </td>
+                            <td>
+                                <a href="#" class="text-danger" onclick="confirmDelete('Employeur 1')">Supprimer</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Employeur 2</td>
+                            <td>Montant retour(table rafp_retour)</td>
+                            <td>
+                                    <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
+                            </td>
+                            <td>
+                                <a href="#" class="text-danger" onclick="confirmDelete('Employeur 2')">Supprimer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
 
                 <a href="${pageContext.request.contextPath}/ajoutEmployeur" class="btn btn-secondary" >Ajouter un employeur</a>
             </div>
         </div>
     </div>
-
 </c:set>
 <c:set var="jsSpec">
+<script src="${pageContext.request.contextPath}/JS/getEmployeurByAgent.js"></script>
 <script>
     function confirmDelete(agent) {
         alert("Voulez-vous vraiment supprimer " + agent + " ?");

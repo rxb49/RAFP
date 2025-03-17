@@ -13,6 +13,21 @@ public class RafpAgent {
     private int base_restante;// rafp 2023 RafpPrecedante
     private int base_retour_recalculee;// rafp 2023 RafpPrecedante
 
+    @Override
+    public String toString() {
+        return "RafpAgent{" +
+                "annee='" + annee + '\'' +
+                ", no_dossier_pers='" + no_dossier_pers + '\'' +
+                ", no_insee='" + no_insee + '\'' +
+                ", tbi=" + tbi +
+                ", indemn=" + indemn +
+                ", seuil=" + seuil +
+                ", rafpp=" + rafpp +
+                ", total_retour=" + total_retour +
+                ", base_restante=" + base_restante +
+                ", base_retour_recalculee=" + base_retour_recalculee +
+                '}';
+    }
 
     public String getAnnee() {
         return annee;

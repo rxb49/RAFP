@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -77,6 +78,34 @@ public class DonneeController {
             logger.error("Erreur - viewDonneesEmployeur -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
 
+        }
+    }
+
+    @PostMapping("/donneesAgent/getInfo")
+    public ResponseEntity<RafpAgent> viewDonneesAgentInfo(@RequestBody Map<String, String> params) {
+        String idAgent = params.get("idAgent");
+
+        try {
+            // Récupération de l'agent avec l'ID
+            RafpAgent agent = donneeService.getInfoAgentById(idAgent);
+            // Si l'agent est trouvé, renvoyer une réponse avec l'agent
+            if (agent != null) {
+                return ResponseEntity.ok(agent);  // Retourne l'agent dans la réponse
+            } else {
+                // Si l'agent n'est pas trouvé, retourner une erreur 404
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - viewDonneesAgentInfo  - Erreur : {}", e.getMessage(), e);
+            // En cas d'erreur BDD, renvoyer une erreur 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        } catch (Exception e) {
+            logger.error("Erreur - viewDonneesAgentInfo - Erreur : {}", e.getMessage(), e);
+            // En cas d'autre erreur, renvoyer une erreur générique 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 

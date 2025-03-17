@@ -100,7 +100,7 @@ public class DonneeDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select distinct S.prenom, S.nom_usuel, A.no_insee from harp_adm.rafp_agent A" +
-                    "    inner join siham_adm.siham_individu_paye S ON S.no_insee = A.no_insee";
+                    "    inner join siham_adm.siham_individu_paye S ON S.no_insee = A.no_insee where A.annee = '2024' ";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -118,6 +118,46 @@ public class DonneeDAO {
         }
         logger.info("Fin de la requête de récuperation des agents");
         return agents;
+    }
+
+    public RafpAgent getInfoAgentById(String no_insee) throws SQLException {
+        logger.info("Début de la requête de récuperation de l'agent");
+        RafpAgent agent = new RafpAgent();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select A.annee, A.no_dossier_pers, A.no_insee, A.tbi, A.indemn, A.seuil, A.rafpp, A.total_retour," +
+                    " A.base_restante, A.base_retour_recalculee from harp_adm.rafp_agent A where A.no_insee = ? and annee = '2024'";
+            // Exécuter la requête de récuperation
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, no_insee);
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+
+                agent.setNo_insee(rs.getString("annee"));
+                agent.setNo_dossier_pers(rs.getString("no_dossier_pers"));
+                agent.setNo_insee(rs.getString("no_insee"));
+                agent.setTbi(rs.getInt("tbi"));
+                agent.setIndemn(rs.getInt("indemn"));
+                agent.setSeuil(rs.getInt("seuil"));
+                agent.setRafpp(rs.getInt("rafpp"));
+                agent.setBase_Restante(rs.getInt("base_restante"));
+                agent.setTotal_Retour(rs.getInt("total_retour"));
+                agent.setBase_retour_recalculee(rs.getInt("base_retour_recalculee"));
+                logger.info(agent.toString());
+            }else{
+                logger.warn("Aucun agent trouvé avec le no_insee: " + no_insee);
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation de l'agent");
+        return agent;
     }
 
 }
