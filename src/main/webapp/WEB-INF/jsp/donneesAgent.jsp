@@ -14,13 +14,12 @@
                 </div>
                 <div class="form-group g-mb-25">
                     <div class="formfield-select--container">
-                        <select class="form-control rounded-0 formUA" id="exampleSelect1">
-                        <option value="" disabled selected>Rechercher un agent</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                        <select class="form-control rounded-0 formUA" id="idAgents" name="idAgents" onchange="getAgentByEmployeur('${pageContext.request.contextPath}')">
+                            <c:forEach var="agent" items="${agents}">
+                                <option value="${agent.no_insee}" data-nom="${agent.nom_usuel}" data-prenom="${agent.prenom}">
+                                    ${agent.no_insee} - ${agent.nom_usuel} - ${agent.prenom}
+                                </option>
+                            </c:forEach>
                         </select>
                     </div>
                 </div><br>

@@ -1,7 +1,6 @@
 package fr.univangers.controller;
 
 import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpAgentEmployeur;
 import fr.univangers.classes.RafpEmployeur;
 import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AgentService;

@@ -1,9 +1,9 @@
 package fr.univangers.dao;
 
 import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpAgentEmployeur;
 import fr.univangers.classes.RafpAgentRetour;
 import fr.univangers.classes.RafpEmployeur;
+import fr.univangers.classes.RafpLibAgent;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class DonneeDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employer order by lib_emp ASC";
+            String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employer E order by lib_emp ASC";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -68,7 +68,7 @@ public class DonneeDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select id_emp, insee, mnt_retour from harp_adm.rafp_retour where id_emp = ?";
+            String requete = "select R.id_emp, R.insee, R.mnt_retour from harp_adm.rafp_retour R where id_emp = ?";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setInt(1, idEmployeur);
@@ -86,6 +86,37 @@ public class DonneeDAO {
             Sql.close(maConnexion);
         }
         logger.info("Fin de la requête de récuperation des agents pour un employeur");
+        return agents;
+    }
+
+    public List<RafpLibAgent> getAgent() throws SQLException {
+        logger.info("Début de la requête de récuperation des agents");
+
+        List<RafpLibAgent> agents = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select distinct S.prenom, S.nom_usuel, A.no_insee from harp_adm.rafp_agent A" +
+                    "    inner join siham_adm.siham_individu_paye S ON S.no_insee = A.no_insee";
+            // Exécuter la requête de récuperation
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpLibAgent agent = new RafpLibAgent();
+                agent.setNo_insee(rs.getString("no_insee"));
+                agent.setNom_usuel(rs.getString("nom_usuel"));
+                agent.setPrenom(rs.getString("prenom"));
+                agents.add(agent);
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation des agents");
         return agents;
     }
 

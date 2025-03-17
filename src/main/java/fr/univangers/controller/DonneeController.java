@@ -1,8 +1,6 @@
 package fr.univangers.controller;
 
-import fr.univangers.classes.Person;
-import fr.univangers.classes.RafpAgentRetour;
-import fr.univangers.classes.RafpEmployeur;
+import fr.univangers.classes.*;
 import fr.univangers.exceptions.UAException;
 import fr.univangers.service.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,8 +64,20 @@ public class DonneeController {
 
 
     @GetMapping("/donneesAgent")
-    public String viewDonneesAgent() {
-        return "donneesAgent";
+    public  String viewDonneesAgent(Model model) {
+        try{
+            List<RafpLibAgent> agents = donneeService.getAgent();
+            model.addAttribute("agents", agents);
+            return "donneesAgent";
+
+        }catch (SQLException e){
+            logger.error("Erreur BDD - viewDonneesEmployeur  - Erreur : {}", e.getMessage(), e);
+            return "errorPage/errorBDD";
+        }catch (Exception e){
+            logger.error("Erreur - viewDonneesEmployeur -  Erreur : {}", e.getMessage(), e);
+            return "errorPage/errorLoad";
+
+        }
     }
 
     @GetMapping("/ajoutAgent")

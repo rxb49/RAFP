@@ -22,9 +22,6 @@ public class AgentService {
         return dao.insertAgent(agent);
     }
 
-    public List<RafpAgentEmployeur> getAgent() throws SQLException {
-        return dao.getAgent();
-    }
 
 
 }

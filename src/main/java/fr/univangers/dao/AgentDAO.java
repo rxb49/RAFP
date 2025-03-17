@@ -73,42 +73,4 @@ public class AgentDAO {
         return ajouterAgent;
     }
 
-
-    public List<RafpAgentEmployeur> getAgent() throws SQLException {
-        logger.info("Début de la requête de récuperation des agents avec employeurs");
-
-        List<RafpAgentEmployeur> agents = new ArrayList<>();
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            String requete = "select distinct E.lib_emp, S.nom_usuel, S.prenom ,R.insee, R.mnt_retour, R.base_retour_recalculee_emp from harp_adm.rafp_retour R" +
-                    "                    INNER JOIN harp_adm.rafp_employeur E ON E.id_emp = R.id_emp" +
-                    "                    INNER JOIN siham_adm.siham_individu_paye S ON S.no_insee = R.insee" +
-                    "                    where s.periode_paie like '2023%'";
-            // Exécuter la requête de récuperation
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
-            while (rs.next()) {
-                RafpAgentEmployeur agent = new RafpAgentEmployeur();
-                agent.setLib_emp(rs.getString("lib_emp"));
-                agent.setNom_usuel(rs.getString("nom_usuel"));
-                agent.setPrenom(rs.getString("prenom"));
-                agent.setNo_insee(rs.getString("insee"));
-                agent.setMnt_retour(rs.getInt("mnt_retour"));
-                agent.setBase_retour_recalculee_emp(rs.getInt("base_retour_recalculee_emp"));
-                agents.add(agent);
-            }
-            rs.close();
-            cstmt.close();
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requête de récuperation des agents avec employeurs");
-        return agents;
-    }
-
-
 }
