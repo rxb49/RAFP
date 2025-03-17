@@ -86,24 +86,44 @@ public class DonneeController {
         String idAgent = params.get("idAgent");
 
         try {
-            // Récupération de l'agent avec l'ID
             RafpAgent agent = donneeService.getInfoAgentById(idAgent);
-            // Si l'agent est trouvé, renvoyer une réponse avec l'agent
             if (agent != null) {
-                return ResponseEntity.ok(agent);  // Retourne l'agent dans la réponse
+                return ResponseEntity.ok(agent);
             } else {
-                // Si l'agent n'est pas trouvé, retourner une erreur 404
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(null);
             }
         } catch (SQLException e) {
             logger.error("Erreur BDD - viewDonneesAgentInfo  - Erreur : {}", e.getMessage(), e);
-            // En cas d'erreur BDD, renvoyer une erreur 500
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         } catch (Exception e) {
             logger.error("Erreur - viewDonneesAgentInfo - Erreur : {}", e.getMessage(), e);
-            // En cas d'autre erreur, renvoyer une erreur générique 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+
+    @PostMapping("/donneesAgent/getEmployeur")
+    public ResponseEntity<List<RafpRetour>> viewDonneesAgentRetourEmployeur(@RequestBody Map<String, String> params) {
+        String idAgent = params.get("idAgent");
+
+        try {
+            List<RafpRetour> agents = donneeService.getEmployeurByAgent(idAgent);
+            if (agents != null) {
+                logger.info(agents.toString());
+                return ResponseEntity.ok(agents);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - viewDonneesAgentRetourEmployeur  - Erreur : {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        } catch (Exception e) {
+            logger.error("Erreur - viewDonneesAgentRetourEmployeur - Erreur : {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }

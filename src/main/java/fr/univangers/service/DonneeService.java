@@ -1,9 +1,6 @@
 package fr.univangers.service;
 
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpAgentRetour;
-import fr.univangers.classes.RafpEmployeur;
-import fr.univangers.classes.RafpLibAgent;
+import fr.univangers.classes.*;
 import fr.univangers.controller.DonneeController;
 import fr.univangers.dao.AgentDAO;
 import fr.univangers.dao.DonneeDAO;
@@ -38,6 +35,10 @@ public class DonneeService {
 
     public RafpAgent getInfoAgentById(String no_insee) throws SQLException {
         return dao.getInfoAgentById(no_insee);
+    }
+
+    public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
+        return dao.getEmployeurByAgent(no_insee);
     }
 
 }

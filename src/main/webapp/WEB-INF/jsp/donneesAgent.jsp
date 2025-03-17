@@ -14,7 +14,7 @@
                 </div>
                 <div class="form-group g-mb-25">
                     <div class="formfield-select--container">
-                        <select class="form-control rounded-0 formUA" id="idAgents" name="idAgents" onchange="getInfoAgent('${pageContext.request.contextPath}')">
+                        <select class="form-control rounded-0 formUA" id="idAgents" name="idAgents" onchange="showInfo('${pageContext.request.contextPath}')">
                             <c:forEach var="agent" items="${agents}">
                                 <option value="${agent.no_insee}" data-nom="${agent.nom_usuel}" data-prenom="${agent.prenom}">
                                     ${agent.no_insee} - ${agent.nom_usuel} - ${agent.prenom}
@@ -23,8 +23,6 @@
                         </select>
                     </div>
                 </div><br>
-
-                <!-- Table to display agent data -->
                 <table class="table table-bordered text-center" id="agentsTable">
                     <thead>
                         <tr>
@@ -39,32 +37,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamic rows will be added here via JavaScript -->
                     </tbody>
                 </table>
-
-                <table class="table table-bordered text-center w-75 mx-auto">
+                <div class="flex-grow-1 cadre-info my-3 mx-3">
+                    <h2 class="mb-1">Liste des employeurs</h2>
+                </div>
+                <table class="table table-bordered text-center" id="employeursTable">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Montant</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        <tr>
-                            <td>Employeur 1</td>
-                            <td>Montant retour(table rafp_retour)</td>
-                            <td>
-                                    <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
-                            </td>
-                            <td>
-                                <a href="#" class="text-danger" onclick="confirmDelete('Employeur 1')">Supprimer</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Employeur 2</td>
-                            <td>Montant retour(table rafp_retour)</td>
-                            <td>
-                                    <a href="${pageContext.request.contextPath}/modifierEmployeur" class="text-primary">Modifier</a>
-                            </td>
-                            <td>
-                                <a href="#" class="text-danger" onclick="confirmDelete('Employeur 2')">Supprimer</a>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
 

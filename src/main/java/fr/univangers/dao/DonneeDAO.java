@@ -1,9 +1,6 @@
 package fr.univangers.dao;
 
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpAgentRetour;
-import fr.univangers.classes.RafpEmployeur;
-import fr.univangers.classes.RafpLibAgent;
+import fr.univangers.classes.*;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -100,7 +97,7 @@ public class DonneeDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select distinct S.prenom, S.nom_usuel, A.no_insee from harp_adm.rafp_agent A" +
-                    "    inner join siham_adm.siham_individu_paye S ON S.no_insee = A.no_insee where A.annee = '2024' ";
+                    "    inner join siham_adm.siham_individu_paye S ON S.no_insee = A.no_insee where A.annee = '2023' ";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -130,7 +127,7 @@ public class DonneeDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select A.annee, A.no_dossier_pers, A.no_insee, A.tbi, A.indemn, A.seuil, A.rafpp, A.total_retour," +
-                    " A.base_restante, A.base_retour_recalculee from harp_adm.rafp_agent A where A.no_insee = ? and annee = '2024'";
+                    " A.base_restante, A.base_retour_recalculee from harp_adm.rafp_agent A where A.no_insee = ? and annee = '2023'";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, no_insee);
@@ -158,6 +155,36 @@ public class DonneeDAO {
         }
         logger.info("Fin de la requête de récuperation de l'agent");
         return agent;
+    }
+
+    public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
+        logger.info("Début de la requête de récuperation des employeurs pour l'agent");
+        List<RafpRetour> employeurs = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select e.lib_emp, R.mnt_retour from harp_adm.rafp_retour R " +
+                    "inner join harp_adm.rafp_employer E on r.id_emp = e.id_emp where R.insee = ?";
+            // Exécuter la requête de récuperation
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, no_insee);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpRetour employeur = new RafpRetour();
+                employeur.setLib_emp(rs.getString("lib_emp"));
+                employeur.setMnt_retour(rs.getInt("mnt_retour"));
+                employeurs.add(employeur);
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation des employeurs pour l'agent");
+        return employeurs;
     }
 
 }
