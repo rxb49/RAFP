@@ -37,7 +37,7 @@ public class DonneeDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
+            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employer order by lib_emp ASC";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();

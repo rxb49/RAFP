@@ -40,10 +40,10 @@ public class DonneeController {
             return "donneesEmployeur";
 
         }catch (SQLException e){
-            logger.error("Erreur BDD - viewGestionEmployeur  - Erreur : {}", e.getMessage(), e);
+            logger.error("Erreur BDD - viewDonneesEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
         }catch (Exception e){
-            logger.error("Erreur - viewHello -  Erreur : {}", e.getMessage(), e);
+            logger.error("Erreur - viewDonneesEmployeur -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
 
         }

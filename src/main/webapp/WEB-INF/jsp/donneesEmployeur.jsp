@@ -24,8 +24,8 @@
                     </div>
                 </div><br>
                 <div class="d-flex align-items-center">
-                    <h2 class="fw-bold my-2 me-5">Employeur</h2>
-                    <h2 class="fw-bold my-2">Montant retour total</h2>
+                    <h2 class="fw-bold my-2 me-5" id="selectedEmployeur"></h2>
+                    <h2 class="fw-bold my-2" id="totalMontantRetour">Montant retour total: </h2>
                 </div>
 
                 <!-- Tableau des agents -->
@@ -39,9 +39,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Les lignes seront ajoutées ici dynamiquement -->
                     </tbody>
                 </table>
+
 
                 <!-- Bouton Ajouter un agent -->
                 <a href="${pageContext.request.contextPath}/ajoutAgent" class="btn btn-secondary">Ajouter un agent</a>
@@ -52,11 +52,30 @@
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/getAgentByEmployeur.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var selectEmployeur = document.getElementById("idEmployeurs");
+        var selectedEmployeurDisplay = document.getElementById("selectedEmployeur");
 
-        <script>
-            function confirmDelete(agent) {
-                alert("Voulez-vous vraiment supprimer " + agent + " ?");
-            }
-        </script>
+
+        function updateEmployeurLabel() {
+            var selectedOption = selectEmployeur.options[selectEmployeur.selectedIndex];
+            selectedEmployeurDisplay.textContent = selectedOption.dataset.name;
+        }
+
+        selectEmployeur.addEventListener("change", function() {
+            updateEmployeurLabel();
+            getAgentByEmployeur('${pageContext.request.contextPath}');
+        });
+        updateEmployeurLabel();
+        getAgentByEmployeur('${pageContext.request.contextPath}');
+
+    });
+</script>
+<script>
+    function confirmDelete(agent) {
+        alert("Voulez-vous vraiment supprimer " + agent + " ?");
+    }
+</script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>
