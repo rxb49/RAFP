@@ -34,7 +34,6 @@ public class DonneeController {
     public  String viewDonneesEmployeur(Model model) {
         try{
             List<RafpEmployeur> employeurs = donneeService.getEmployeur();
-            logger.info(employeurs.toString());
             model.addAttribute("employeurs", employeurs);
             return "donneesEmployeur";
 

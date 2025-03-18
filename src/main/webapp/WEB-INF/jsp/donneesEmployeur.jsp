@@ -32,7 +32,9 @@
                 <table class="table table-bordered text-center" id="agentsTable">
                     <thead>
                         <tr>
-                            <th>Nom de l’agent</th>
+                            <th>N° Insee</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
                             <th>Montant retour total</th>
                             <th>Modifier</th>
                             <th>Supprimer</th>

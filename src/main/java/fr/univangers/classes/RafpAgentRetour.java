@@ -3,17 +3,37 @@ package fr.univangers.classes;
 public class RafpAgentRetour {
 
     private int id_emp;
+    private String nom_usuel;
+    private String prenom;
     private String insee;
-    private int mnt_retour; // rafp 2023 RafpPrecedante
+    private int mnt_retour;
 
 
     @Override
     public String toString() {
         return "RafpAgentRetour{" +
                 "id_emp=" + id_emp +
+                ", nom_usuel=" + nom_usuel +
+                ", prenom=" + prenom +
                 ", insee='" + insee + '\'' +
                 ", mnt_retour=" + mnt_retour +
                 '}';
+    }
+
+    public String getNom_usuel() {
+        return nom_usuel;
+    }
+
+    public void setNom_usuel(String nom) {
+        this.nom_usuel = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
     public String getInsee() {
