@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class EmployeurController {
@@ -28,6 +29,28 @@ public class EmployeurController {
         this.employeurService = employeurService;
     }
 
+    @GetMapping("/rechercheEmployeur")
+    public  String viewRechercheEmployeur() {
+        return "rechercheEmployeur";
+    }
+
+    @GetMapping(value = "/rechercheEmployeur/search", produces = "application/json")
+    public ResponseEntity<List<RafpEmployeur>> viewRechercheEmployeurSearch(@RequestParam String recherche) {
+        try {
+            logger.info("🔵 Recherche reçue : {}", recherche);
+            List<RafpEmployeur> employeurs = employeurService.getEmployeurBySearch(recherche);
+            return ResponseEntity.ok(employeurs);
+
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - viewRechercheEmployeurSearch  - Erreur : {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        } catch (Exception e) {
+            logger.error("Erreur - viewRechercheEmployeurSearch - Erreur : {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 
     @GetMapping("/gestionEmployeur")
     public  String viewGestionEmployeur() {
@@ -45,7 +68,7 @@ public class EmployeurController {
             logger.error("Erreur BDD - viewGestionEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
         }catch (Exception e){
-            logger.error("Erreur - viewHello -  Erreur : {}", e.getMessage(), e);
+            logger.error("Erreur - viewGestionEmployeur -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
 
         }

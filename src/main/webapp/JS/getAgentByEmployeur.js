@@ -24,7 +24,7 @@ function getAgentByEmployeur(path) {
 
                 // 2️⃣ Nom
                 var cellNom = document.createElement("td");
-                cellNom.textContent = agent.nom_usuel || 'N/A';  // ✅ Assurez-vous que l'objet contient bien "nom_usuel"
+                cellNom.textContent = agent.nom_usuel || 'N/A';
                 row.appendChild(cellNom);
 
                 // 3️⃣ Prénom

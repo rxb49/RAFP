@@ -115,6 +115,40 @@ public class EmployeurDAO {
         return employeurs;
     }
 
+    public List<RafpEmployeur> getEmployeurBySearch(String recherche) throws SQLException {
+        logger.info("Début de la requête de recherche des employeurs");
+        List<RafpEmployeur> employeurs = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employer " +
+                    "WHERE lib_emp LIKE ? " +
+                    "   OR mail_emp LIKE ? ";
+            // Exécuter la requête de récuperation
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, "%" + recherche + "%");
+            cstmt.setString(2, "%" + recherche + "%");
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpEmployeur employeur = new RafpEmployeur();
+                employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setLib_emp(rs.getString("lib_emp"));
+                employeur.setMail_emp(rs.getString("mail_emp"));
+                employeurs.add(employeur);
+            }
+            logger.info(employeurs.toString());
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de recherche des employeurs");
+        return employeurs;
+    }
+
     public boolean updateEmployeur(RafpEmployeur rafpEmployeur) throws SQLException, UAException {
         logger.info("Début de la requête de modification d'un employeur");
         logger.info(rafpEmployeur.getLib_emp());
