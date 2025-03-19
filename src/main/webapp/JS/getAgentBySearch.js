@@ -1,5 +1,5 @@
 function getAgentBySearch(path) {
-    var inputSearch = document.getElementById("inputName").value.trim();
+    var inputSearch = document.getElementById("inputName").value.trim().toUpperCase();
 
     if (!inputSearch) {
         console.error("Champ de recherche vide !");

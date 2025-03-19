@@ -14,6 +14,7 @@
                 <table class="table table-bordered text-center" id="agentsTable">
                     <thead>
                         <tr>
+                            <th>N° Insee</th>
                             <th>Nom</th>
                             <th>Prenom</th>
                             <th>TBI</th>
@@ -26,14 +27,15 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>${agent.no_insee}</td>
                             <td>${agent.nom_usuel}</td>
                             <td>${agent.prenom}</td>
-                            <td>${agent.tbi}</td>
-                            <td>${agent.indemn}</td>
-                            <td>${agent.seuil}</td>
-                            <td>${agent.base_Restante}</td>
-                            <td>${agent.total_Retour}</td>
-                            <td>${agent.base_Retour_Recalculee}</td>
+                            <td>${agent.tbi} €</td>
+                            <td>${agent.indemn} €</td>
+                            <td>${agent.seuil} €</td>
+                            <td>${agent.base_Restante} €</td>
+                            <td>${agent.total_Retour} €</td>
+                            <td>${agent.base_Retour_Recalculee} €</td>
                         </tr>
                     </tbody>
                 </table>

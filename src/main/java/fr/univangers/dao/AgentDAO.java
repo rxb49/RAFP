@@ -147,13 +147,14 @@ public class AgentDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select A.nom_usuel, A.prenom, A.tbi, A.indemn, A.base_restante, A.total_retour, A.base_retour_recalculee from harp_adm.rafp_agent A " +
+            String requete = "select A.no_insee, A.nom_usuel, A.prenom, A.tbi, A.indemn, A.base_restante, A.total_retour, A.base_retour_recalculee from harp_adm.rafp_agent A " +
                     "where A.no_insee = ?";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1,   no_insee );
             rs = cstmt.executeQuery();
             while (rs.next()) {
+                agent.setNo_insee(rs.getString("no_insee"));
                 agent.setNom_usuel(rs.getString("nom_usuel"));
                 agent.setPrenom(rs.getString("prenom"));
                 agent.setTbi(rs.getInt("tbi"));
