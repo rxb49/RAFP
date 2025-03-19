@@ -37,12 +37,11 @@ public class AgentController {
 
 
     @PostMapping("/donneesAgent")
-    public  String viewDonneesAgent(Model model, @RequestParam String no_insee, HttpSession session) {
+    public  String viewDonneesAgent(Model model, @RequestParam String no_insee) {
         try{
             if (no_insee == null) {
                 return "redirect:/error";
             }
-            session.setAttribute("no_insee", no_insee);
 
             List<RafpRetour> employeurs = agentService.getEmployeurByAgent(no_insee);
             RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
@@ -82,6 +81,14 @@ public class AgentController {
         }
     }
 
+    @GetMapping("/ajoutAgent")
+    public String viewAjoutAgent() {
+        return "ajoutAgent";
+    }
+    @GetMapping("/modifierAgent")
+    public String viewModifierAgent() {
+        return "modifierAgent";
+    }
 
 }
 

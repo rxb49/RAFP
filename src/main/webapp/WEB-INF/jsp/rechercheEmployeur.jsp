@@ -36,19 +36,7 @@
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/getEmployeurBySearch.js"></script>
 <script>
-    let timeout;
-
-    document.getElementById("inputName").addEventListener("input", function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            rechercherEmployeur(this.value);
-        }, 300);
-    });
-
-    function rechercherEmployeur(valeur) {
-        console.log("Recherche de l'employeur :", valeur);
-        getEmployeurBySearch('${pageContext.request.contextPath}');
-    }
+    const path = '${pageContext.request.contextPath}';
 </script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>

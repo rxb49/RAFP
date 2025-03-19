@@ -1,10 +1,25 @@
+let timeout;
+
+document.addEventListener("DOMContentLoaded", function () {
+    const inputSearch = document.getElementById("inputName");
+
+    if (inputSearch) {
+        inputSearch.addEventListener("input", function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                rechercherAgent(this.value);
+            }, 300);
+        });
+    }
+});
+
+function rechercherAgent(valeur) {
+    console.log("Recherche de l'agent :", valeur);
+    getAgentBySearch(path);
+}
+
 function getAgentBySearch(path) {
     var inputSearch = document.getElementById("inputName").value.trim().toUpperCase();
-
-    if (!inputSearch) {
-        console.error("Champ de recherche vide !");
-        return;
-    }
 
     fetch(`${path}/rechercheAgent/search?recherche=${encodeURIComponent(inputSearch)}`, {
         method: 'GET',
@@ -39,7 +54,6 @@ function getAgentBySearch(path) {
 
                 var cellVoir = document.createElement("td");
 
-
                 var buttonVoir = document.createElement("button");
                 buttonVoir.type = "button";
                 buttonVoir.className = "text-primary";
@@ -48,7 +62,7 @@ function getAgentBySearch(path) {
                 buttonVoir.addEventListener("click", function () {
                     var form = document.createElement("form");
                     form.method = "POST";
-                    form.action =  `${path}/donneesAgent`;
+                    form.action = `${path}/donneesAgent`;
 
                     var inputId = document.createElement("input");
                     inputId.type = "hidden";
@@ -68,5 +82,3 @@ function getAgentBySearch(path) {
         })
         .catch(error => console.error("Erreur lors de la requête :", error));
 }
-
-

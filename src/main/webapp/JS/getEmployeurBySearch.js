@@ -1,10 +1,19 @@
+let timeout;
+
+document.getElementById("inputName").addEventListener("input", function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        rechercherEmployeur(this.value);
+    }, 300);
+});
+
+function rechercherEmployeur(valeur) {
+    console.log("Recherche de l'employeur :", valeur);
+    getEmployeurBySearch(path);
+}
+
 function getEmployeurBySearch(path) {
     var inputSearch = document.getElementById("inputName").value.trim().toUpperCase();
-
-    if (!inputSearch) {
-        console.error("Champ de recherche vide !");
-        return;
-    }
 
     fetch(`${path}/rechercheEmployeur/search?recherche=${encodeURIComponent(inputSearch)}`, {
         method: 'GET',

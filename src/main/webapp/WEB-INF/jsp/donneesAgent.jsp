@@ -58,7 +58,7 @@
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
                                 <td><a href="#" >Modifier</a></td>
-                                <td><a href="#" onclick="confirmDelete('${employeur.lib_emp}')">Supprimer</a></td>
+                                <td><a href="#" onclick="confirmDeleteEmployeur('${employeur.lib_emp}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -70,10 +70,7 @@
     </div>
 </c:set>
 <c:set var="jsSpec">
-<script>
-    function confirmDelete(agent) {
-        alert("Voulez-vous vraiment supprimer " + agent + " ?");
-    }
-</script>
+<script src="${pageContext.request.contextPath}/JS/confirmDelete.js"></script>
+
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp" %>

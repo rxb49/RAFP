@@ -29,13 +29,12 @@ public class EmployeurController {
     }
 
     @PostMapping("/donneesEmployeur")
-    public String viewDonneesEmployeur(@RequestParam Integer id_emp, Model model, HttpSession session) {
+    public String viewDonneesEmployeur(@RequestParam Integer id_emp, Model model) {
         try {
             if (id_emp == null) {
                 return "redirect:/error";
             }
 
-            session.setAttribute("id_emp", id_emp);
             List<RafpAgentRetour> agents = employeurService.getAgentByEmployeurId(id_emp);
             RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
             double totalMontantRetour = agents.stream()
@@ -149,5 +148,15 @@ public class EmployeurController {
             logger.error("Erreur - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", rafpEmployeur.getId_emp(), rafpEmployeur.getLib_emp(), rafpEmployeur.getMail_emp(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/ajoutEmployeur")
+    public String viewAjoutEmployeur() {
+        return "ajoutEmployeur";
+    }
+
+    @GetMapping("/modifierEmployeur")
+    public String viewModifierEmployeur() {
+        return "modifierEmployeur";
     }
 }

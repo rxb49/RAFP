@@ -39,7 +39,7 @@
                             <td>${agent.prenom}</td>
                             <td>${agent.mnt_retour} €</td>
                             <td><a href="${path}/modifierAgent?id_insee=${agent.insee}" class="text-primary">Modifier</a></td>
-                            <td><a href="#" class="text-danger" onclick="confirmDelete('${agent.insee}')">Supprimer</a></td>
+                            <td><a href="#" class="text-danger" onclick="confirmDeleteAgent('${agent.insee}')">Supprimer</a></td>
                         </tr>
                     </c:forEach>
                 </tbody>
@@ -49,14 +49,7 @@
 </c:set>
 
 <c:set var="jsSpec">
-
-<script>
-    function confirmDelete(agentInsee) {
-        if (confirm("Voulez-vous vraiment supprimer l'agent avec l'INSEE " + agentInsee + " ?")) {
-            console.log("Agent " + agentInsee + " supprimé.");
-        }
-    }
-</script>
+<script src="${pageContext.request.contextPath}/JS/confirmDelete.js"></script>
 </c:set>
 
 <%@ include file="templatePageAvecMenuV.jsp"%>

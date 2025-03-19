@@ -33,11 +33,6 @@
     </div>
 </c:set>
 <c:set var="jsSpec">
-<script>
-    function confirmDelete(agent) {
-        alert("Voulez-vous vraiment supprimer " + agent + " ?");
-    }
-</script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>
 
