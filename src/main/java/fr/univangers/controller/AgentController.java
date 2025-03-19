@@ -68,7 +68,6 @@ public class AgentController {
     @GetMapping(value = "/rechercheAgent/search", produces = "application/json")
     public ResponseEntity<List<RafpLibAgent>> viewRechercheAgentSearch(@RequestParam String recherche) {
         try {
-            logger.info("🔵 Recherche reçue : {}", recherche);
             List<RafpLibAgent> agents = agentService.getAgentBySearch(recherche);
             return ResponseEntity.ok(agents);
 

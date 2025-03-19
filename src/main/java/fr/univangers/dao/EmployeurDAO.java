@@ -127,7 +127,6 @@ public class EmployeurDAO {
             String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employer " +
                     "WHERE lib_emp LIKE ? " +
                     "   OR mail_emp LIKE ? ";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, "%" + recherche + "%");
             cstmt.setString(2, "%" + recherche + "%");
@@ -206,7 +205,6 @@ public class EmployeurDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employer E where E.id_emp = ?";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setInt(1, idEmployeur);
             rs = cstmt.executeQuery();
@@ -237,7 +235,6 @@ public class EmployeurDAO {
 
             String requete = "select distinct R.id_emp, a.nom_usuel, A.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
                     "               inner join harp_adm.rafp_agent A on R.insee = A.no_insee where id_emp = ?";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setInt(1, idEmployeur);
             rs = cstmt.executeQuery();
@@ -250,7 +247,6 @@ public class EmployeurDAO {
                 employeur.setMnt_retour(rs.getInt("mnt_retour"));
                 agents.add(employeur);
             }
-            logger.info("Agents pour l'employeur" + agents.toString());
             rs.close();
             cstmt.close();
         }finally {

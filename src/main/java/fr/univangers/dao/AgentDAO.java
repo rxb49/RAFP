@@ -26,12 +26,6 @@ public class AgentDAO {
 
 
 
-    /**
-     * Insert l'agent dans la table rafp agent'
-     * @return : booléen
-     * on fait pour le moment pour un seul agent matricule = 22445
-     * @throws SQLException : SQLException
-     */
     public RafpAgent insertAgent(RafpAgent agent) throws SQLException {
         logger.info("Début de la requête d'insertion de l'agent");
         Connection maConnexion = null;
@@ -39,12 +33,10 @@ public class AgentDAO {
         RafpAgent ajouterAgent = new RafpAgent();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            // Insertion de l'agent
             String requete = "INSERT INTO harp_adm.rafp_agent (annee, no_dossier_pers, no_insee, tbi, indemn, seuil, rafpp," +
                     " base_restante, total_retour, base_retour_recalculee) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
-            // Définir les valeurs des paramètres avant l'exécution
             cstmt.setString(1, agent.getAnnee());
             cstmt.setString(2, agent.getNo_dossier_pers());
             cstmt.setString(3, agent.getNo_insee());
@@ -56,11 +48,10 @@ public class AgentDAO {
             cstmt.setInt(9, agent.getTotal_Retour());
             cstmt.setInt(10, agent.getBase_Retour_Recalculee());
 
-            // Exécuter la requête d'insertion
             int rowsInserted = cstmt.executeUpdate();
             if (rowsInserted > 0) {
                 logger.info("Insertion en base de donnée réussie !");
-                ajouterAgent = agent; // Assigner l'agent inséré à la variable de retour
+                ajouterAgent = agent;
             } else {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
@@ -85,7 +76,6 @@ public class AgentDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "select distinct A.prenom, A.nom_usuel, A.no_insee from harp_adm.rafp_agent A where A.annee = '2023' ";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             while (rs.next()) {
@@ -116,7 +106,6 @@ public class AgentDAO {
 
             String requete = "select distinct A.prenom, A.nom_usuel, A.no_insee from harp_adm.rafp_agent A " +
                     "where A.prenom LIKE ? OR  A.nom_usuel LIKE ? ";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, "%" + recherche + "%");
             cstmt.setString(2, "%" + recherche + "%");
@@ -149,7 +138,6 @@ public class AgentDAO {
 
             String requete = "select A.no_insee, A.nom_usuel, A.prenom, A.tbi, A.indemn, A.base_restante, A.total_retour, A.base_retour_recalculee from harp_adm.rafp_agent A " +
                     "where A.no_insee = ?";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1,   no_insee );
             rs = cstmt.executeQuery();
@@ -184,7 +172,6 @@ public class AgentDAO {
 
             String requete = "select e.lib_emp, R.mnt_retour from harp_adm.rafp_retour R " +
                     "inner join harp_adm.rafp_employer E on r.id_emp = e.id_emp where R.insee = ?";
-            // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, no_insee);
             rs = cstmt.executeQuery();

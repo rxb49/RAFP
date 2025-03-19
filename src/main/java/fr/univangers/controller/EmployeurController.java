@@ -41,7 +41,6 @@ public class EmployeurController {
             double totalMontantRetour = agents.stream()
                     .mapToDouble(RafpAgentRetour::getMnt_retour)
                     .sum();
-            // Ajouter les informations à la vue
             model.addAttribute("agents", agents);
             model.addAttribute("employeur", employeur);
             model.addAttribute("totalMontantRetour", totalMontantRetour);
@@ -58,12 +57,6 @@ public class EmployeurController {
     }
 
 
-
-
-
-
-
-
     @GetMapping("/rechercheEmployeur")
     public  String viewRechercheEmployeur() {
         return "rechercheEmployeur";
@@ -72,7 +65,6 @@ public class EmployeurController {
     @GetMapping(value = "/rechercheEmployeur/search", produces = "application/json")
     public ResponseEntity<List<RafpEmployeur>> viewRechercheEmployeurSearch(@RequestParam String recherche) {
         try {
-            logger.info("🔵 Recherche reçue : {}", recherche);
             List<RafpEmployeur> employeurs = employeurService.getEmployeurBySearch(recherche);
             return ResponseEntity.ok(employeurs);
 
@@ -100,10 +92,10 @@ public class EmployeurController {
             return "gestionEmployeurModifier";
 
         }catch (SQLException e){
-            logger.error("Erreur BDD - viewGestionEmployeur  - Erreur : {}", e.getMessage(), e);
+            logger.error("Erreur BDD - viewGestionEmployeurModifier  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
         }catch (Exception e){
-            logger.error("Erreur - viewGestionEmployeur -  Erreur : {}", e.getMessage(), e);
+            logger.error("Erreur - viewGestionEmployeurModifier -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
 
         }
@@ -114,7 +106,6 @@ public class EmployeurController {
     @PostMapping(value = "/gestionEmployeur/add", produces = "application/json")
     public ResponseEntity<String> addEmployeur(HttpServletRequest request, @RequestBody RafpEmployeur rafpEmployeur) {
         try {
-            logger.info(" Nom Employeur " + rafpEmployeur);
             boolean vRetour = employeurService.insertEmployeur(rafpEmployeur);
             if (vRetour){
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -141,7 +132,6 @@ public class EmployeurController {
     @PostMapping(value = "/gestionEmployeur/update", produces = "application/json")
     public ResponseEntity<String> updateEmployeur(HttpServletRequest request, @RequestBody RafpEmployeur rafpEmployeur) {
         try {
-            logger.info(" Nom Employeur " + rafpEmployeur);
             boolean vRetour = employeurService.updateEmployeur(rafpEmployeur);
             if (vRetour) {
                 return new ResponseEntity<>(HttpStatus.OK);

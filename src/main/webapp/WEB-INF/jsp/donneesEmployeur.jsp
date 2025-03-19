@@ -53,7 +53,6 @@
 <script>
     function confirmDelete(agentInsee) {
         if (confirm("Voulez-vous vraiment supprimer l'agent avec l'INSEE " + agentInsee + " ?")) {
-            // Logique de suppression ici
             console.log("Agent " + agentInsee + " supprimé.");
         }
     }

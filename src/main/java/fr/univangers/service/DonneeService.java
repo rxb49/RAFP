@@ -26,10 +26,5 @@ public class DonneeService {
     }
 
 
-    public RafpAgent getInfoAgentById(String no_insee) throws SQLException {
-        return dao.getInfoAgentById(no_insee);
-    }
-
-
 
 }
