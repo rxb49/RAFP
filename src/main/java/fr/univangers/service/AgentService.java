@@ -22,6 +22,22 @@ public class AgentService {
         return dao.insertAgent(agent);
     }
 
+    public List<RafpLibAgent> getAgent() throws SQLException {
+        return dao.getAgent();
+    }
+
+    public List<RafpLibAgent> getAgentBySearch(String recherche) throws SQLException {
+        return dao.getAgentBySearch(recherche);
+    }
+
+    public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
+        return dao.getEmployeurByAgent(no_insee);
+    }
+
+    public RafpAgent getAgentByNoInsee(String no_insee) throws SQLException {
+        return dao.getAgentByNoInsee(no_insee);
+    }
+
 
 
 }

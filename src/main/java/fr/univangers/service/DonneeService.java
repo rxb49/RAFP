@@ -25,16 +25,11 @@ public class DonneeService {
         return dao.getEmployeur();
     }
 
-    public List<RafpLibAgent> getAgent() throws SQLException {
-        return dao.getAgent();
-    }
 
     public RafpAgent getInfoAgentById(String no_insee) throws SQLException {
         return dao.getInfoAgentById(no_insee);
     }
 
-    public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
-        return dao.getEmployeurByAgent(no_insee);
-    }
+
 
 }

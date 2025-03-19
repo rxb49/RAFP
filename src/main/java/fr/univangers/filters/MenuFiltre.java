@@ -34,7 +34,7 @@ public class MenuFiltre implements Filter {
         Menu accueil = new Menu(messageSource.getMessage("titre.accueil", null, locale), "/", "bi-clock-fill");
         Menu gestionEmployeur = new Menu(messageSource.getMessage("titre.employeur.gestion", null, locale), "/gestionEmployeur", "bi-person-fill");
         Menu donneesEmployeur = new Menu(messageSource.getMessage("saisie.employeur", null, locale), "/rechercheEmployeur", "bi-briefcase-fill");
-        Menu donnesAgent = new Menu(messageSource.getMessage("saisie.agent", null, locale), "/donneesAgent", "bi-briefcase-fill");
+        Menu donnesAgent = new Menu(messageSource.getMessage("saisie.agent", null, locale), "/rechercheAgent", "bi-briefcase-fill");
         Menu calculRafp = new Menu(messageSource.getMessage("rafp.calcul", null, locale), "/calculRafp", "bi-briefcase-fill");
 
         List<Menu> leMenu = List.of(accueil, gestionEmployeur, donneesEmployeur, donnesAgent, calculRafp);

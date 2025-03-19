@@ -1,4 +1,4 @@
-function getEmployeurBySearch(path) {
+function getAgentBySearch(path) {
     var inputSearch = document.getElementById("inputName").value.trim();
 
     if (!inputSearch) {
@@ -6,7 +6,7 @@ function getEmployeurBySearch(path) {
         return;
     }
 
-    fetch(`${path}/rechercheEmployeur/search?recherche=${encodeURIComponent(inputSearch)}`, {
+    fetch(`${path}/rechercheAgent/search?recherche=${encodeURIComponent(inputSearch)}`, {
         method: 'GET',
         headers: { "Accept": "application/json" }
     })
@@ -19,19 +19,23 @@ function getEmployeurBySearch(path) {
                 return;
             }
 
-            var tbody = document.getElementById("employeursTable").getElementsByTagName("tbody")[0];
+            var tbody = document.getElementById("agentsTable").getElementsByTagName("tbody")[0];
             tbody.innerHTML = "";
 
-            data.forEach(employeur => {
+            data.forEach(agent => {
                 var row = document.createElement("tr");
 
+                var cellPrenom = document.createElement("td");
+                cellPrenom.textContent = agent.prenom;
+                row.appendChild(cellPrenom);
+
                 var cellNom = document.createElement("td");
-                cellNom.textContent = employeur.lib_emp;
+                cellNom.textContent = agent.nom_usuel || 'N/A';
                 row.appendChild(cellNom);
 
-                var cellMail = document.createElement("td");
-                cellMail.textContent = employeur.mail_emp || 'N/A';
-                row.appendChild(cellMail);
+                var cellNo_insee = document.createElement("td");
+                cellNo_insee.textContent = agent.no_insee || 'N/A';
+                row.appendChild(cellNo_insee);
 
                 var cellVoir = document.createElement("td");
 
@@ -44,12 +48,12 @@ function getEmployeurBySearch(path) {
                 buttonVoir.addEventListener("click", function () {
                     var form = document.createElement("form");
                     form.method = "POST";
-                    form.action =  `${path}/donneesEmployeur`;
+                    form.action =  `${path}/donneesAgent`;
 
                     var inputId = document.createElement("input");
                     inputId.type = "hidden";
-                    inputId.name = "id_emp";
-                    inputId.value = employeur.id_emp;
+                    inputId.name = "no_insee";
+                    inputId.value = agent.no_insee;
 
                     form.appendChild(inputId);
                     document.body.appendChild(form);

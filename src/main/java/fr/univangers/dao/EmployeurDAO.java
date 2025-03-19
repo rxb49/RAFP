@@ -235,8 +235,8 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select distinct R.id_emp, S.nom_usuel, S.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
-                    "inner join siham_adm.siham_individu_paye S on R.insee = s.no_insee where id_emp = ?";
+            String requete = "select distinct R.id_emp, a.nom_usuel, A.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
+                    "               inner join harp_adm.rafp_agent A on R.insee = A.no_insee where id_emp = ?";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setInt(1, idEmployeur);
