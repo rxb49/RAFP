@@ -13,7 +13,6 @@
                     <h2 class="mb-1">Rechercher un employeur</h2>
                 </div>
                <div class="form-group g-mb-25">
-                    <label for="inputName" class="labelRequired">Rechercher un employeur</label>
                     <input type="text" class="form-control form-control-md formUA" id="inputName" aria-describedby="inputName" placeholder="Rechercher un employeur">
                </div><br>
 

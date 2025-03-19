@@ -25,10 +25,6 @@ public class DonneeService {
         return dao.getEmployeur();
     }
 
-    public List<RafpAgentRetour> getAgentByEmployeurId(int idEmployeur) throws SQLException {
-        return dao.getAgentByEmployeurId(idEmployeur);
-    }
-
     public List<RafpLibAgent> getAgent() throws SQLException {
         return dao.getAgent();
     }

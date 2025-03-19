@@ -2,11 +2,9 @@ package fr.univangers.controller;
 
 import fr.univangers.classes.*;
 import fr.univangers.exceptions.UAException;
-import fr.univangers.service.AppelExterne;
-import fr.univangers.service.AutorisationService;
-import fr.univangers.service.EmployeurService;
-import fr.univangers.service.PersonnelService;
+import fr.univangers.service.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +27,42 @@ public class EmployeurController {
     public EmployeurController(EmployeurService employeurService) {
         this.employeurService = employeurService;
     }
+
+    @PostMapping("/donneesEmployeur")
+    public String viewDonneesEmployeur(@RequestParam Integer id_emp, Model model, HttpSession session) {
+        try {
+            if (id_emp == null) {
+                return "redirect:/error";
+            }
+
+            session.setAttribute("id_emp", id_emp);
+            List<RafpAgentRetour> agents = employeurService.getAgentByEmployeurId(id_emp);
+            RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
+            double totalMontantRetour = agents.stream()
+                    .mapToDouble(RafpAgentRetour::getMnt_retour)
+                    .sum();
+            // Ajouter les informations à la vue
+            model.addAttribute("agents", agents);
+            model.addAttribute("employeur", employeur);
+            model.addAttribute("totalMontantRetour", totalMontantRetour);
+
+
+            return "donneesEmployeur";
+        } catch (SQLException e) {
+            logger.error("ErreurBDD - viewDonneesEmployeur - Erreur : {}", e.getMessage(), e);
+            return "redirect:/error";
+        } catch (Exception e) {
+            logger.error("Erreur - viewDonneesEmployeur - Erreur : {}", e.getMessage(), e);
+            return "redirect:/error";
+        }
+    }
+
+
+
+
+
+
+
 
     @GetMapping("/rechercheEmployeur")
     public  String viewRechercheEmployeur() {
@@ -105,13 +140,12 @@ public class EmployeurController {
 
     @PostMapping(value = "/gestionEmployeur/update", produces = "application/json")
     public ResponseEntity<String> updateEmployeur(HttpServletRequest request, @RequestBody RafpEmployeur rafpEmployeur) {
-        try{
+        try {
             logger.info(" Nom Employeur " + rafpEmployeur);
             boolean vRetour = employeurService.updateEmployeur(rafpEmployeur);
-            if (vRetour){
+            if (vRetour) {
                 return new ResponseEntity<>(HttpStatus.OK);
-            }
-            else{
+            } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -121,11 +155,9 @@ public class EmployeurController {
         } catch (SQLException e) {
             logger.error("Erreur BDD - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", rafpEmployeur.getId_emp(), rafpEmployeur.getLib_emp(), rafpEmployeur.getMail_emp(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Erreur - updateEmployeur - idEmployeurs : {} - nomEmployeurUpdate : {} - mailEmployeurUpdate : {} - Erreur : {}", rafpEmployeur.getId_emp(), rafpEmployeur.getLib_emp(), rafpEmployeur.getMail_emp(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 }

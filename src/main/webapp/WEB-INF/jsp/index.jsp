@@ -20,7 +20,7 @@
             </span>
         </a>
 
-        <a href="${pageContext.request.contextPath}/donneesEmployeur" class="card card-custom d-flex flex-row pe-4 mb-3">
+        <a href="${pageContext.request.contextPath}/rechercheEmployeur" class="card card-custom d-flex flex-row pe-4 mb-3">
             <span class="icon-container me-3 m-2"><i class="bi bi-plus"></i></span>
             <div class="flex-grow-1 cadre-info my-3">
                 <h2 class="mb-1"><spring:message code="saisie.employeur" /></h2>

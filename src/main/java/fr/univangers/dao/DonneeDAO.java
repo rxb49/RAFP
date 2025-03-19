@@ -55,40 +55,6 @@ public class DonneeDAO {
     }
 
 
-    public List<RafpAgentRetour> getAgentByEmployeurId(int idEmployeur) throws SQLException {
-        logger.info("Début de la requête de récuperation des agents pour un employeur");
-
-        List<RafpAgentRetour> agents = new ArrayList<>();
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            String requete = "select distinct R.id_emp, S.nom_usuel, S.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
-                    "inner join siham_adm.siham_individu_paye S on R.insee = s.no_insee where id_emp = ?";
-            // Exécuter la requête de récuperation
-            cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setInt(1, idEmployeur);
-            rs = cstmt.executeQuery();
-            while (rs.next()) {
-                RafpAgentRetour employeur = new RafpAgentRetour();
-                employeur.setId_emp(rs.getInt("id_emp"));
-                employeur.setNom_usuel(rs.getString("nom_usuel"));
-                employeur.setPrenom(rs.getString("prenom"));
-                employeur.setInsee(rs.getString("insee"));
-                employeur.setMnt_retour(rs.getInt("mnt_retour"));
-                agents.add(employeur);
-            }
-            logger.info("Agents pour l'employeur" + agents.toString());
-            rs.close();
-            cstmt.close();
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requête de récuperation des agents pour un employeur");
-        return agents;
-    }
 
     public List<RafpLibAgent> getAgent() throws SQLException {
         logger.info("Début de la requête de récuperation des agents");
