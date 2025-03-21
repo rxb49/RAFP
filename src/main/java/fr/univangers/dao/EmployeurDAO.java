@@ -36,7 +36,7 @@ public class EmployeurDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employer WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
             verificationStmt.setString(1, employeur.getLib_emp());
             verificationStmt.setString(2, employeur.getMail_emp());
@@ -50,7 +50,7 @@ public class EmployeurDAO {
             Sql.close(resultSet);
 
             // Obtenir l'id maximum existant
-            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employeur";
+            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employer";
             PreparedStatement maxIdStmt = maConnexion.prepareStatement(maxIdQuery);
             ResultSet maxIdResultSet = maxIdStmt.executeQuery();
             maxIdResultSet.next();
@@ -58,7 +58,7 @@ public class EmployeurDAO {
             int newId = maxId + 1;
 
             // Insertion de l'agent
-            String requete = "INSERT INTO harp_adm.rafp_employeur (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_employer (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
             // Définir les valeurs des paramètres avant l'exécution
@@ -95,9 +95,10 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
+            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employer order by lib_emp ASC";
             // Exécuter la requête de récuperation
-
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
             while (rs.next()) {
                 RafpEmployeur employeur = new RafpEmployeur();
                 employeur.setId_emp(rs.getInt("id_emp"));
@@ -105,14 +106,45 @@ public class EmployeurDAO {
                 employeur.setMail_emp(rs.getString("mail_emp"));
                 employeurs.add(employeur);
             }
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();
         }finally {
         Sql.close(maConnexion);
         }
         logger.info("Fin de la requête de récuperation des employeurs");
+        return employeurs;
+    }
+
+    public List<RafpEmployeur> getEmployeurBySearch(String recherche) throws SQLException {
+        logger.info("Début de la requête de recherche des employeurs");
+        List<RafpEmployeur> employeurs = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employer " +
+                    "WHERE lib_emp LIKE ? " +
+                    "   OR mail_emp LIKE ? ";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, "%" + recherche + "%");
+            cstmt.setString(2, "%" + recherche + "%");
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpEmployeur employeur = new RafpEmployeur();
+                employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setLib_emp(rs.getString("lib_emp"));
+                employeur.setMail_emp(rs.getString("mail_emp"));
+                employeurs.add(employeur);
+            }
+            logger.info(employeurs.toString());
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de recherche des employeurs");
         return employeurs;
     }
 
@@ -130,7 +162,7 @@ public class EmployeurDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employer WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
             verificationStmt.setString(1, rafpEmployeur.getMail_emp());
             verificationStmt.setString(2, rafpEmployeur.getLib_emp());
@@ -142,7 +174,7 @@ public class EmployeurDAO {
             }
             Sql.close(resultSet);
 
-            String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
+            String requete = "update harp_adm.rafp_employer set lib_emp = ?, mail_emp = ? where id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
             // Exécuter la requête d'insertion
 
@@ -161,5 +193,66 @@ public class EmployeurDAO {
         }
         logger.info("Fin de la requête de modification d'un employeur");
         return result;
+    }
+
+    public RafpEmployeur getEmployeurById(int idEmployeur) throws SQLException {
+        logger.info("Début de la requête de récuperation de l'employeurs");
+        RafpEmployeur employeur = new RafpEmployeur();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employer E where E.id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setInt(1, idEmployeur);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setLib_emp(rs.getString("lib_emp"));
+                employeur.setMail_emp(rs.getString("mail_emp"));
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation de l'employeurs");
+        return employeur;
+    }
+
+
+    public List<RafpAgentRetour> getAgentByEmployeurId(int idEmployeur) throws SQLException {
+        logger.info("Début de la requête de récuperation des agents pour un employeur");
+        logger.info("Id de l'employeur " + idEmployeur);
+        List<RafpAgentRetour> agents = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select distinct R.id_emp, a.nom_usuel, A.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
+                    "               inner join harp_adm.rafp_agent A on R.insee = A.no_insee where id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setInt(1, idEmployeur);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                RafpAgentRetour employeur = new RafpAgentRetour();
+                employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setNom_usuel(rs.getString("nom_usuel"));
+                employeur.setPrenom(rs.getString("prenom"));
+                employeur.setInsee(rs.getString("insee"));
+                employeur.setMnt_retour(rs.getInt("mnt_retour"));
+                agents.add(employeur);
+            }
+            rs.close();
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation des agents pour un employeur");
+        return agents;
     }
 }

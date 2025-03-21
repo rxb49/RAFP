@@ -3,7 +3,6 @@ package fr.univangers;
 import fr.univangers.classes.Personnel;
 import fr.univangers.classes.User;
 import fr.univangers.controller.MainController;
-import fr.univangers.controller.PersonnelController;
 import fr.univangers.service.AppelExterne;
 import fr.univangers.service.PersonnelService;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +26,6 @@ class ApplicationmodeleApplicationTests {
 
     @Autowired
     private MainController mainController;
-    @Autowired
-    private PersonnelController personnelController;
 
     @Autowired
     private MockMvc mockMvc; //Permet de tester les appels aux Controller, et du coup on ajoute @AutoConfigureMockMvc
@@ -42,7 +39,6 @@ class ApplicationmodeleApplicationTests {
     @DisplayName("Controller")
     void testController(){
         assertNotNull(mainController);
-        assertNotNull(personnelController);
     }
 
     @Test

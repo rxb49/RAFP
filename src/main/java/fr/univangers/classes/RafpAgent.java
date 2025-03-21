@@ -12,7 +12,27 @@ public class RafpAgent {
     private int total_retour;// rafp 2023 RafpPrecedante
     private int base_restante;// rafp 2023 RafpPrecedante
     private int base_retour_recalculee;// rafp 2023 RafpPrecedante
+    private String nom_usuel; // Siham_adm.siham_individu_paye
+    private String prenom; // Siham_adm.siham_individu_paye
 
+
+    @Override
+    public String toString() {
+        return "RafpAgent{" +
+                "annee='" + annee + '\'' +
+                ", no_dossier_pers='" + no_dossier_pers + '\'' +
+                ", no_insee='" + no_insee + '\'' +
+                ", tbi=" + tbi +
+                ", indemn=" + indemn +
+                ", seuil=" + seuil +
+                ", rafpp=" + rafpp +
+                ", total_retour=" + total_retour +
+                ", base_restante=" + base_restante +
+                ", base_retour_recalculee=" + base_retour_recalculee +
+                ", nom_usuel=" + nom_usuel +
+                ", prenom=" + prenom +
+                '}';
+    }
 
     public String getAnnee() {
         return annee;
@@ -79,5 +99,21 @@ public class RafpAgent {
     }
 
     public void setBase_retour_recalculee(int base_retour_recalculee) { this.base_retour_recalculee = base_retour_recalculee; }
+
+    public String getNom_usuel() {
+        return nom_usuel;
+    }
+
+    public void setNom_usuel(String nom_usuel) {
+        this.nom_usuel = nom_usuel;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
 
 }

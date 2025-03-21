@@ -27,6 +27,19 @@ public class EmployeurService {
         return dao.getEmployeur();
     }
 
+
+    public RafpEmployeur getEmployeurById(int id) throws SQLException {
+        return dao.getEmployeurById(id);
+    }
+
+    public List<RafpAgentRetour> getAgentByEmployeurId(int idEmployeur) throws SQLException {
+        return dao.getAgentByEmployeurId(idEmployeur);
+    }
+
+    public List<RafpEmployeur> getEmployeurBySearch(String recherche) throws SQLException {
+        return dao.getEmployeurBySearch(recherche);
+    }
+
     public boolean updateEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
         return dao.updateEmployeur(employeur);
     }

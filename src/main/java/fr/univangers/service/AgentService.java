@@ -1,9 +1,6 @@
 package fr.univangers.service;
 
-import fr.univangers.classes.Personnel;
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpPrecedante;
-import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.classes.*;
 import fr.univangers.dao.AgentDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +21,23 @@ public class AgentService {
     public RafpAgent insertAgent(RafpAgent agent) throws SQLException {
         return dao.insertAgent(agent);
     }
+
+    public List<RafpLibAgent> getAgent() throws SQLException {
+        return dao.getAgent();
+    }
+
+    public List<RafpLibAgent> getAgentBySearch(String recherche) throws SQLException {
+        return dao.getAgentBySearch(recherche);
+    }
+
+    public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
+        return dao.getEmployeurByAgent(no_insee);
+    }
+
+    public RafpAgent getAgentByNoInsee(String no_insee) throws SQLException {
+        return dao.getAgentByNoInsee(no_insee);
+    }
+
 
 
 }

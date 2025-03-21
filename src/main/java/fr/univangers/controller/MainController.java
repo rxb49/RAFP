@@ -89,7 +89,10 @@ public class MainController {
         }
     }
 
-
+    @GetMapping("/calculRafp")
+    public String viewCalculRafp(HttpServletRequest request, Model model) {
+        return "calculRafp";
+    }
 
 
 
