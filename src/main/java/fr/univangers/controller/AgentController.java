@@ -30,34 +30,36 @@ public class AgentController {
     private final Logger logger = LoggerFactory.getLogger(AgentController.class);
 
     private final AgentService agentService;
-    private final EmployeurService employeurService;
 
     public AgentController(AgentService agentService, EmployeurService employeurService) {
         this.agentService = agentService;
-        this.employeurService = employeurService;
     }
 
 
-    @PostMapping("/donneesAgent")
-    public  String viewDonneesAgent(Model model, @RequestParam String no_insee) {
-        try{
-            if (no_insee == null) {
-                return "redirect:/error";
+    @GetMapping("/donneesAgent")
+    public String viewDonneesAgent(Model model, @RequestParam("no_insee") String no_insee) {
+        try {
+            if (no_insee == null || no_insee.isEmpty()) {
+                return "redirect:/error"; // Redirection si no_insee est absent
             }
 
+            // Récupérer les employeurs et l'agent en utilisant le no_insee
             List<RafpRetour> employeurs = agentService.getEmployeurByAgent(no_insee);
             RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
+
+            // Ajouter les données au modèle pour les utiliser dans la vue
             model.addAttribute("employeurs", employeurs);
             model.addAttribute("agent", agent);
+
+            // Retourner la vue
             return "donneesAgent";
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             logger.error("Erreur BDD - viewDonneesAgent  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Erreur - viewDonneesAgent -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
-
         }
     }
 

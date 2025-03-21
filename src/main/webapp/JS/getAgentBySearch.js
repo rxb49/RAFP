@@ -23,7 +23,7 @@ function getAgentBySearch(path) {
 
     fetch(`${path}/rechercheAgent/search?recherche=${encodeURIComponent(inputSearch)}`, {
         method: 'GET',
-        headers: { "Accept": "application/json" }
+        headers: {"Accept": "application/json"}
     })
         .then(response => response.json())
         .then(data => {
@@ -54,31 +54,18 @@ function getAgentBySearch(path) {
 
                 var cellVoir = document.createElement("td");
 
-                var buttonVoir = document.createElement("button");
-                buttonVoir.type = "button";
-                buttonVoir.className = "text-primary";
-                buttonVoir.textContent = "Voir";
+                var linkVoir = document.createElement("a");
+                linkVoir.className = "text-primary";  // Applique une classe de style
+                linkVoir.textContent = "Voir";  // Texte du lien
+                var url = `${path}/donneesAgent?no_insee=${encodeURIComponent(agent.no_insee)}`;
+                linkVoir.href = url;
 
-                buttonVoir.addEventListener("click", function () {
-                    var form = document.createElement("form");
-                    form.method = "POST";
-                    form.action = `${path}/donneesAgent`;
 
-                    var inputId = document.createElement("input");
-                    inputId.type = "hidden";
-                    inputId.name = "no_insee";
-                    inputId.value = agent.no_insee;
-
-                    form.appendChild(inputId);
-                    document.body.appendChild(form);
-                    form.submit();
-                });
-
-                cellVoir.appendChild(buttonVoir);
+                cellVoir.appendChild(linkVoir);
                 row.appendChild(cellVoir);
 
                 tbody.appendChild(row);
-            });
+            })
+                .catch(error => console.error("Erreur lors de la requête :", error));
         })
-        .catch(error => console.error("Erreur lors de la requête :", error));
 }
