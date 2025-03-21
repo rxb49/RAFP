@@ -1,6 +1,7 @@
 package fr.univangers.dao;
 
 import fr.univangers.classes.*;
+import fr.univangers.exceptions.UAException;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -189,5 +190,35 @@ public class AgentDAO {
         }
         logger.info("Fin de la requête de récuperation des employeurs pour l'agent");
         return employeurs;
+    }
+
+    public boolean updateTotalRetourByAgent(String no_insee) throws SQLException, UAException {
+        logger.info("Début de la requête de calcul du total_retour");
+        if (no_insee == null || no_insee.isEmpty()) {
+            throw new UAException("Le numéro Insee de l'agent ne peut pas être null");
+        }
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            // modification de l'agent
+            String requete = "update harp_adm.rafp_agent A set A.total_retour = (SELECT SUM(R.mnt_retour) FROM harp_adm.rafp_retour R " +
+                    "WHERE R.insee = A.no_insee ) WHERE  A.no_insee = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            // Définir les valeurs des paramètres avant l'exécution
+            cstmt.setString(1, no_insee);
+            cstmt.executeUpdate();
+
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête de calcul du total_retour");
+        return result;
     }
 }

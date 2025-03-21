@@ -170,12 +170,26 @@ public class EmployeurController {
     @PostMapping("/ajoutEmployeur/add")
     public ResponseEntity<String> viewAjoutEmployeurAdd(@RequestBody Map<String, String> requestData, Model model) {
         String no_insee = requestData.get("noInsee");
+        String idEmpStr = requestData.get("idEmployeur");
+        String montantStr = requestData.get("montant");
+        // Vérification des entrées vides ou nulles
+        if (no_insee == null || no_insee.isEmpty()) {
+            return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
+        }
+        if (idEmpStr == null || idEmpStr.isEmpty()) {
+            return new ResponseEntity<>("L'identifiant employeur ne peut pas être vide", HttpStatus.BAD_REQUEST);
+        }
+        if (montantStr == null || montantStr.isEmpty()) {
+            return new ResponseEntity<>("Le montant ne peut pas être vide", HttpStatus.BAD_REQUEST);
+        }
         int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
         int montant = Integer.parseInt(requestData.get("montant"));
+
         try {
             logger.info(requestData.toString());
             boolean vRetour = employeurService.insertEmployeurAdd(no_insee, id_emp, montant);
             if (vRetour) {
+                agentService.updateTotalRetourByAgent(no_insee);
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

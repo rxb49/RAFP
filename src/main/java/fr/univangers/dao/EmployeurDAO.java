@@ -258,8 +258,8 @@ public class EmployeurDAO {
 
     public boolean insertEmployeurAdd(String no_insee, int id_emp, int montant) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion du retour");
-        if (no_insee == null || id_emp == 0  || montant == 0 || no_insee.isEmpty()) {
-            throw new UAException("Le montant et l'employeur ne peuvent pas être null");
+        if (no_insee == null || no_insee.isEmpty() || id_emp == 0 || montant == 0) {
+            throw new UAException("Le montant et l'employeur ne peuvent pas être null ou égaux à zéro");
         }
         Connection maConnexion = null;
         PreparedStatement cstmt = null;

@@ -2,6 +2,7 @@ package fr.univangers.service;
 
 import fr.univangers.classes.*;
 import fr.univangers.dao.AgentDAO;
+import fr.univangers.exceptions.UAException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,12 @@ public class AgentService {
     public RafpAgent getAgentByNoInsee(String no_insee) throws SQLException {
         return dao.getAgentByNoInsee(no_insee);
     }
+
+    public boolean updateTotalRetourByAgent(String no_insee) throws SQLException, UAException {
+        return dao.updateTotalRetourByAgent(no_insee);
+    }
+
+
 
 
 
