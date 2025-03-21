@@ -255,4 +255,57 @@ public class EmployeurDAO {
         logger.info("Fin de la requête de récuperation des agents pour un employeur");
         return agents;
     }
+
+    public boolean insertEmployeurAdd(String no_insee, int id_emp, int montant) throws SQLException, UAException {
+        logger.info("Début de la requête d'insertion du retour");
+        if (no_insee == null || id_emp == 0  || montant == 0 || no_insee.isEmpty()) {
+            throw new UAException("Le montant et l'employeur ne peuvent pas être null");
+        }
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            //Vérifier si le retour existe déjà
+            String verificationQuery = "SELECT COUNT(insee) nb FROM harp_adm.rafp_retour WHERE  insee = ? AND id_emp = ?";
+            PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
+            verificationStmt.setString(1, no_insee);
+            verificationStmt.setInt(2, id_emp);
+            ResultSet resultSet = verificationStmt.executeQuery();
+            if (resultSet.next()) {
+                if (resultSet.getInt("nb") > 0) {
+                    logger.info("Le retour existe déjà");
+                    throw new UAException("Le retour existe déjà.");
+                }
+            }
+            Sql.close(resultSet);
+
+
+            // Insertion de l'agent
+            String requete = "insert into harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) VALUES (?, ?, ?, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            // Définir les valeurs des paramètres avant l'exécution
+            cstmt.setString(1, "2023");
+            cstmt.setString(2, no_insee);
+            cstmt.setInt(3, id_emp);
+            cstmt.setInt(4, montant);
+            // Exécuter la requête d'insertion
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête d'insertion du retour");
+        return result;
+    }
 }

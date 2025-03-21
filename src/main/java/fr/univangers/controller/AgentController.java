@@ -30,9 +30,11 @@ public class AgentController {
     private final Logger logger = LoggerFactory.getLogger(AgentController.class);
 
     private final AgentService agentService;
+    private final EmployeurService employeurService;
 
-    public AgentController(AgentService agentService) {
+    public AgentController(AgentService agentService, EmployeurService employeurService) {
         this.agentService = agentService;
+        this.employeurService = employeurService;
     }
 
 
@@ -82,13 +84,14 @@ public class AgentController {
     }
 
     @GetMapping("/ajoutAgent")
-    public String viewAjoutAgent() {
+    public String viewAjoutAgent( ) {
         return "ajoutAgent";
     }
+
+
+
     @GetMapping("/modifierAgent")
-    public String viewModifierAgent() {
-        return "modifierAgent";
-    }
+    public String viewModifierAgent() { return "modifierAgent";}
 
 }
 

@@ -44,5 +44,9 @@ public class EmployeurService {
         return dao.updateEmployeur(employeur);
     }
 
+    public boolean insertEmployeurAdd(String no_insee, int id_emp, int montant) throws SQLException, UAException {
+        return dao.insertEmployeurAdd(no_insee, id_emp, montant);
+    }
+
 
 }

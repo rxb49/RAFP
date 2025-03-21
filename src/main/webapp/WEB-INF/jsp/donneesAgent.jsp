@@ -64,7 +64,7 @@
                     </tbody>
                 </table>
 
-                <a href="${pageContext.request.contextPath}/ajoutEmployeur" class="btn btn-secondary">Ajouter un employeur</a>
+                <a href="${pageContext.request.contextPath}/ajoutEmployeur?no_insee=${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
             </div>
         </div>
     </div>

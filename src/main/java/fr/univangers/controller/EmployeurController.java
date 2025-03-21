@@ -23,9 +23,11 @@ public class EmployeurController {
     private final Logger logger = LoggerFactory.getLogger(EmployeurController.class);
 
     private final EmployeurService employeurService;
+    private final AgentService agentService;
 
-    public EmployeurController(EmployeurService employeurService) {
+    public EmployeurController(EmployeurService employeurService, AgentService agentService) {
         this.employeurService = employeurService;
+        this.agentService = agentService;
     }
 
     @PostMapping("/donneesEmployeur")
@@ -151,9 +153,47 @@ public class EmployeurController {
     }
 
     @GetMapping("/ajoutEmployeur")
-    public String viewAjoutEmployeur() {
-        return "ajoutEmployeur";
+    public String viewAjoutEmployeur(Model model, @RequestParam("no_insee") String noInsee) {
+        try{
+            List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
+            RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
+            logger.info(employeurs.toString());
+            model.addAttribute("employeurs", employeurs);
+            model.addAttribute("agent", agent);
+            return "ajoutEmployeur";
+
+        }catch (Exception e){
+            return "errorPage/errorBDD";
+        }
     }
+
+    @PostMapping("/ajoutEmployeur/add")
+    public ResponseEntity<String> viewAjoutEmployeurAdd(@RequestBody Map<String, String> requestData, Model model) {
+        String no_insee = requestData.get("noInsee");
+        int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
+        int montant = Integer.parseInt(requestData.get("montant"));
+        try {
+            logger.info(requestData.toString());
+            boolean vRetour = employeurService.insertEmployeurAdd(no_insee, id_emp, montant);
+            if (vRetour) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (UAException e) {
+            logger.error("Erreur UA - viewAjoutEmployeurAdd - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        catch (SQLException e) {
+            logger.error("Erreur BDD - viewAjoutEmployeurAdd - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("Erreur - viewAjoutEmployeurAdd - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/modifierEmployeur")
     public String viewModifierEmployeur() {
