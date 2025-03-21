@@ -208,6 +208,33 @@ public class EmployeurController {
         }
     }
 
+    @PostMapping("/ajoutEmployeur/delete")
+    public ResponseEntity<String> viewAjoutEmployeurDelete(@RequestBody Map<String, String> requestData, Model model) {
+        String no_insee = requestData.get("noInsee");
+        int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
+        try {
+            logger.info(requestData.toString());
+            boolean vRetour = employeurService.deleteDonneeEmployeur(no_insee, id_emp);
+            if (vRetour) {
+                agentService.updateTotalRetourByAgent(no_insee);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (UAException e) {
+            logger.error("Erreur UA - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        catch (SQLException e) {
+            logger.error("Erreur BDD - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("Erreur - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/modifierEmployeur")
     public String viewModifierEmployeur() {

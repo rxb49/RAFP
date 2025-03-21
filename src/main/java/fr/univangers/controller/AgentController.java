@@ -46,7 +46,6 @@ public class AgentController {
             // Récupérer les employeurs et l'agent en utilisant le no_insee
             List<RafpRetour> employeurs = agentService.getEmployeurByAgent(no_insee);
             RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
-
             // Ajouter les données au modèle pour les utiliser dans la vue
             model.addAttribute("employeurs", employeurs);
             model.addAttribute("agent", agent);

@@ -281,7 +281,6 @@ public class EmployeurDAO {
             Sql.close(resultSet);
 
 
-            // Insertion de l'agent
             String requete = "insert into harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) VALUES (?, ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
@@ -306,6 +305,39 @@ public class EmployeurDAO {
         }
 
         logger.info("Fin de la requête d'insertion du retour");
+        return result;
+    }
+
+    public boolean deleteDonneeEmployeur(String no_insee, int id_emp) throws SQLException, UAException {
+        logger.info("Début de la requête de suppression du retour");
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            // Suppression du retour
+            String requete = "delete from harp_adm.rafp_retour R where R.insee = ? AND R.id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            // Définir les valeurs des paramètres avant l'exécution
+            cstmt.setString(1, no_insee);
+            cstmt.setInt(2, id_emp);
+            // Exécuter la requête de suppression
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Suppression en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne supprimé en base de donnée.");
+            }
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête de suppression du retour");
         return result;
     }
 }

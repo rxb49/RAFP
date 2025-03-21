@@ -46,6 +46,7 @@
                 <table class="table table-bordered text-center" id="employeursTable">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Nom</th>
                             <th>Montant</th>
                             <th>Modifier</th>
@@ -55,15 +56,15 @@
                     <tbody>
                         <c:forEach var="employeur" items="${employeurs}">
                             <tr>
+                                <td>${employeur.id_emp}</td>
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
                                 <td><a href="#" >Modifier</a></td>
-                                <td><a href="#" onclick="confirmDeleteEmployeur('${employeur.lib_emp}')">Supprimer</a></td>
+                                <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
-
                 <a href="${pageContext.request.contextPath}/ajoutEmployeur?no_insee=${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
             </div>
         </div>
@@ -71,6 +72,7 @@
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/confirmDelete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp" %>
