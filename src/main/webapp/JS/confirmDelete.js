@@ -13,12 +13,8 @@ function confirmDeleteEmployeur(path, employeur, id_emp) {
         cancelButtonText: "Annuler"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(path+'/ajoutEmployeur/delete', {
-                method: 'POST',
-                body: JSON.stringify({
-                    noInsee: noInsee,
-                    idEmployeur: id_emp
-                }),
+            fetch(`${path}/ajoutEmployeur/delete?noInsee=${encodeURIComponent(noInsee)}&idEmployeur=${encodeURIComponent(id_emp)}`, {
+                method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }

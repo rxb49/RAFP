@@ -57,7 +57,7 @@ function getAgentBySearch(path) {
                 var linkVoir = document.createElement("a");
                 linkVoir.className = "text-primary";  // Applique une classe de style
                 linkVoir.textContent = "Voir";  // Texte du lien
-                var url = `${path}/donneesAgent?no_insee=${encodeURIComponent(agent.no_insee)}`;
+                var url = `${path}/donneesAgent/${agent.no_insee}`;
                 linkVoir.href = url;
 
 

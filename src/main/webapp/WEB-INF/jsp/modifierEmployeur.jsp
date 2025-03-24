@@ -25,11 +25,11 @@
                     <br>
                     <div class="form-group g-mb-25 px-3">
                         <label for="montant" class="labelRequired"><spring:message code="employeur.mail"/></label>
-                        <input type="number" value="${retour.mnt_retour}" required="required" class="form-control form-control-md formUA" name="montant" id="montant" aria-describedby="montant" placeholder="Entrez un montant">
+                        <input type="number" value="${retour.mnt_retour}" required="required" class="form-control form-control-md formUA" id="montant" aria-describedby="montant" placeholder="Entrez un montant">
                     </div><br>
                     <div class="button-group">
                         <button type="submit" onclick="modifEmployeurRetour('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">Modifier</button>
-                        <a href="${pageContext.request.contextPath}/donneesAgent?no_insee=${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
+                        <a href="${pageContext.request.contextPath}/donneesAgent/${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
                     </div>
             </div>
         </div>

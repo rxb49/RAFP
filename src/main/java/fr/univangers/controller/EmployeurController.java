@@ -32,10 +32,10 @@ public class EmployeurController {
         this.retourService = retourService;
     }
 
-    @PostMapping("/donneesEmployeur")
-    public String viewDonneesEmployeur(@RequestParam Integer id_emp, Model model) {
+    @GetMapping("/donneesEmployeur")
+    public String viewDonneesEmployeur(Model model, @RequestParam("id_emp") int id_emp) {
         try {
-            if (id_emp == null) {
+            if (id_emp == 0 ) {
                 return "redirect:/error";
             }
 
@@ -210,29 +210,28 @@ public class EmployeurController {
         }
     }
 
-    @PostMapping("/ajoutEmployeur/delete")
-    public ResponseEntity<String> viewAjoutEmployeurDelete(@RequestBody Map<String, String> requestData, Model model) {
-        String no_insee = requestData.get("noInsee");
-        int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
+    @DeleteMapping("/ajoutEmployeur/delete")
+    public ResponseEntity<String> viewAjoutEmployeurDelete(@RequestParam String noInsee, @RequestParam int idEmployeur) {
+
         try {
-            logger.info(requestData.toString());
-            boolean vRetour = employeurService.deleteDonneeEmployeur(no_insee, id_emp);
+            logger.info("Suppression employeur - noInsee: {} - idEmployeur: {}", noInsee, idEmployeur);
+            boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, idEmployeur);
             if (vRetour) {
-                agentService.updateTotalRetourByAgent(no_insee);
+                agentService.updateTotalRetourByAgent(noInsee);
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (UAException e) {
-            logger.error("Erreur UA - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            logger.error("Erreur UA - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
         catch (SQLException e) {
-            logger.error("Erreur BDD - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            logger.error("Erreur BDD - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            logger.error("Erreur - viewAjoutEmployeurDelete - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -250,30 +249,33 @@ public class EmployeurController {
             model.addAttribute("retour", retour);
             return "modifierEmployeur";
 
-        }catch (Exception e){
+        }
+        catch (SQLException e){
+            logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
+        }catch (Exception e){
+            return "errorPage/errorLoad";
         }
     }
 
     @PostMapping("/ajoutEmployeur/modifier")
     public ResponseEntity<String> viewModifierEmployeurModif(@RequestBody Map<String, String> requestData, Model model) {
-        String no_insee = requestData.get("noInsee");
-        String idEmpStr = requestData.get("idEmployeur");
-        String montantStr = requestData.get("montant");
-        // Vérification des entrées vides ou nulles
-        if (no_insee == null || no_insee.isEmpty()) {
-            return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
-        }
-        if (idEmpStr == null || idEmpStr.isEmpty()) {
-            return new ResponseEntity<>("L'identifiant employeur ne peut pas être vide", HttpStatus.BAD_REQUEST);
-        }
-        if (montantStr == null || montantStr.isEmpty()) {
-            return new ResponseEntity<>("Le montant ne peut pas être vide", HttpStatus.BAD_REQUEST);
-        }
-        int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
-        int montant = Integer.parseInt(requestData.get("montant"));
-
         try {
+            String no_insee = requestData.get("noInsee");
+            String idEmpStr = requestData.get("idEmployeur");
+            String montantStr = requestData.get("montant");
+            // Vérification des entrées vides ou nulles
+            if (no_insee == null || no_insee.isEmpty()) {
+                return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            if (idEmpStr == null || idEmpStr.isEmpty()) {
+                return new ResponseEntity<>("L'identifiant employeur ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            if (montantStr == null || montantStr.isEmpty()) {
+                return new ResponseEntity<>("Le montant ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
+            int montant = Integer.parseInt(requestData.get("montant"));
             logger.info(requestData.toString());
             boolean vRetour = retourService.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
             if (vRetour) {

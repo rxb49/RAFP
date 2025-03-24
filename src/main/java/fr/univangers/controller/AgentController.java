@@ -16,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -36,8 +33,9 @@ public class AgentController {
     }
 
 
-    @GetMapping("/donneesAgent")
-    public String viewDonneesAgent(Model model, @RequestParam("no_insee") String no_insee) {
+    @GetMapping("/donneesAgent/{no_insee}")
+    public String viewDonneesAgent(Model model, @PathVariable String no_insee) {
+        System.out.println("Contrôleur appelé avec no_insee = " + no_insee);
         try {
             if (no_insee == null || no_insee.isEmpty()) {
                 return "redirect:/error"; // Redirection si no_insee est absent
@@ -85,8 +83,18 @@ public class AgentController {
     }
 
     @GetMapping("/ajoutAgent")
-    public String viewAjoutAgent( ) {
-        return "ajoutAgent";
+    public String viewAjoutAgent(Model model, @RequestParam("id_emp") int id_emp ) {
+        try{
+            //List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
+            //RafpAgent agent = agentService.getAgentByNoInsee(id_emp);
+            //logger.info(employeurs.toString());
+            //model.addAttribute("employeurs", employeurs);
+            //model.addAttribute("agent", agent);
+            return "ajoutAgent";
+
+        }catch (Exception e){
+            return "errorPage/errorBDD";
+        }
     }
 
 
