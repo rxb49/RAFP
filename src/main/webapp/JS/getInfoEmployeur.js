@@ -9,9 +9,23 @@ function updateEmployerDetails() {
     document.getElementById("mailEmployeurUpdate").value = email;
 }
 
+function isValidEmail(email) {
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
+
 function insertEmployeur(path){
     let nomEmployeur = document.getElementById("nomEmployeur").value;
     let mailEmployeur = document.getElementById("mailEmployeur").value;
+
+    if (!isValidEmail(mailEmployeur)) {
+        Swal.fire({
+            icon: "error",
+            title: "Format d'e-mail invalide",
+            text: "Veuillez entrer une adresse e-mail valide contenant un '@' et un point."
+        });
+        return; // Stoppe l'exécution si l'email est invalide
+    }
     fetch(path+'/gestionEmployeur/add', {
         method: 'POST',
         body: JSON.stringify({
