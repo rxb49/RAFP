@@ -5,8 +5,8 @@ function insertEmployeurRetour(path){
     var selectedOption = select.options[select.selectedIndex];
     var idEmployeur = selectedOption.value;
     let montant = document.getElementById("montant").value;
-    const urlParams = new URLSearchParams(window.location.search);
-    var noInsee = urlParams.get("no_insee");
+    const pathSegments = window.location.pathname.split('/');
+    const noInsee = pathSegments[pathSegments.length - 1]; // Avant-dernier segment
     fetch(path+'/ajoutEmployeur/add', {
         method: 'POST',
         body: JSON.stringify({

@@ -38,13 +38,13 @@
                             <td>${agent.nom_usuel}</td>
                             <td>${agent.prenom}</td>
                             <td>${agent.mnt_retour} €</td>
-                            <td><a href="${path}/modifierAgent?id_insee=${agent.insee}" class="text-primary">Modifier</a></td>
+                            <td><a href="${pageContext.request.contextPath}/modifierAgent/${employeur.id_emp}/${agent.insee}" class="text-primary">Modifier</a></td>
                             <td><a href="#" class="text-danger" onclick="confirmDeleteAgent('${agent.insee}')">Supprimer</a></td>
                         </tr>
                     </c:forEach>
                 </tbody>
             </table>
-            <a href="${pageContext.request.contextPath}/ajoutAgent?id_emp=${employeur.id_emp}" class="btn btn-secondary">Ajouter un agent</a>
+            <a href="${pageContext.request.contextPath}/ajoutAgent/${employeur.id_emp}" class="btn btn-secondary">Ajouter un agent</a>
         </div>
     </div>
 </c:set>

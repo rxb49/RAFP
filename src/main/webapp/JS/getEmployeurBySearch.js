@@ -47,7 +47,7 @@ function getEmployeurBySearch(path) {
                 var linkVoir = document.createElement("a");
                 linkVoir.className = "text-primary";  // Applique une classe de style
                 linkVoir.textContent = "Voir";  // Texte du lien
-                var url = `${path}/donneesEmployeur?id_emp=${encodeURIComponent(employeur.id_emp)}`;
+                var url = `${path}/donneesEmployeur/${employeur.id_emp}`;
                 linkVoir.href = url;
 
 

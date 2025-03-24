@@ -82,8 +82,8 @@ public class AgentController {
         }
     }
 
-    @GetMapping("/ajoutAgent")
-    public String viewAjoutAgent(Model model, @RequestParam("id_emp") int id_emp ) {
+    @GetMapping("/ajoutAgent/{id_emp}")
+    public String viewAjoutAgent(@PathVariable int id_emp ) {
         try{
             //List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
             //RafpAgent agent = agentService.getAgentByNoInsee(id_emp);
@@ -99,8 +99,10 @@ public class AgentController {
 
 
 
-    @GetMapping("/modifierAgent")
-    public String viewModifierAgent() { return "modifierAgent";}
+    @GetMapping("/modifierAgent/{id_emp}/{noInsee}")
+    public String viewModifierAgent(@PathVariable String noInsee, @PathVariable int id_emp) {
+        return "modifierAgent";
+    }
 
 }
 

@@ -61,13 +61,13 @@
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
                                 <td>${employeur.base_retour_recalculee_emp}</td>
-                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur/${agent.no_insee}/${employeur.id_emp}" >Modifier</a></td>
+                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur/${agent.no_insee}/${employeur.id_emp}" class="text-primary">Modifier</a></td>
                                 <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
-                <a href="${pageContext.request.contextPath}/ajoutEmployeur?no_insee=${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
+                <a href="${pageContext.request.contextPath}/ajoutEmployeur/${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
             </div>
         </div>
     </div>

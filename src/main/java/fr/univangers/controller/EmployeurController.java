@@ -32,8 +32,8 @@ public class EmployeurController {
         this.retourService = retourService;
     }
 
-    @GetMapping("/donneesEmployeur")
-    public String viewDonneesEmployeur(Model model, @RequestParam("id_emp") int id_emp) {
+    @GetMapping("/donneesEmployeur/{id_emp}")
+    public String viewDonneesEmployeur(Model model, @PathVariable int id_emp) {
         try {
             if (id_emp == 0 ) {
                 return "redirect:/error";
@@ -154,8 +154,8 @@ public class EmployeurController {
         }
     }
 
-    @GetMapping("/ajoutEmployeur")
-    public String viewAjoutEmployeur(Model model, @RequestParam("no_insee") String noInsee) {
+    @GetMapping("/ajoutEmployeur/{noInsee}")
+    public String viewAjoutEmployeur(Model model, @PathVariable String noInsee) {
         try{
             List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
             RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
