@@ -59,7 +59,7 @@
                                 <td>${employeur.id_emp}</td>
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
-                                <td><a href="#" >Modifier</a></td>
+                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur?no_insee=${agent.no_insee}&id_employeur=${employeur.id_emp}" >Modifier</a></td>
                                 <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>
