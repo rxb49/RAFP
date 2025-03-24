@@ -2,9 +2,9 @@
 
 function modifEmployeurRetour(path){
     let montant = document.getElementById("montant").value;
-    const urlParams = new URLSearchParams(window.location.search);
-    var noInsee = urlParams.get("no_insee");
-    var idEmployeur = urlParams.get("id_employeur");
+    const pathSegments = window.location.pathname.split('/');
+    const noInsee = pathSegments[pathSegments.length - 2];
+    const idEmployeur = pathSegments[pathSegments.length - 1];
     console.log(montant, noInsee, idEmployeur);
     fetch(path+'/ajoutEmployeur/modifier', {
         method: 'POST',

@@ -1,6 +1,6 @@
 function confirmDeleteEmployeur(path, employeur, id_emp) {
-    const urlParams = new URLSearchParams(window.location.search);
-    var noInsee = urlParams.get("no_insee");
+    const pathSegments = window.location.pathname.split('/');
+    const noInsee = pathSegments[pathSegments.length - 1];
 
     Swal.fire({
         title: "Êtes-vous sûr ?",
@@ -13,7 +13,7 @@ function confirmDeleteEmployeur(path, employeur, id_emp) {
         cancelButtonText: "Annuler"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`${path}/ajoutEmployeur/delete?noInsee=${encodeURIComponent(noInsee)}&idEmployeur=${encodeURIComponent(id_emp)}`, {
+            fetch(`${path}/ajoutEmployeur/delete/${noInsee}/${id_emp}`, {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"

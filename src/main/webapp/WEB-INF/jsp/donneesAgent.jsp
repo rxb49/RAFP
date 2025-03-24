@@ -49,6 +49,7 @@
                             <th>Id</th>
                             <th>Nom</th>
                             <th>Montant</th>
+                            <th>Base retour employeur</th>
                             <th>Modifier</th>
                             <th>Supprimer</th>
                         </tr>
@@ -59,7 +60,8 @@
                                 <td>${employeur.id_emp}</td>
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
-                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur?no_insee=${agent.no_insee}&id_employeur=${employeur.id_emp}" >Modifier</a></td>
+                                <td>${employeur.base_retour_recalculee_emp}</td>
+                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur/${agent.no_insee}/${employeur.id_emp}" >Modifier</a></td>
                                 <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>

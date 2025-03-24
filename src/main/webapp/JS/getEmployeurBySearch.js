@@ -44,30 +44,15 @@ function getEmployeurBySearch(path) {
 
                 var cellVoir = document.createElement("td");
 
+                var linkVoir = document.createElement("a");
+                linkVoir.className = "text-primary";  // Applique une classe de style
+                linkVoir.textContent = "Voir";  // Texte du lien
+                var url = `${path}/donneesEmployeur?id_emp=${encodeURIComponent(employeur.id_emp)}`;
+                linkVoir.href = url;
 
-                var buttonVoir = document.createElement("button");
-                buttonVoir.type = "button";
-                buttonVoir.className = "text-primary";
-                buttonVoir.textContent = "Voir";
 
-                buttonVoir.addEventListener("click", function () {
-                    var form = document.createElement("form");
-                    form.method = "POST";
-                    form.action =  `${path}/donneesEmployeur`;
-
-                    var inputId = document.createElement("input");
-                    inputId.type = "hidden";
-                    inputId.name = "id_emp";
-                    inputId.value = employeur.id_emp;
-
-                    form.appendChild(inputId);
-                    document.body.appendChild(form);
-                    form.submit();
-                });
-
-                cellVoir.appendChild(buttonVoir);
+                cellVoir.appendChild(linkVoir);
                 row.appendChild(cellVoir);
-
                 tbody.appendChild(row);
             });
         })

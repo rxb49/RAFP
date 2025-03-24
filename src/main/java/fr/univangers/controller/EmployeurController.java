@@ -210,12 +210,12 @@ public class EmployeurController {
         }
     }
 
-    @DeleteMapping("/ajoutEmployeur/delete")
-    public ResponseEntity<String> viewAjoutEmployeurDelete(@RequestParam String noInsee, @RequestParam int idEmployeur) {
+    @DeleteMapping("/ajoutEmployeur/delete/{noInsee}/{id_emp}")
+    public ResponseEntity<String> viewAjoutEmployeurDelete(@PathVariable String noInsee, @PathVariable int id_emp) {
 
         try {
-            logger.info("Suppression employeur - noInsee: {} - idEmployeur: {}", noInsee, idEmployeur);
-            boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, idEmployeur);
+            logger.info("Suppression employeur - noInsee: {} - idEmployeur: {}", noInsee, id_emp);
+            boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
             if (vRetour) {
                 agentService.updateTotalRetourByAgent(noInsee);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -223,26 +223,26 @@ public class EmployeurController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (UAException e) {
-            logger.error("Erreur UA - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
+            logger.error("Erreur UA - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
         catch (SQLException e) {
-            logger.error("Erreur BDD - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
+            logger.error("Erreur BDD - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, idEmployeur, e.getMessage());
+            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
 
-    @GetMapping("/modifierEmployeur")
-    public String viewModifierEmployeur(Model model, @RequestParam("no_insee") String noInsee, @RequestParam("id_employeur") int idEmployeur) {
+    @GetMapping("/modifierEmployeur/{no_insee}/{id_emp}")
+    public String viewModifierEmployeur(Model model, @PathVariable String no_insee, @PathVariable int id_emp) {
         try{
-            RafpEmployeur employeur =  employeurService.getEmployeurById(idEmployeur);
-            RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
-            RafpRetour retour = retourService.getRetourByInseeEmployeur(idEmployeur, noInsee);
+            RafpEmployeur employeur =  employeurService.getEmployeurById(id_emp);
+            RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
+            RafpRetour retour = retourService.getRetourByInseeEmployeur(id_emp, no_insee);
             logger.info(employeur.toString());
             model.addAttribute("employeurs", employeur);
             model.addAttribute("agent", agent);

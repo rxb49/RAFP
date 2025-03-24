@@ -34,7 +34,7 @@
                     </div><br>
                     <div class="button-group">
                         <button type="submit" onclick="insertEmployeurRetour('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">Ajouter</button>
-                        <a href="${pageContext.request.contextPath}/donneesAgent?no_insee=${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
+                        <a href="${pageContext.request.contextPath}/donneesAgent/${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
 
                     </div>
             </div>
