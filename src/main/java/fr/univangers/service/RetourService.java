@@ -1,6 +1,7 @@
 package fr.univangers.service;
 
 import fr.univangers.classes.*;
+import fr.univangers.dao.AgentDAO;
 import fr.univangers.dao.PersonnelDAO;
 import fr.univangers.dao.RetourDAO;
 import fr.univangers.exceptions.UAException;
@@ -13,11 +14,14 @@ import java.util.List;
 @Service
 public class RetourService {
     final private RetourDAO dao;
+    final private AgentDAO agentDao;
+
 
     @Autowired
-    public RetourService(RetourDAO dao){
+    public RetourService(RetourDAO dao, AgentDAO agentDAO){
         super();
         this.dao = dao;
+        this.agentDao = agentDAO;
     }
 
     public RafpRetour getRetourByInseeEmployeur(int id_emp, String no_insee) throws SQLException, UAException {
@@ -29,8 +33,13 @@ public class RetourService {
     }
 
     public boolean insertImportTotalData(String lbl_emp, String no_insee, double montant) throws SQLException, UAException {
-        return dao.insertImportTotalData(lbl_emp, no_insee, montant);
-    }
+        boolean insertionReussie = dao.insertImportTotalData(lbl_emp, no_insee, montant);
+
+        if (insertionReussie) {
+            agentDao.updateTotalRetourByAgent(no_insee);
+        }
+
+        return insertionReussie;    }
 
 
 
