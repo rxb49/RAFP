@@ -26,7 +26,7 @@
 
 
                 <div class="button-group">
-                    <button type="submit" onclick="importTotal()" class="btn btn-md btn-primary">Ajouter</button>
+                    <button type="submit" onclick="importTotal('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">Ajouter</button>
                     <a href="${pageContext.request.contextPath}/donneesEmployeur/${employeurs.id_emp}" class="btn btn-md btn-secondary">Annuler</a>
                 </div>
             </div>

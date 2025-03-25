@@ -28,5 +28,10 @@ public class RetourService {
         return dao.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
     }
 
+    public boolean insertImportTotalData(String lbl_emp, String no_insee, double montant) throws SQLException, UAException {
+        return dao.insertImportTotalData(lbl_emp, no_insee, montant);
+    }
+
+
 
 }

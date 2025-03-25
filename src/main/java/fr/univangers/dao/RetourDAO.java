@@ -93,5 +93,66 @@ public class RetourDAO {
         return result;
     }
 
+    public RafpEmployeur getIdEmployeurByLib(String lbl_emp) throws SQLException {
+        logger.info("Début de la requête de récuperation de l'employeur");
+
+        RafpEmployeur employeur = new RafpEmployeur();
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select id_emp from harp_adm.rafp_employeur where lib_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, lbl_emp);
+
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                employeur.setId_emp(rs.getInt("id_emp"));
+            } else {
+                logger.warn("Aucun employeur trouvé pour le libellé : " + lbl_emp);
+            }
+            rs.close();
+            cstmt.close();
+            logger.info(employeur.toString());
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation de lemployeur");
+        return employeur;
+    }
+
+    public boolean insertImportTotalData(String lbl_emp, String no_insee, double montant) throws SQLException, UAException {
+        logger.info("Début de la requête d'insertion des retours totaux");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try{
+            RafpEmployeur id_emp = getIdEmployeurByLib(lbl_emp);
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) VALUES (?, ?, ?, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            cstmt.setString(1, "2024");
+            cstmt.setString(2, no_insee);
+            cstmt.setInt(3, id_emp.getId_emp());
+            cstmt.setDouble(4, montant);
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête d'insertion des retours totaux");
+        return result;
+    }
+
 
 }
