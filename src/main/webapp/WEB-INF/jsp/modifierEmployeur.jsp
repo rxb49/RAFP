@@ -28,7 +28,7 @@
                         <input type="number" value="${retour.mnt_retour}" required="required" class="form-control form-control-md formUA" id="montant" aria-describedby="montant" placeholder="Entrez un montant">
                     </div><br>
                     <div class="button-group">
-                        <button type="submit" onclick="modifEmployeurRetour('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">Modifier</button>
+                        <button type="submit" onclick="modifEmployeurRetour('${pageContext.request.contextPath}', '${employeurs.id_emp}', '${agent.no_insee}')" class="btn btn-md btn-primary">Modifier</button>
                         <a href="${pageContext.request.contextPath}/donneesAgent/${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
                     </div>
             </div>

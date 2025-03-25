@@ -1,6 +1,4 @@
-function confirmDeleteEmployeur(path, employeur, id_emp) {
-    const pathSegments = window.location.pathname.split('/');
-    const noInsee = pathSegments[pathSegments.length - 1];
+function confirmDeleteEmployeur(path, employeur, id_emp, noInsee) {
 
     Swal.fire({
         title: "Êtes-vous sûr ?",
@@ -21,21 +19,13 @@ function confirmDeleteEmployeur(path, employeur, id_emp) {
             })
                 .then(response => response.text())
                 .then(text => {
-                    if(text === "") {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Le retour est supprimé",
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: text,
-                        }).then(() => {
-                            location.reload();
-                        });
-                    }
+                    Swal.fire({
+                        icon: "success",
+                        title: text,
+                    }).then(() => {
+                        location.reload();
+                    });
+
                 })
                 .catch(error => {
                     Swal.fire({

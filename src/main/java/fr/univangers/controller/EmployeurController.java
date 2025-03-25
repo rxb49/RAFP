@@ -218,9 +218,9 @@ public class EmployeurController {
             boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
             if (vRetour) {
                 agentService.updateTotalRetourByAgent(noInsee);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("La suppression du retour est effectuée", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Erreur dans la suppression du retour", HttpStatus.BAD_REQUEST);
             }
         } catch (UAException e) {
             logger.error("Erreur UA - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
@@ -228,11 +228,11 @@ public class EmployeurController {
         }
         catch (SQLException e) {
             logger.error("Erreur BDD - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Erreur base de données", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - idEmp: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>("Erreur inconnue",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -280,9 +280,9 @@ public class EmployeurController {
             boolean vRetour = retourService.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
             if (vRetour) {
                 agentService.updateTotalRetourByAgent(no_insee);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("Modification du retour effectuée",HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Erreur dans la modification du retour",HttpStatus.BAD_REQUEST);
             }
         } catch (UAException e) {
             logger.error("Erreur UA - viewModifierEmployeurModif - requestData : {} - Erreur : {}", requestData, e.getMessage());
