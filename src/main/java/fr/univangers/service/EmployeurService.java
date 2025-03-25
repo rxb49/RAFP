@@ -48,5 +48,9 @@ public class EmployeurService {
         return dao.insertEmployeurAdd(no_insee, id_emp, montant);
     }
 
+    public boolean deleteDonneeEmployeur(String no_insee, int id_emp) throws SQLException, UAException {
+        return dao.deleteDonneeEmployeur(no_insee, id_emp);
+    }
+
 
 }

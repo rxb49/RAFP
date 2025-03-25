@@ -171,13 +171,14 @@ public class AgentDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select e.lib_emp, R.mnt_retour from harp_adm.rafp_retour R " +
-                    "inner join harp_adm.rafp_employer E on r.id_emp = e.id_emp where R.insee = ?";
+            String requete = "select e.id_emp, e.lib_emp, R.mnt_retour from harp_adm.rafp_retour R " +
+                    "inner join harp_adm.rafp_employeur E on r.id_emp = e.id_emp where R.insee = ?";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, no_insee);
             rs = cstmt.executeQuery();
             while (rs.next()) {
                 RafpRetour employeur = new RafpRetour();
+                employeur.setId_emp(rs.getInt("id_emp"));
                 employeur.setLib_emp(rs.getString("lib_emp"));
                 employeur.setMnt_retour(rs.getInt("mnt_retour"));
                 employeurs.add(employeur);

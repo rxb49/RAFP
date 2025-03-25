@@ -46,8 +46,10 @@
                 <table class="table table-bordered text-center" id="employeursTable">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Nom</th>
                             <th>Montant</th>
+                            <th>Base retour employeur</th>
                             <th>Modifier</th>
                             <th>Supprimer</th>
                         </tr>
@@ -55,22 +57,24 @@
                     <tbody>
                         <c:forEach var="employeur" items="${employeurs}">
                             <tr>
+                                <td>${employeur.id_emp}</td>
                                 <td>${employeur.lib_emp}</td>
                                 <td>${employeur.mnt_retour}</td>
-                                <td><a href="#" >Modifier</a></td>
-                                <td><a href="#" onclick="confirmDeleteEmployeur('${employeur.lib_emp}')">Supprimer</a></td>
+                                <td>${employeur.base_retour_recalculee_emp}</td>
+                                <td><a href="${pageContext.request.contextPath}/modifierEmployeur/${agent.no_insee}/${employeur.id_emp}" class="text-primary">Modifier</a></td>
+                                <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}', '${agent.no_insee}')">Supprimer</a></td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
-
-                <a href="${pageContext.request.contextPath}/ajoutEmployeur?no_insee=${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
+                <a href="${pageContext.request.contextPath}/ajoutEmployeur/${agent.no_insee}" class="btn btn-secondary">Ajouter un employeur</a>
             </div>
         </div>
     </div>
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/confirmDelete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp" %>

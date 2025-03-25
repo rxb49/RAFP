@@ -24,16 +24,18 @@ public class EmployeurController {
 
     private final EmployeurService employeurService;
     private final AgentService agentService;
+    private final RetourService retourService;
 
-    public EmployeurController(EmployeurService employeurService, AgentService agentService) {
+    public EmployeurController(EmployeurService employeurService, AgentService agentService, RetourService retourService) {
         this.employeurService = employeurService;
         this.agentService = agentService;
+        this.retourService = retourService;
     }
 
-    @PostMapping("/donneesEmployeur")
-    public String viewDonneesEmployeur(@RequestParam Integer id_emp, Model model) {
+    @GetMapping("/donneesEmployeur/{id_emp}")
+    public String viewDonneesEmployeur(Model model, @PathVariable int id_emp) {
         try {
-            if (id_emp == null) {
+            if (id_emp == 0 ) {
                 return "redirect:/error";
             }
 
@@ -152,8 +154,8 @@ public class EmployeurController {
         }
     }
 
-    @GetMapping("/ajoutEmployeur")
-    public String viewAjoutEmployeur(Model model, @RequestParam("no_insee") String noInsee) {
+    @GetMapping("/ajoutEmployeur/{noInsee}")
+    public String viewAjoutEmployeur(Model model, @PathVariable String noInsee) {
         try{
             List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
             RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
@@ -172,7 +174,6 @@ public class EmployeurController {
         String no_insee = requestData.get("noInsee");
         String idEmpStr = requestData.get("idEmployeur");
         String montantStr = requestData.get("montant");
-        // Vérification des entrées vides ou nulles
         if (no_insee == null || no_insee.isEmpty()) {
             return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
         }
@@ -187,7 +188,8 @@ public class EmployeurController {
 
         try {
             logger.info(requestData.toString());
-            boolean vRetour = employeurService.insertEmployeurAdd(no_insee, id_emp, montant);
+
+            boolean vRetour = employeurService.insertEmployeurAdd(no_insee, id_emp , montant);
             if (vRetour) {
                 agentService.updateTotalRetourByAgent(no_insee);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -208,9 +210,91 @@ public class EmployeurController {
         }
     }
 
+    @DeleteMapping("/ajoutEmployeur/delete/{noInsee}/{id_emp}")
+    public ResponseEntity<String> viewAjoutEmployeurDelete(@PathVariable String noInsee, @PathVariable int id_emp) {
 
-    @GetMapping("/modifierEmployeur")
-    public String viewModifierEmployeur() {
-        return "modifierEmployeur";
+        try {
+            logger.info("Suppression employeur - noInsee: {} - idEmployeur: {}", noInsee, id_emp);
+            boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
+            if (vRetour) {
+                agentService.updateTotalRetourByAgent(noInsee);
+                return new ResponseEntity<>("La suppression du retour est effectuée", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Erreur dans la suppression du retour", HttpStatus.BAD_REQUEST);
+            }
+        } catch (UAException e) {
+            logger.error("Erreur UA - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        catch (SQLException e) {
+            logger.error("Erreur BDD - viewAjoutEmployeurDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>("Erreur base de données", HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("Erreur - viewAjoutEmployeurDelete - noInsee: {} - idEmp: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>("Erreur inconnue",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping("/modifierEmployeur/{no_insee}/{id_emp}")
+    public String viewModifierEmployeur(Model model, @PathVariable String no_insee, @PathVariable int id_emp) {
+        try{
+            RafpEmployeur employeur =  employeurService.getEmployeurById(id_emp);
+            RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
+            RafpRetour retour = retourService.getRetourByInseeEmployeur(id_emp, no_insee);
+            logger.info(employeur.toString());
+            model.addAttribute("employeurs", employeur);
+            model.addAttribute("agent", agent);
+            model.addAttribute("retour", retour);
+            return "modifierEmployeur";
+
+        }
+        catch (SQLException e){
+            logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
+            return "errorPage/errorBDD";
+        }catch (Exception e){
+            return "errorPage/errorLoad";
+        }
+    }
+
+    @PostMapping("/ajoutEmployeur/modifier")
+    public ResponseEntity<String> viewModifierEmployeurModif(@RequestBody Map<String, String> requestData, Model model) {
+        try {
+            String no_insee = requestData.get("noInsee");
+            String idEmpStr = requestData.get("idEmployeur");
+            String montantStr = requestData.get("montant");
+            // Vérification des entrées vides ou nulles
+            if (no_insee == null || no_insee.isEmpty()) {
+                return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            if (idEmpStr == null || idEmpStr.isEmpty()) {
+                return new ResponseEntity<>("L'identifiant employeur ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            if (montantStr == null || montantStr.isEmpty()) {
+                return new ResponseEntity<>("Le montant ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+            int id_emp = Integer.parseInt(requestData.get("idEmployeur"));
+            int montant = Integer.parseInt(requestData.get("montant"));
+            logger.info(requestData.toString());
+            boolean vRetour = retourService.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
+            if (vRetour) {
+                agentService.updateTotalRetourByAgent(no_insee);
+                return new ResponseEntity<>("Modification du retour effectuée",HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Erreur dans la modification du retour",HttpStatus.BAD_REQUEST);
+            }
+        } catch (UAException e) {
+            logger.error("Erreur UA - viewModifierEmployeurModif - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        catch (SQLException e) {
+            logger.error("Erreur BDD - viewModifierEmployeurModif - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("Erreur - viewModifierEmployeurModif - requestData : {} - Erreur : {}", requestData, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

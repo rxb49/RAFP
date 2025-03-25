@@ -51,8 +51,8 @@ public class RafpRetour {
         return lib_emp;
     }
 
-    public void setLib_emp(String id_emp) {
-        this.lib_emp = id_emp;
+    public void setLib_emp(String lib_emp) {
+        this.lib_emp = lib_emp;
     }
 
     public int getMnt_retour() {

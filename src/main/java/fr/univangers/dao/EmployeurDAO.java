@@ -36,7 +36,7 @@ public class EmployeurDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employer WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
             verificationStmt.setString(1, employeur.getLib_emp());
             verificationStmt.setString(2, employeur.getMail_emp());
@@ -50,7 +50,7 @@ public class EmployeurDAO {
             Sql.close(resultSet);
 
             // Obtenir l'id maximum existant
-            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employer";
+            String maxIdQuery = "SELECT MAX(id_emp) FROM harp_adm.rafp_employeur";
             PreparedStatement maxIdStmt = maConnexion.prepareStatement(maxIdQuery);
             ResultSet maxIdResultSet = maxIdStmt.executeQuery();
             maxIdResultSet.next();
@@ -58,7 +58,7 @@ public class EmployeurDAO {
             int newId = maxId + 1;
 
             // Insertion de l'agent
-            String requete = "INSERT INTO harp_adm.rafp_employer (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_employeur (id_emp, lib_emp, mail_emp) VALUES (?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
             // Définir les valeurs des paramètres avant l'exécution
@@ -95,7 +95,7 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employer order by lib_emp ASC";
+            String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
             // Exécuter la requête de récuperation
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -124,7 +124,7 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employer " +
+            String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employeur " +
                     "WHERE lib_emp LIKE ? " +
                     "   OR mail_emp LIKE ? ";
             cstmt = maConnexion.prepareStatement(requete);
@@ -162,7 +162,7 @@ public class EmployeurDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             //Vérifier si l'employeur existe déjà
-            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employer WHERE lib_emp = ? AND mail_emp = ?";
+            String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
             verificationStmt.setString(1, rafpEmployeur.getMail_emp());
             verificationStmt.setString(2, rafpEmployeur.getLib_emp());
@@ -174,7 +174,7 @@ public class EmployeurDAO {
             }
             Sql.close(resultSet);
 
-            String requete = "update harp_adm.rafp_employer set lib_emp = ?, mail_emp = ? where id_emp = ?";
+            String requete = "update harp_adm.rafp_employeur set lib_emp = ?, mail_emp = ? where id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
             // Exécuter la requête d'insertion
 
@@ -204,7 +204,7 @@ public class EmployeurDAO {
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employer E where E.id_emp = ?";
+            String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employeur E where E.id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setInt(1, idEmployeur);
             rs = cstmt.executeQuery();
@@ -281,7 +281,6 @@ public class EmployeurDAO {
             Sql.close(resultSet);
 
 
-            // Insertion de l'agent
             String requete = "insert into harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) VALUES (?, ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
@@ -306,6 +305,39 @@ public class EmployeurDAO {
         }
 
         logger.info("Fin de la requête d'insertion du retour");
+        return result;
+    }
+
+    public boolean deleteDonneeEmployeur(String no_insee, int id_emp) throws SQLException, UAException {
+        logger.info("Début de la requête de suppression du retour");
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            // Suppression du retour
+            String requete = "delete from harp_adm.rafp_retour R where R.insee = ? AND R.id_emp = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            // Définir les valeurs des paramètres avant l'exécution
+            cstmt.setString(1, no_insee);
+            cstmt.setInt(2, id_emp);
+            // Exécuter la requête de suppression
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Suppression en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne supprimé en base de donnée.");
+            }
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête de suppression du retour");
         return result;
     }
 }

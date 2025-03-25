@@ -25,7 +25,7 @@
 
                 <div class="button-group">
                     <button type="submit" class="btn btn-md btn-primary">Ajouter</button>
-                    <a href="${pageContext.request.contextPath}/donneesEmployeur" class="btn btn-md btn-secondary">Annuler</a>
+                    <a href="${pageContext.request.contextPath}/donneesEmployeur?no_insee=${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
                 </div>
             </div>
         </div>
