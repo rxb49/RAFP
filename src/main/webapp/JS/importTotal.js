@@ -111,20 +111,35 @@ function clearTempData(path) {
 }
 
 function validateImport(path) {
-    fetch(path + "/importTotal/validate", { method: 'POST' })
-        .then(response => response.text())
-        .then(text => {
-            Swal.fire({
-                icon: "success",
-                title: text
-            }).then(() => {
-                location.reload(); // Recharger la page après validation
-            });
+    fetch(path + "/importTotal/validate", {
+        method: "POST",
+    })
+        .then(response => response.text().then(text => ({ status: response.status, text })))
+        .then(({ status, text }) => {
+            if (status === 200) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Succès",
+                    text: text,
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Erreur",
+                    text: text,
+                }).then(() => {
+                    location.reload();
+                });
+            }
         })
         .catch(error => {
             Swal.fire({
                 icon: "error",
-                title: text + error
+                title: "Erreur",
+                text: "Une erreur est survenue lors de la validation.",
             });
         });
 }
+

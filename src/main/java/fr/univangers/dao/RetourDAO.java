@@ -155,10 +155,27 @@ public class RetourDAO {
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
+        ResultSet rs = null;
         boolean result = false;
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
+            // Vérifier si une des données est déjà présente
+            String checkQuery = """
+            SELECT COUNT(*) FROM harp_adm.rafp_temp t
+            INNER JOIN harp_adm.rafp_retour r ON t.id_emp = r.id_emp AND t.insee = r.insee """;
+
+            cstmt = maConnexion.prepareStatement(checkQuery);
+            rs = cstmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                logger.warn("Erreur : Des données existent déjà dans la table définitive !");
+                String deleteQuery = "DELETE FROM harp_adm.rafp_temp";
+                cstmt = maConnexion.prepareStatement(deleteQuery);
+                cstmt.executeUpdate();
+
+                maConnexion.commit();
+                return result;
+            }
             // Insérer les données de la table temporaire vers la table définitive
             String insertQuery = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) SELECT ?, insee, id_emp, retour FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(insertQuery);
