@@ -34,11 +34,15 @@ public class RetourService {
     }
 
     public boolean validateImportTotalData() throws SQLException, UAException {
-        //boolean insertionReussie = dao.validateImportTotalData();
-        //if (insertionReussie) {
-        //    agentDao.updateTotalRetourByAgent(no_insee);
-        //}
-        return dao.validateImportTotalData();
+        List<String> insertedNoInsee = dao.getInsertedNoInsee();
+        boolean insertionReussie = dao.validateImportTotalData();
+
+        if (insertionReussie) {
+            for (String noInsee : insertedNoInsee) {
+                agentDao.updateTotalRetourByAgent(noInsee);
+            }
+        }
+        return insertionReussie;
     }
 
     public boolean clearTempData() throws SQLException, UAException {

@@ -125,6 +125,28 @@ public class RetourDAO {
         return result;
     }
 
+    public List<String> getInsertedNoInsee() throws SQLException {
+        List<String> noInseeList = new ArrayList<>();
+        Connection maConnexion = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "SELECT DISTINCT insee FROM harp_adm.rafp_temp"; // Remplace par le vrai nom de la table temporaire
+            stmt = maConnexion.prepareStatement(requete);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                noInseeList.add(rs.getString("insee"));
+            }
+        } finally {
+            Sql.close(maConnexion);
+        }
+        return noInseeList;
+    }
+
+
     public boolean validateImportTotalData() throws SQLException {
         logger.info("Validation des données et insertion en base définitive");
 
