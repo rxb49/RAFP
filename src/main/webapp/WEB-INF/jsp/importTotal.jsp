@@ -14,22 +14,24 @@
                     <h2 class="mb-1">Importer vos données</h2>
                 </div>
 
-                <div class="form-group g-mb-25 px-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input form-control formUA" id="exampleInputFile" name="exampleInputFile" lang="fr">
-                        <div class="invalid-feedback"></div>
-                    </div><br>
-                </div>
+                <!-- Formulaire d'import -->
+                <div id="importForm">
+                    <div class="form-group g-mb-25 px-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input form-control formUA" id="exampleInputFile" name="exampleInputFile" lang="fr">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <br>
+                    </div>
 
-                <pre id="output"></pre>
-
-                <div class="button-group">
-                    <button type="submit" onclick="importTotal('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">
-                        Ajouter
-                    </button>
-                    <a href="${pageContext.request.contextPath}/donneesEmployeur/${employeurs.id_emp}" class="btn btn-md btn-secondary">
-                        Annuler
-                    </a>
+                    <div class="button-group">
+                        <button type="submit" onclick="importTotal('${pageContext.request.contextPath}')" class="btn btn-md btn-primary">
+                            Ajouter
+                        </button>
+                        <a href="${pageContext.request.contextPath}/donneesEmployeur/${employeurs.id_emp}" class="btn btn-md btn-secondary">
+                            Annuler
+                        </a>
+                    </div>
                 </div>
 
                 <hr>
@@ -40,8 +42,12 @@
                     <!-- La table des données en attente sera affichée ici -->
                 </div>
 
+                <!-- Boutons d'action -->
                 <button id="validateButton" onclick="validateImport('${pageContext.request.contextPath}')" class="btn btn-success" style="display: none;">
                     Valider les données
+                </button>
+                <button id="cancelButton" onclick="clearTempData('${pageContext.request.contextPath}')" class="btn btn-danger" style="display: none;">
+                    Annuler et réinitialiser
                 </button>
 
             </div>

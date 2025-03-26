@@ -152,11 +152,9 @@ public class RetourDAO {
                 result = true;
             } else {
                 logger.warn("Aucune donnée à insérer.");
-                maConnexion.rollback();
             }
         } catch (Exception e) {
             logger.error("Erreur lors de la validation des données", e);
-            if (maConnexion != null) maConnexion.rollback();
         } finally {
             Sql.close(maConnexion);
         }
@@ -193,6 +191,31 @@ public class RetourDAO {
             Sql.close(maConnexion);
         }
         return tempData;
+    }
+
+    public boolean clearTempData() throws SQLException {
+        logger.info("Suppression des données temporaires");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "DELETE FROM harp_adm.rafp_temp";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.executeUpdate();
+            int rowsDeleted = cstmt.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                logger.info(rowsDeleted + " lignes supprime dans rafp_temp");
+                result = true;
+            }
+            logger.info("Données temporaires supprimées avec succès.");
+        } finally {
+            Sql.close(maConnexion);
+        }
+        return result;
     }
 
 }

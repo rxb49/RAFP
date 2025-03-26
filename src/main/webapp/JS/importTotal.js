@@ -56,27 +56,61 @@ function importTotal(path) {
 
 // Récupération et affichage des données en attente de validation
 function fetchTempData(path) {
-    console.log("passage dans fetchTempData");
+    console.log("Passage dans fetchTempData");
+
     fetch(path + "/importTotal/tempData")
         .then(response => response.json())
         .then(data => {
-            let html = "<table class='table table-striped'><tr><th>No INSEE</th><th>Nom</th><th>Prenom</th><th>Montant</th><th>Employeur</th><th>Id Employeur</th></tr>";
-            data.forEach(row => {
-                html += `<tr>
-                    <td>${row.insee}</td>
-                    <td>${row.nom_usuel}</td>
-                    <td>${row.prenom}</td>
-                    <td>${row.retour}</td>
-                    <td>${row.lib_emp}</td>
-                    <td>${row.id_emp}</td>
-                </tr>`;
-            });
-            html += "</table>";
-            document.getElementById("tempDataTable").innerHTML = html;
-            document.getElementById("validateButton").style.display = "block"; // Afficher le bouton de validation
+            let tempDataTable = document.getElementById("tempDataTable");
+            let importForm = document.getElementById("importForm");
+            let cancelButton = document.getElementById("cancelButton");
+
+            if (data.length > 0) {
+                let html = "<table class='table table-striped'><tr><th>No INSEE</th><th>Nom</th><th>Prénom</th><th>Montant</th><th>Employeur</th><th>ID Employeur</th></tr>";
+                data.forEach(row => {
+                    html += `<tr>
+                        <td>${row.insee}</td>
+                        <td>${row.nom_usuel}</td>
+                        <td>${row.prenom}</td>
+                        <td>${row.retour}</td>
+                        <td>${row.lib_emp}</td>
+                        <td>${row.id_emp}</td>
+                    </tr>`;
+                });
+                html += "</table>";
+
+                tempDataTable.innerHTML = html;
+                document.getElementById("validateButton").style.display = "block";
+                importForm.style.display = "none"; // Cacher le formulaire d'import
+                cancelButton.style.display = "block"; // Afficher le bouton Annuler
+            } else {
+                tempDataTable.innerHTML = "<p>Aucune donnée en attente.</p>";
+                document.getElementById("validateButton").style.display = "none";
+                importForm.style.display = "block"; // Réafficher le formulaire
+                cancelButton.style.display = "none"; // Cacher le bouton Annuler
+            }
         })
         .catch(error => {
             console.error("Erreur lors de la récupération des données temporaires :", error);
+        });
+}
+
+function clearTempData(path) {
+    fetch(path + "/importTotal/clearTempData", { method: "DELETE" })
+        .then(response => response.text())
+        .then(message => {
+            Swal.fire({
+                icon: "success",
+                title: message,
+            }).then(() => {
+                fetchTempData(path); // Recharge les données (qui seront vides)
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: "error",
+                title: "Erreur lors de la suppression des données : " + error,
+            });
         });
 }
 

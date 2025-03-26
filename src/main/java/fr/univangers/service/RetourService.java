@@ -41,6 +41,11 @@ public class RetourService {
         return dao.validateImportTotalData();
     }
 
+    public boolean clearTempData() throws SQLException, UAException {
+        return dao.clearTempData();
+    }
+
+
     public boolean insertImportTotalDataTemp(int idEmp, String no_insee, double montant) throws SQLException, UAException {
         //boolean insertionReussie = dao.insertImportTotalDataTemp(idEmp, no_insee, montant);
 
