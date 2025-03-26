@@ -1,7 +1,5 @@
 function importTotal(path) {
-    console.log("Passage dans importTotal");
-
-    const fileInput = document.getElementById("exampleInputFile");
+    const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];
     if (file) {
         const reader = new FileReader();
@@ -13,19 +11,16 @@ function importTotal(path) {
                 .filter(line => line.trim() !== '')
                 .map(line => {
                     const columns = line.split(";");
-                    columns[0] = columns[0].substring(0, 13);  // Trim noInsee to 13 characters
-                    columns[1] = columns[1].replace(",", ".");  // Convert amount to correct format
+                    columns[0] = columns[0].substring(0, 13);
+                    columns[1] = columns[1].replace(",", ".");
                     return columns;
                 });
 
-            // Préparation du tableau d'objets avec les champs requis
             const jsonData = data.map(item => ({
                 noInsee: item[0].replace(",", "").trim(),
-                montant: parseFloat(item[1].replace(",", ".")),  // S'assurer que c'est un nombre
+                montant: parseFloat(item[1].replace(",", ".")),
                 idEmployeur: parseInt(item[2].trim())
             }));
-
-            console.log(jsonData);
 
             fetch(path + '/importTotal/insert', {
                 method: 'POST',
@@ -38,15 +33,15 @@ function importTotal(path) {
                 .then(text => {
                     Swal.fire({
                         icon: "success",
-                        title: "Les données ont été insérées dans la table temporaire.",
+                        title: text,
                     }).then(() => {
-                        fetchTempData(path); // Charger les données dans la table temporaire
+                        fetchTempData(path);
                     });
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: "error",
-                        title: "Erreur lors de l'insertion : " + error,
+                        title: text + error,
                     });
                 });
         };
@@ -54,9 +49,7 @@ function importTotal(path) {
     }
 }
 
-// Récupération et affichage des données en attente de validation
 function fetchTempData(path) {
-    console.log("Passage dans fetchTempData");
 
     fetch(path + "/importTotal/tempData")
         .then(response => response.json())
@@ -81,17 +74,20 @@ function fetchTempData(path) {
 
                 tempDataTable.innerHTML = html;
                 document.getElementById("validateButton").style.display = "block";
-                importForm.style.display = "none"; // Cacher le formulaire d'import
-                cancelButton.style.display = "block"; // Afficher le bouton Annuler
+                importForm.style.display = "none";
+                cancelButton.style.display = "block";
             } else {
                 tempDataTable.innerHTML = "<p>Aucune donnée en attente.</p>";
                 document.getElementById("validateButton").style.display = "none";
-                importForm.style.display = "block"; // Réafficher le formulaire
-                cancelButton.style.display = "none"; // Cacher le bouton Annuler
+                importForm.style.display = "block";
+                cancelButton.style.display = "none";
             }
         })
         .catch(error => {
-            console.error("Erreur lors de la récupération des données temporaires :", error);
+            Swal.fire({
+                icon: "error",
+                title: "Erreur lors de la récuperation des données temporaires : " + error,
+            });
         });
 }
 
@@ -103,7 +99,7 @@ function clearTempData(path) {
                 icon: "success",
                 title: message,
             }).then(() => {
-                fetchTempData(path); // Recharge les données (qui seront vides)
+                fetchTempData(path);
             });
         })
         .catch(error => {
@@ -114,14 +110,13 @@ function clearTempData(path) {
         });
 }
 
-// Validation des données (insertion définitive)
 function validateImport(path) {
     fetch(path + "/importTotal/validate", { method: 'POST' })
         .then(response => response.text())
         .then(text => {
             Swal.fire({
                 icon: "success",
-                title: "Données validées avec succès !"
+                title: text
             }).then(() => {
                 location.reload(); // Recharger la page après validation
             });
@@ -129,7 +124,7 @@ function validateImport(path) {
         .catch(error => {
             Swal.fire({
                 icon: "error",
-                title: "Erreur lors de la validation : " + error
+                title: text + error
             });
         });
 }

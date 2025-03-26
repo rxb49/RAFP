@@ -28,16 +28,10 @@ import java.util.Map;
 @Controller
 public class RetourController {
     private static final Logger logger = LoggerFactory.getLogger(RetourController.class);
-    private final PersonnelService personnelService;
-    private final AgentService agentService;
-    private final CalculService calculService;
     private final RetourService retourService;
 
 
-    public RetourController(PersonnelService personnelService, AgentService agentService, CalculService calculService, RetourService retourService) {
-        this.personnelService = personnelService;
-        this.agentService = agentService;
-        this.calculService = calculService;
+    public RetourController(RetourService retourService) {
         this.retourService = retourService;
     }
 
@@ -58,17 +52,7 @@ public class RetourController {
                 String noInsee = (String) item.get("noInsee");
                 double montant = Double.parseDouble((item.get("montant").toString()));
                 Object idEmpObj = item.get("idEmployeur");
-
-                if (idEmpObj == null) {
-                    throw new IllegalArgumentException("L'ID employeur est manquant dans la ligne du CSV !");
-                }
-
-                int idEmp;
-                try {
-                    idEmp = Integer.parseInt(idEmpObj.toString());
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Format invalide pour l'ID employeur : " + idEmpObj);
-                }
+                int idEmp = Integer.parseInt(idEmpObj.toString());
                 vRetour = retourService.insertImportTotalDataTemp(idEmp, noInsee, montant);
             }
             if (vRetour) {
@@ -82,20 +66,18 @@ public class RetourController {
         }
         catch (SQLException e) {
             logger.error("Erreur BDD - insertImportTotalData - data : {} - Erreur : {}", data, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Erreur d'insertion dans la table temporaire", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
             logger.error("Erreur - insertImportTotalData - data : {} - Erreur : {}", data, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Erreur d'insertion dans la table temporaire", HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/importTotal/tempData")
     public ResponseEntity<List<Map<String, Object>>> getTempImportData() {
-        System.out.println("🔍 Requête reçue : GET /importTotal/tempData");
         try {
             List<Map<String, Object>> tempData = retourService.getTempImportData();
-            System.out.println(tempData);
             return ResponseEntity.ok(tempData);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -106,9 +88,9 @@ public class RetourController {
     public ResponseEntity<String> clearTempData() {
         try {
             retourService.clearTempData(); // Suppression des données
-            return ResponseEntity.ok("Données temporaires supprimées avec succès !");
+            return new ResponseEntity<>("Suppression des données temporaires effectué ",HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la suppression des données.");
+            return new ResponseEntity<>("Erreur dans la suppression des données temporaires ",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

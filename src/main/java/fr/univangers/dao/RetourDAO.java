@@ -97,7 +97,7 @@ public class RetourDAO {
 
 
     public boolean insertImportTotalDataTemp(int id_emp, String no_insee, double montant) throws SQLException, UAException {
-        logger.info("Début de la requête d'insertion des retours totaux");
+        logger.info("Début de la requête d'insertion des retours totaux temporaires");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
@@ -118,28 +118,31 @@ public class RetourDAO {
             } else {
                 logger.warn("Aucune ligne insérée en base de donnée.");
             }
+            cstmt.close();
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requête d'insertion des retours totaux");
+        logger.info("Fin de la requête d'insertion des retours totaux temporaires");
         return result;
     }
 
     public List<String> getInsertedNoInsee() throws SQLException {
         List<String> noInseeList = new ArrayList<>();
         Connection maConnexion = null;
-        PreparedStatement stmt = null;
+        PreparedStatement cstmt = null;
         ResultSet rs = null;
 
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "SELECT DISTINCT insee FROM harp_adm.rafp_temp"; // Remplace par le vrai nom de la table temporaire
-            stmt = maConnexion.prepareStatement(requete);
-            rs = stmt.executeQuery();
+            String requete = "SELECT DISTINCT insee FROM harp_adm.rafp_temp";
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
 
             while (rs.next()) {
                 noInseeList.add(rs.getString("insee"));
             }
+            cstmt.close();
+            rs.close();
         } finally {
             Sql.close(maConnexion);
         }
@@ -175,6 +178,7 @@ public class RetourDAO {
             } else {
                 logger.warn("Aucune donnée à insérer.");
             }
+            cstmt.close();
         } catch (Exception e) {
             logger.error("Erreur lors de la validation des données", e);
         } finally {
@@ -187,7 +191,7 @@ public class RetourDAO {
         logger.info("Récupération des données en attente de validation");
 
         Connection maConnexion = null;
-        PreparedStatement stmt = null;
+        PreparedStatement cstmt = null;
         ResultSet rs = null;
         List<Map<String, Object>> tempData = new ArrayList<>();
         try {
@@ -195,8 +199,8 @@ public class RetourDAO {
             String requete = "SELECT T.id_emp, E.lib_emp, T.insee, A.nom_usuel, A.prenom, T.retour FROM harp_adm.rafp_temp T " +
                     "INNER JOIN harp_adm.rafp_agent A ON A.no_insee = T.insee " +
                     "INNER JOIN harp_adm.rafp_employeur E ON E.id_emp = T.id_emp WHERE T.insee = A.no_insee";
-            stmt = maConnexion.prepareStatement(requete);
-            rs = stmt.executeQuery();
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
 
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
@@ -209,6 +213,8 @@ public class RetourDAO {
                 tempData.add(row);
             }
             logger.info(tempData.toString());
+            cstmt.close();
+            rs.close();
         } finally {
             Sql.close(maConnexion);
         }
@@ -234,6 +240,7 @@ public class RetourDAO {
                 result = true;
             }
             logger.info("Données temporaires supprimées avec succès.");
+            cstmt.close();
         } finally {
             Sql.close(maConnexion);
         }

@@ -14,11 +14,10 @@
                     <h2 class="mb-1">Importer vos données</h2>
                 </div>
 
-                <!-- Formulaire d'import -->
                 <div id="importForm">
                     <div class="form-group g-mb-25 px-3">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input form-control formUA" id="exampleInputFile" name="exampleInputFile" lang="fr">
+                            <input type="file" class="custom-file-input form-control formUA" id="fileInput" name="fileInput" lang="fr">
                             <div class="invalid-feedback"></div>
                         </div>
                         <br>
@@ -36,13 +35,11 @@
 
                 <hr>
 
-                <!-- Affichage des données en attente de validation -->
                 <h3>Données en attente de validation</h3>
                 <div id="tempDataTable" class="table-responsive">
-                    <!-- La table des données en attente sera affichée ici -->
+
                 </div>
 
-                <!-- Boutons d'action -->
                 <button id="validateButton" onclick="validateImport('${pageContext.request.contextPath}')" class="btn btn-success" style="display: none;">
                     Valider les données
                 </button>
