@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RetourService {
@@ -32,14 +33,27 @@ public class RetourService {
         return dao.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
     }
 
-    public boolean insertImportTotalData(String lbl_emp, String no_insee, double montant) throws SQLException, UAException {
-        boolean insertionReussie = dao.insertImportTotalData(lbl_emp, no_insee, montant);
+    public boolean validateImportTotalData() throws SQLException, UAException {
+        //boolean insertionReussie = dao.validateImportTotalData();
+        //if (insertionReussie) {
+        //    agentDao.updateTotalRetourByAgent(no_insee);
+        //}
+        return dao.validateImportTotalData();
+    }
 
-        if (insertionReussie) {
-            agentDao.updateTotalRetourByAgent(no_insee);
-        }
+    public boolean insertImportTotalDataTemp(int idEmp, String no_insee, double montant) throws SQLException, UAException {
+        //boolean insertionReussie = dao.insertImportTotalDataTemp(idEmp, no_insee, montant);
 
-        return insertionReussie;    }
+//        if (insertionReussie) {
+//            agentDao.updateTotalRetourByAgent(no_insee);
+//        }
+
+        return dao.insertImportTotalDataTemp(idEmp, no_insee, montant);
+    }
+
+    public List<Map<String, Object>> getTempImportData() throws SQLException {
+        return dao.getTempImportData();
+    }
 
 
 

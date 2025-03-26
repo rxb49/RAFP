@@ -16,7 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class RetourDAO {
@@ -93,52 +95,21 @@ public class RetourDAO {
         return result;
     }
 
-    public RafpEmployeur getIdEmployeurByLib(String lbl_emp) throws SQLException {
-        logger.info("Début de la requête de récuperation de l'employeur");
 
-        RafpEmployeur employeur = new RafpEmployeur();
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            String requete = "select id_emp from harp_adm.rafp_employeur where lib_emp = ?";
-            cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, lbl_emp);
-
-            rs = cstmt.executeQuery();
-            if (rs.next()) {
-                employeur.setId_emp(rs.getInt("id_emp"));
-            } else {
-                logger.warn("Aucun employeur trouvé pour le libellé : " + lbl_emp);
-            }
-            rs.close();
-            cstmt.close();
-            logger.info(employeur.toString());
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requête de récuperation de lemployeur");
-        return employeur;
-    }
-
-    public boolean insertImportTotalData(String lbl_emp, String no_insee, double montant) throws SQLException, UAException {
+    public boolean insertImportTotalDataTemp(int id_emp, String no_insee, double montant) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion des retours totaux");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         boolean result = false;
         try{
-            RafpEmployeur id_emp = getIdEmployeurByLib(lbl_emp);
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) VALUES (?, ?, ?, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_temp (id_emp, insee, retour) VALUES ( ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
-            cstmt.setString(1, "2024");
+            cstmt.setInt(1, id_emp);
             cstmt.setString(2, no_insee);
-            cstmt.setInt(3, id_emp.getId_emp());
-            cstmt.setDouble(4, montant);
+            cstmt.setDouble(3, montant);
 
             int rowsInserted = cstmt.executeUpdate();
             if (rowsInserted > 0) {
@@ -154,5 +125,74 @@ public class RetourDAO {
         return result;
     }
 
+    public boolean validateImportTotalData() throws SQLException {
+        logger.info("Validation des données et insertion en base définitive");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            // Insérer les données de la table temporaire vers la table définitive
+            String insertQuery = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) SELECT ?, insee, id_emp, retour FROM harp_adm.rafp_temp";
+            cstmt = maConnexion.prepareStatement(insertQuery);
+            cstmt.setString(1, "2024");
+
+            int rowsInserted = cstmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                logger.info(rowsInserted + " lignes insérées dans rafp_retour");
+
+                String deleteQuery = "DELETE FROM harp_adm.rafp_temp";
+                cstmt = maConnexion.prepareStatement(deleteQuery);
+                cstmt.executeUpdate();
+
+                maConnexion.commit();
+                result = true;
+            } else {
+                logger.warn("Aucune donnée à insérer.");
+                maConnexion.rollback();
+            }
+        } catch (Exception e) {
+            logger.error("Erreur lors de la validation des données", e);
+            if (maConnexion != null) maConnexion.rollback();
+        } finally {
+            Sql.close(maConnexion);
+        }
+        return result;
+    }
+
+    public List<Map<String, Object>> getTempImportData() throws SQLException {
+        logger.info("Récupération des données en attente de validation");
+
+        Connection maConnexion = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Map<String, Object>> tempData = new ArrayList<>();
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "SELECT T.id_emp, E.lib_emp, T.insee, A.nom_usuel, A.prenom, T.retour FROM harp_adm.rafp_temp T " +
+                    "INNER JOIN harp_adm.rafp_agent A ON A.no_insee = T.insee " +
+                    "INNER JOIN harp_adm.rafp_employeur E ON E.id_emp = T.id_emp WHERE T.insee = A.no_insee";
+            stmt = maConnexion.prepareStatement(requete);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("id_emp", rs.getInt("id_emp"));
+                row.put("lib_emp", rs.getString("lib_emp"));
+                row.put("insee", rs.getString("insee"));
+                row.put("nom_usuel", rs.getString("nom_usuel"));
+                row.put("prenom", rs.getString("prenom"));
+                row.put("retour", rs.getDouble("retour"));
+                tempData.add(row);
+            }
+            logger.info(tempData.toString());
+        } finally {
+            Sql.close(maConnexion);
+        }
+        return tempData;
+    }
 
 }

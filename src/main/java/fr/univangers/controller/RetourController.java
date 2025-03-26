@@ -50,14 +50,25 @@ public class RetourController {
     }
 
     @PostMapping("/importTotal/insert")
-    public ResponseEntity<String> insertImportTotalData(@RequestBody List<Map<String, Object>> data) {
+    public ResponseEntity<String> insertImportTotalDataTemp(@RequestBody List<Map<String, Object>> data) {
         boolean vRetour = false;
         try {
             for (Map<String, Object> item : data) {
                 String noInsee = (String) item.get("noInsee");
                 double montant = Double.parseDouble((item.get("montant").toString()));
-                String employeur = (String) item.get("employeur");
-                vRetour = retourService.insertImportTotalData(employeur, noInsee, montant);
+                Object idEmpObj = item.get("idEmployeur");
+
+                if (idEmpObj == null) {
+                    throw new IllegalArgumentException("L'ID employeur est manquant dans la ligne du CSV !");
+                }
+
+                int idEmp;
+                try {
+                    idEmp = Integer.parseInt(idEmpObj.toString());
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Format invalide pour l'ID employeur : " + idEmpObj);
+                }
+                vRetour = retourService.insertImportTotalDataTemp(idEmp, noInsee, montant);
             }
             if (vRetour) {
                 return new ResponseEntity<>("Import du fichier CSV effectué avec succès ",HttpStatus.OK);
@@ -75,6 +86,33 @@ public class RetourController {
         catch (Exception e) {
             logger.error("Erreur - insertImportTotalData - data : {} - Erreur : {}", data, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/importTotal/tempData")
+    public ResponseEntity<List<Map<String, Object>>> getTempImportData() {
+        System.out.println("🔍 Requête reçue : GET /importTotal/tempData");
+        try {
+            List<Map<String, Object>> tempData = retourService.getTempImportData();
+            System.out.println(tempData);
+            return ResponseEntity.ok(tempData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/importTotal/validate")
+    public ResponseEntity<String> InsertFinalData() {
+        boolean vRetour = false;
+        try {
+            vRetour = retourService.validateImportTotalData();
+            if(vRetour){
+                return new ResponseEntity<>("Inseretion finale effectué ",HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>("Erreur dans l'insertion des données",HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erreur dans l'insertion des données",HttpStatus.BAD_REQUEST);
         }
     }
 
