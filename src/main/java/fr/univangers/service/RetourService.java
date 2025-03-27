@@ -46,7 +46,7 @@ public class RetourService {
         return dao.insertImportTotalDataTemp(idEmp, no_insee, montant);
     }
 
-    public List<Map<String, Object>> getTempImportData() throws SQLException {
+    public List<RafpImport> getTempImportData() throws SQLException {
         return dao.getTempImportData();
     }
 

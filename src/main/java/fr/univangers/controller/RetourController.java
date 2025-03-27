@@ -1,6 +1,7 @@
 package fr.univangers.controller;
 
 import fr.univangers.classes.RafpAgent;
+import fr.univangers.classes.RafpImport;
 import fr.univangers.classes.RafpPrecedante;
 import fr.univangers.classes.RafpRetour;
 import fr.univangers.exceptions.UAException;
@@ -78,11 +79,11 @@ public class RetourController {
     }
 
     @GetMapping("/importTotal/tempData")
-    public ResponseEntity<List<Map<String, Object>>> getTempImportData(HttpServletRequest request) throws Exception {
+    public ResponseEntity<List<RafpImport>> getTempImportData(HttpServletRequest request) throws Exception {
         try {
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
-            List<Map<String, Object>> tempData = retourService.getTempImportData();
+            List<RafpImport> tempData = retourService.getTempImportData();
             return ResponseEntity.ok(tempData);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

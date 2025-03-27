@@ -1,9 +1,6 @@
 package fr.univangers.dao;
 
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpEmployeur;
-import fr.univangers.classes.RafpLibAgent;
-import fr.univangers.classes.RafpRetour;
+import fr.univangers.classes.*;
 import fr.univangers.exceptions.UAException;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
@@ -170,9 +167,17 @@ public class RetourDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         boolean result = false;
+        String annee = "";
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
+            //Récuperation de l'année n-1
+            String requete = "select max(annee) as annee from harp_adm.rafp_agent";
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                annee = rs.getString(1);
+            }
             // Vérifier si une des données est déjà présente
             String checkQuery = """
             SELECT COUNT(*) FROM harp_adm.rafp_temp t
@@ -192,7 +197,7 @@ public class RetourDAO {
             // Insérer les données de la table temporaire vers la table définitive
             String insertQuery = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) SELECT ?, insee, id_emp, retour FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(insertQuery);
-            cstmt.setString(1, "2024");
+            cstmt.setString(1, annee);
 
             int rowsInserted = cstmt.executeUpdate();
 
@@ -217,13 +222,13 @@ public class RetourDAO {
         return result;
     }
 
-    public List<Map<String, Object>> getTempImportData() throws SQLException {
+    public List<RafpImport> getTempImportData() throws SQLException {
         logger.info("Récupération des données en attente de validation");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        List<Map<String, Object>> tempData = new ArrayList<>();
+        List<RafpImport> tempData = new ArrayList<>();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             String requete = "SELECT T.id_emp, E.lib_emp, T.insee, A.nom_usuel, A.prenom, T.retour FROM harp_adm.rafp_temp T " +
@@ -233,14 +238,14 @@ public class RetourDAO {
             rs = cstmt.executeQuery();
 
             while (rs.next()) {
-                Map<String, Object> row = new HashMap<>();
-                row.put("id_emp", rs.getInt("id_emp"));
-                row.put("lib_emp", rs.getString("lib_emp"));
-                row.put("insee", rs.getString("insee"));
-                row.put("nom_usuel", rs.getString("nom_usuel"));
-                row.put("prenom", rs.getString("prenom"));
-                row.put("retour", rs.getDouble("retour"));
-                tempData.add(row);
+                RafpImport importData = new RafpImport();
+                importData.setId_emp(rs.getInt("id_emp"));
+                importData.setLib_emp(rs.getString("lib_emp"));
+                importData.setInsee(rs.getString("insee"));
+                importData.setNom_usuel(rs.getString("nom_usuel"));
+                importData.setPrenom(rs.getString("prenom"));
+                importData.setRetour(rs.getDouble("retour"));
+                tempData.add(importData);
             }
             logger.info(tempData.toString());
             cstmt.close();
