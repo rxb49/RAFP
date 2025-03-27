@@ -20,6 +20,17 @@
             </span>
         </a>
 
+        <a href="${pageContext.request.contextPath}/importTotal" class="card card-custom d-flex flex-row pe-4 mb-3">
+            <span class="icon-container me-3 m-2"><i class="bi bi-plus"></i></span>
+            <div class="flex-grow-1 cadre-info my-3">
+                <h2 class="mb-1"><spring:message code="saisie.import" /></h2>
+                <p class="mb-0 text-muted"><spring:message code="saisie.import.detail" /></p>
+            </div>
+            <span class="d-flex justify-content-center">
+                <i class="bi bi-chevron-right arrow-icon"></i>
+            </span>
+        </a>
+
         <a href="${pageContext.request.contextPath}/rechercheEmployeur" class="card card-custom d-flex flex-row pe-4 mb-3">
             <span class="icon-container me-3 m-2"><i class="bi bi-plus"></i></span>
             <div class="flex-grow-1 cadre-info my-3">
