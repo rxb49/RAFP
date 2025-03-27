@@ -23,11 +23,24 @@ import java.util.Map;
 @Component
 public class RetourDAO {
     private final Logger logger = LoggerFactory.getLogger(RetourDAO.class);
-
+    private final AgentDAO agentdao;
     private final OracleConfiguration oracleConfiguration;
 
-    public RetourDAO(OracleConfiguration oracleConfiguration) {
+    public RetourDAO(AgentDAO agentdao, OracleConfiguration oracleConfiguration) {
+        this.agentdao = agentdao;
         this.oracleConfiguration = oracleConfiguration;
+    }
+
+    public boolean validateImportTotalDataFinal() throws SQLException, UAException {
+        List<String> insertedNoInsee = getInsertedNoInsee();
+        boolean insertionReussie = validateImportTotalData();
+
+        if (insertionReussie) {
+            for (String noInsee : insertedNoInsee) {
+                agentdao.updateTotalRetourByAgent(noInsee);
+            }
+        }
+        return insertionReussie;
     }
 
     public RafpRetour getRetourByInseeEmployeur(int idEmployeur, String no_insee) throws SQLException {
@@ -126,7 +139,7 @@ public class RetourDAO {
         return result;
     }
 
-    public List<String> getInsertedNoInsee() throws SQLException {
+    private List<String> getInsertedNoInsee() throws SQLException {
         List<String> noInseeList = new ArrayList<>();
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
@@ -150,7 +163,7 @@ public class RetourDAO {
     }
 
 
-    public boolean validateImportTotalData() throws SQLException {
+    private boolean validateImportTotalData() throws SQLException {
         logger.info("Validation des données et insertion en base définitive");
 
         Connection maConnexion = null;

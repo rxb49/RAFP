@@ -107,7 +107,7 @@ public class RetourController {
         try {
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
-            vRetour = retourService.validateImportTotalData();
+            vRetour = retourService.validateImportTotalDataFinal();
             if(vRetour){
                 return new ResponseEntity<>("Inseretion finale effectué ",HttpStatus.OK);
             }else{

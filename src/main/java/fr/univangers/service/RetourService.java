@@ -33,16 +33,8 @@ public class RetourService {
         return dao.updateRetourByInseeEmployeur(id_emp, no_insee, montant);
     }
 
-    public boolean validateImportTotalData() throws SQLException, UAException {
-        List<String> insertedNoInsee = dao.getInsertedNoInsee();
-        boolean insertionReussie = dao.validateImportTotalData();
-
-        if (insertionReussie) {
-            for (String noInsee : insertedNoInsee) {
-                agentDao.updateTotalRetourByAgent(noInsee);
-            }
-        }
-        return insertionReussie;
+    public boolean validateImportTotalDataFinal() throws SQLException, UAException {
+        return dao.validateImportTotalDataFinal();
     }
 
     public boolean clearTempData() throws SQLException, UAException {
