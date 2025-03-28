@@ -247,7 +247,7 @@ public class RetourDAO {
             cstmt.setString(1, annee);
 
             int rowsInserted = cstmt.executeUpdate();
-            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) ";
+            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = '2024'";
             PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
             stmtTable3.executeUpdate();
 
