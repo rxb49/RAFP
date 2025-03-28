@@ -105,17 +105,6 @@ public class MainController {
         }
     }
 
-    @GetMapping("/calculRafp")
-    public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
-        return "calculRafp";
-    }
-
-
-
-
-
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         //page de test de l'appli pour centreon
