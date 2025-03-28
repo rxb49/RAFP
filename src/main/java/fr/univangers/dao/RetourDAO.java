@@ -240,12 +240,17 @@ public class RetourDAO {
                 maConnexion.commit();
                 return result;
             }
+            // update le montant total de la table rafp_agent a faire avec les données de rrafp_retour
             // Insérer les données de la table temporaire vers la table définitive
             String insertQuery = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) SELECT ?, insee, id_emp, retour FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(insertQuery);
             cstmt.setString(1, annee);
 
             int rowsInserted = cstmt.executeUpdate();
+            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) ";
+            PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
+            stmtTable3.executeUpdate();
+
 
             if (rowsInserted > 0) {
                 logger.info(rowsInserted + " lignes insérées dans rafp_retour");
