@@ -35,7 +35,7 @@ public class AgentDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             String requete = "INSERT INTO harp_adm.rafp_agent (annee, no_dossier_pers, no_insee, tbi, indemn, seuil, rafpp," +
-                    " base_restante, total_retour, base_retour_recalculee) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    " base_restante, total_retour, base_retour_recalculee, nom_usuel, prenom) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
 
             cstmt.setString(1, agent.getAnnee());
@@ -48,6 +48,9 @@ public class AgentDAO {
             cstmt.setInt(8, agent.getBase_Restante());
             cstmt.setInt(9, agent.getTotal_Retour());
             cstmt.setInt(10, agent.getBase_Retour_Recalculee());
+            cstmt.setString(11, agent.getNom_usuel());
+            cstmt.setString(12, agent.getPrenom());
+
 
             int rowsInserted = cstmt.executeUpdate();
             if (rowsInserted > 0) {
