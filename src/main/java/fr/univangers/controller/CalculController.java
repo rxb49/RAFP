@@ -51,9 +51,9 @@ public class CalculController {
             System.out.println("Passage dans calculRafp/calcul");
             boolean vRetour = calculService.calculBaseRetourRecalculeeEmp();
             if (vRetour) {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("le calcul de la RAFP à été effectué ",HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Problème dans le calcul de la RAFP ", HttpStatus.BAD_REQUEST);
             }
         }catch (UAException e) {
         logger.error("Erreur UA - CalculRafp - Erreur : {}", e.getMessage());

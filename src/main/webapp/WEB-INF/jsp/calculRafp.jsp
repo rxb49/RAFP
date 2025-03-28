@@ -22,6 +22,7 @@
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/calculRAFP.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>
 

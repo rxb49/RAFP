@@ -178,51 +178,6 @@ public class CalculDAO {
         return vRetour;
     }
 
-    public void UpdateBaseRetour1() throws SQLException {
-        logger.info("Début de la requete de calcul de la base retour recalculee1");
-
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            String requete = "update harp_adm.rafp_agent set base_retour_recalculee = total_retour where total_retour < base_restante";
-            logger.info(requete);
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
-            rs.close();
-            cstmt.close();
-
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requete de calcul de la base retour recalculee1");
-
-    }
-
-    public void UpdateBaseRetour2() throws SQLException {
-        logger.info("Début de la requete de calcul de la base retour recalculee2");
-
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            String requete = "update harp_adm.rafp_agent set base_retour_recalculee = base_restante where total_retour >=base_restante";
-            logger.info(requete);
-            cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
-            rs.close();
-            cstmt.close();
-
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requete de calcul de la base retour recalculee2");
-
-    }
 
 
     /**
@@ -240,9 +195,6 @@ public class CalculDAO {
         boolean vRetour = false;
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
-
-            UpdateBaseRetour1();
-            UpdateBaseRetour2();
 
             String requete = "update harp_adm.rafp_retour I set base_retour_recalculee_emp=mnt_retour* " +
                     "(select MAX(base_retour_recalculee) from harp_adm.rafp_agent R " +
