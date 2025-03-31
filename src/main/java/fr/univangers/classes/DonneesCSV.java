@@ -1,6 +1,6 @@
 package fr.univangers.classes;
 
-public class EmployeurCSV {
+public class DonneesCSV {
 
     private int id_emp;
     private String nom_usuel;
@@ -14,7 +14,7 @@ public class EmployeurCSV {
 
     @Override
     public String toString() {
-        return "EmployeurCSV{" +
+        return "DonneesCSV{" +
                 "nom_usuel='" + nom_usuel + '\'' +
                 ", id_emp='" + id_emp + '\'' +
                 ", prenom='" + prenom + '\'' +

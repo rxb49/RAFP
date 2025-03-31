@@ -1,14 +1,9 @@
 package fr.univangers.controller;
 
-import fr.univangers.classes.EmployeurCSV;
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpPrecedante;
-import fr.univangers.exceptions.NonAutorisationException;
+import fr.univangers.classes.DonneesCSV;
 import fr.univangers.exceptions.UAException;
-import fr.univangers.service.AgentService;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.CalculService;
-import fr.univangers.service.PersonnelService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
@@ -20,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 
 @Controller
@@ -73,8 +67,9 @@ public class CalculController {
         try {
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
-            List<EmployeurCSV> vRetour = calculService.getDataEmployeurCSV();
-            if (vRetour.isEmpty()) {
+            List<DonneesCSV> vRetour = calculService.getDataEmployeurCSV();
+            System.out.println(vRetour.toString());
+            if (!vRetour.isEmpty()) {
                 return new ResponseEntity<>("le génération des CSV est effectué ",HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Problème lors de la génération des CSV ", HttpStatus.BAD_REQUEST);

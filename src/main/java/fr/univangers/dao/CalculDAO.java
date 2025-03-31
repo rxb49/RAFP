@@ -224,18 +224,18 @@ public class CalculDAO {
 
 
     /**
-     * Récupere les données à implémenter dans le fichier CSV employeur pour tous les employeurs'
-     * @return : les données des employeurs qui on des retours
+     * Récupere les données à implémenter dans le fichier CSV '
+     * @return : les données a implémenter dans les fichier CSV
      * @throws SQLException : SQLException
      */
-    public List<EmployeurCSV> getDataEmployeurCSV() throws SQLException {
+    public List<DonneesCSV> getDataEmployeurCSV() throws SQLException {
 
-        logger.info("Début de la requete de generation des CSV pour les employeurs");
+        logger.info("Début de la requete de recuperation des données CSV");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        List<EmployeurCSV> employeurCSVList = new ArrayList<>();
+        List<DonneesCSV> donneesCSVList = new ArrayList<>();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
@@ -247,7 +247,7 @@ public class CalculDAO {
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             while (rs.next()) {
-                EmployeurCSV employeur = new EmployeurCSV();
+                DonneesCSV employeur = new DonneesCSV();
                 employeur.setId_emp(rs.getInt("id_emp"));
                 employeur.setNom_usuel(rs.getString("nom_usuel"));
                 employeur.setPrenom(rs.getString("prenom"));
@@ -258,10 +258,10 @@ public class CalculDAO {
                 employeur.setPatronalRafp(rs.getDouble("Cotisation_Patronal_RAFP"));
                 employeur.setTotalRafp(rs.getDouble("Total_Cotisation_RAFP"));
 
-                employeurCSVList.add(employeur);
+                donneesCSVList.add(employeur);
             }
 
-            logger.info(employeurCSVList.toString());
+            logger.info(donneesCSVList.toString());
             rs.close();
             cstmt.close();
         }
@@ -269,9 +269,9 @@ public class CalculDAO {
             Sql.close(maConnexion);
         }
 
-        logger.info("Fin de la requete de generation des CSV pour les employeurs");
+        logger.info("Fin de la requete de recuperation des données CSV");
 
-        return employeurCSVList;
+        return donneesCSVList;
     }
 
 
