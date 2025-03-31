@@ -58,13 +58,31 @@ public class CalculController {
         }catch (UAException e) {
         logger.error("Erreur UA - CalculRafp - Erreur : {}", e.getMessage());
         return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
-    } catch (SQLException e) {
-        logger.error("Erreur BDD - CalculRafp - Erreur : {}", e.getMessage());
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (Exception e) {
-        logger.error("Erreur - CalculRafp - Erreur : {}", e.getMessage());
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - CalculRafp - Erreur : {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("Erreur - CalculRafp - Erreur : {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
+
+    @GetMapping("/calculRafp/generateCSV")
+    public ResponseEntity<String> GenerateCSV(HttpServletRequest request) throws Exception {
+        try {
+            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
+            autorisationService.verifAutorisation(idEncrypt);
+            boolean vRetour = calculService.getDataEmployeurCSV();
+            if (vRetour) {
+                return new ResponseEntity<>("le génération des CSV est effectué ",HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Problème lors de la génération des CSV ", HttpStatus.BAD_REQUEST);
+            }
+
+        }catch (Exception e) {
+            logger.error("Erreur - CalculRafp - Erreur : {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
     }
 

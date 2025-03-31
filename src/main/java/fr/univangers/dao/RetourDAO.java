@@ -29,6 +29,7 @@ public class RetourDAO {
     public boolean validateImportTotalDataFinal() throws SQLException, UAException {
         List<String> insertedNoInsee = getInsertedNoInsee();
         boolean insertionReussie = validateImportTotalData();
+        logger.info("Données: " + insertionReussie);
 
         if (insertionReussie) {
             for (String noInsee : insertedNoInsee) {
@@ -255,10 +256,9 @@ public class RetourDAO {
 
             int rowsInserted = cstmt.executeUpdate();
             String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = ?";
-            PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
+            cstmt = maConnexion.prepareStatement(insertQueryTable3);
             cstmt.setString(1, annee);
-            stmtTable3.executeUpdate();
-
+            cstmt.executeUpdate();
 
             if (rowsInserted > 0) {
                 logger.info(rowsInserted + " lignes insérées dans rafp_retour");
@@ -282,6 +282,7 @@ public class RetourDAO {
         }
         return result;
     }
+
 
     public List<RafpImport> getTempImportData() throws SQLException {
         logger.info("Récupération des données en attente de validation");

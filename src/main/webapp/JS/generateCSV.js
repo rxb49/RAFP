@@ -1,5 +1,5 @@
 function generateCSV(path) {
-
+    console.log("Passage dans generateCSV");
     fetch(`${path}/calculRafp/generateCSV`, {
         method: 'GET',
         headers: {

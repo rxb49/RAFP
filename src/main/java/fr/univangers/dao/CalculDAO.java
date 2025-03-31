@@ -1,9 +1,6 @@
 package fr.univangers.dao;
 
-import fr.univangers.classes.Personnel;
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpPrecedante;
-import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.classes.*;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
@@ -201,11 +198,12 @@ public class CalculDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "update harp_adm.rafp_retour I set base_retour_recalculee_emp=mnt_retour* " +
-                    "(select MAX(base_retour_recalculee) from harp_adm.rafp_agent R " +
-                    "where I.insee=R.no_insee)/ " +
-                    "(select MAX(total_retour) from harp_adm.rafp_agent RR " +
-                    "where i.insee=rr.no_insee)";
+            String requete = "update harp_adm.rafp_retour I set base_retour_recalculee_emp=ROUND(mnt_retour* " +
+                    " (select MAX(base_retour_recalculee) from harp_adm.rafp_agent R " +
+                    " where I.insee=R.no_insee)/ " +
+                    " (select MAX(total_retour) from harp_adm.rafp_agent RR" +
+                    " inner join harp_adm.rafp_retour I ON i.insee = rr.no_insee" +
+                    " where i.insee=rr.no_insee), 2)";
             logger.info(requete);
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -223,4 +221,62 @@ public class CalculDAO {
 
         return vRetour;
     }
+
+
+    /**
+     * Récupere les données à implémenter dans le fichier CSV employeur pour tous les employeurs'
+     * @return : les données des employeurs qui on des retours
+     * @throws SQLException : SQLException
+     */
+    public boolean getDataEmployeurCSV() throws SQLException {
+
+        logger.info("Début de la requete de generation des CSV pour les employeurs");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        boolean vRetour = false;
+        List<EmployeurCSV> employeurCSVList = new ArrayList<>();
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
+                    "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
+                    "R.base_retour_recalculee_emp* 0.1 AS \"Total_Cotisation_RAFP\"" +
+                    "from harp_adm.rafp_retour R inner join harp_adm.rafp_agent A ON a.no_insee = r.insee " +
+                    "WHERE R.annee = '2024' AND A.annee = '2024'  ORDER BY R.id_emp ";
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                EmployeurCSV employeur = new EmployeurCSV();
+                employeur.setNom_usuel(rs.getString("nom_usuel"));
+                employeur.setPrenom(rs.getString("prenom"));
+                employeur.setNo_insee(rs.getString("no_insee"));
+                employeur.setMnt_retour(rs.getDouble("mnt_retour"));
+                employeur.setBase_retour_recalculee_emp(rs.getDouble("base_retour_recalculee_emp"));
+                employeur.setSalaraialRafp(rs.getDouble("Cotisation_Salarial_RAFP"));
+                employeur.setPatronalRafp(rs.getDouble("Cotisation_Patronal_RAFP"));
+                employeur.setTotalRafp(rs.getDouble("Total_Cotisation_RAFP"));
+
+                employeurCSVList.add(employeur);
+
+            }
+
+            logger.info(employeurCSVList.toString());
+            rs.close();
+            cstmt.close();
+            vRetour = true;
+
+        }
+        finally {
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requete de generation des CSV pour les employeurs");
+
+        return vRetour;
+    }
+
+
+
 }
