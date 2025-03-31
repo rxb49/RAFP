@@ -227,9 +227,9 @@ public class RetourDAO {
             // Vérifier si une des données est déjà présente
             String checkQuery = """
             SELECT COUNT(*) FROM harp_adm.rafp_temp t
-            INNER JOIN harp_adm.rafp_retour r ON t.id_emp = r.id_emp AND t.insee = r.insee """;
-
+            INNER JOIN harp_adm.rafp_retour r ON t.id_emp = r.id_emp AND t.insee = r.insee AND r.annee = ? """;
             cstmt = maConnexion.prepareStatement(checkQuery);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 logger.warn("Erreur : Des données existent déjà dans la table définitive !");
