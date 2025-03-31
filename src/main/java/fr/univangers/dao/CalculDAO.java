@@ -27,6 +27,42 @@ public class CalculDAO {
         this.oracleConfiguration = oracleConfiguration;
     }
 
+
+    /**
+     * Récuperation de la derniere année initialisé'
+     * @return : l'année max de la table rafp_agent
+     * @throws SQLException : SQLException
+     */
+    public String getAnnee() throws SQLException {
+
+        logger.info("Début de la requete de récupération de l'année");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        String annee = "";
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            //Récuperation de l'année n-1
+            String requeteAnnee = "select max(annee) as annee from harp_adm.rafp_agent";
+            cstmt = maConnexion.prepareStatement(requeteAnnee);
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                annee = rs.getString(1);
+            }
+            rs.close();
+            cstmt.close();
+        }
+        finally {
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requete de récuperation de l'année");
+
+        return annee;
+    }
+
     /**
      * Calcul e TBI pour les agents ayant travailler en 2024 en ajoutant tous leurs paye de l'année n-1'
      * @return : les dans la table rafp_agent la valeur du tbi pour chaque agent à l'année n-1
@@ -40,8 +76,10 @@ public class CalculDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         boolean vRetour = false;
+        String annee = getAnnee();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
+
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent R set TBI=(" +
                     "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
@@ -50,10 +88,11 @@ public class CalculDAO {
                     "     and H.type_element='BR'" +
                     "     and H.montant <>0" +
                     "     and H.tem_rafp is null" +
-                    "     and R.annee = '2024' ) " +
+                    "     and R.annee = ? ) " +
                     ")";
 
             cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();
@@ -80,6 +119,8 @@ public class CalculDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         boolean vRetour = false;
+        String annee = getAnnee();
+
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
@@ -90,9 +131,10 @@ public class CalculDAO {
                     "     and type_element='BR'" +
                     "     and montant <>0" +
                     "     and tem_rafp='O'" +
-                    "     and r.annee = '2024') " +
+                    "     and R.annee = ?) " +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();
@@ -120,6 +162,8 @@ public class CalculDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         boolean vRetour = false;
+        String annee = getAnnee();
+
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
@@ -129,10 +173,11 @@ public class CalculDAO {
                     "     and R.no_dossier_pers=H.no_individu" +
                     "     and type_element='CO'" +
                     "     and compte_comptable='64535100'" +
-                    "     and r.annee = '2024'" +
+                    "     and r.annee = ?" +
                     "      )  " +
                     ")";
             cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();
@@ -159,12 +204,15 @@ public class CalculDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         boolean vRetour = false;
+        String annee = getAnnee();
+
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             //Récupération des informations de l'année
-            String requete = " update harp_adm.rafp_agent set seuil=nvl(tbi,0)*0.2 where annee = '2024'";
+            String requete = " update harp_adm.rafp_agent set seuil=nvl(tbi,0)*0.2 where annee = ?";
 
             cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             rs.close();
             cstmt.close();

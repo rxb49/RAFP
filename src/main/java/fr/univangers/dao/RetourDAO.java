@@ -13,9 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class RetourDAO {
@@ -159,35 +157,40 @@ public class RetourDAO {
         return noInseeList;
     }
 
-    public void UpdateBaseRetour1() throws SQLException {
+    public boolean UpdateBaseRetour1() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee1");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
-        ResultSet rs = null;
+        boolean result = false;
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
             String requete = "update harp_adm.rafp_agent set base_retour_recalculee = total_retour where total_retour < base_restante";
             logger.info(requete);
             cstmt = maConnexion.prepareStatement(requete);
-            rs = cstmt.executeQuery();
-            rs.close();
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne modifier en base de donnée.");
+            }
             cstmt.close();
-
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requete de calcul de la base retour recalculee1");
-
+        logger.info("Fin de la requête de modification du retour");
+        return result;
     }
 
-    public void UpdateBaseRetour2() throws SQLException {
+    public boolean UpdateBaseRetour2() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee2");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
+        boolean result = false;
+
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
@@ -195,14 +198,18 @@ public class RetourDAO {
             logger.info(requete);
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
-            rs.close();
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne modifier en base de donnée.");
+            }
             cstmt.close();
-
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requete de calcul de la base retour recalculee2");
-
+        logger.info("Fin de la requête de modification du retour");
+        return result;
     }
 
 
@@ -247,8 +254,9 @@ public class RetourDAO {
             cstmt.setString(1, annee);
 
             int rowsInserted = cstmt.executeUpdate();
-            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = '2024'";
+            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = ?";
             PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
+            cstmt.setString(1, annee);
             stmtTable3.executeUpdate();
 
 
