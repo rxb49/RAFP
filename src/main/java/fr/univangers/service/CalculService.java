@@ -1,9 +1,6 @@
 package fr.univangers.service;
 
-import fr.univangers.classes.Personnel;
-import fr.univangers.classes.RafpAgent;
-import fr.univangers.classes.RafpPrecedante;
-import fr.univangers.classes.SihamIndividuPaye;
+import fr.univangers.classes.*;
 import fr.univangers.dao.AgentDAO;
 import fr.univangers.dao.CalculDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +39,7 @@ public class CalculService {
         return dao.calculBaseRetourRecalculeeEmp();
     }
 
-    public boolean getDataEmployeurCSV() throws SQLException {
+    public List<EmployeurCSV> getDataEmployeurCSV() throws SQLException {
         return dao.getDataEmployeurCSV();
     }
 

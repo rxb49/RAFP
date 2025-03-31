@@ -2,6 +2,7 @@ package fr.univangers.classes;
 
 public class EmployeurCSV {
 
+    private int id_emp;
     private String nom_usuel;
     private String prenom;
     private String no_insee;
@@ -15,6 +16,7 @@ public class EmployeurCSV {
     public String toString() {
         return "EmployeurCSV{" +
                 "nom_usuel='" + nom_usuel + '\'' +
+                ", id_emp='" + id_emp + '\'' +
                 ", prenom='" + prenom + '\'' +
                 ", no_insee='" + no_insee + '\'' +
                 ", mnt_retour=" + mnt_retour +
@@ -23,6 +25,14 @@ public class EmployeurCSV {
                 ", PatronalRafp=" + PatronalRafp +
                 ", TotalRafp=" + TotalRafp +
                 '}';
+    }
+
+    public int getId_emp() {
+        return id_emp;
+    }
+
+    public void setId_emp(int id_emp) {
+        this.id_emp = id_emp;
     }
 
     public String getNom_usuel() {

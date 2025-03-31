@@ -1,5 +1,6 @@
 package fr.univangers.controller;
 
+import fr.univangers.classes.EmployeurCSV;
 import fr.univangers.classes.RafpAgent;
 import fr.univangers.classes.RafpPrecedante;
 import fr.univangers.exceptions.NonAutorisationException;
@@ -72,8 +73,8 @@ public class CalculController {
         try {
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
-            boolean vRetour = calculService.getDataEmployeurCSV();
-            if (vRetour) {
+            List<EmployeurCSV> vRetour = calculService.getDataEmployeurCSV();
+            if (vRetour.isEmpty()) {
                 return new ResponseEntity<>("le génération des CSV est effectué ",HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Problème lors de la génération des CSV ", HttpStatus.BAD_REQUEST);

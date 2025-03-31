@@ -228,19 +228,18 @@ public class CalculDAO {
      * @return : les données des employeurs qui on des retours
      * @throws SQLException : SQLException
      */
-    public boolean getDataEmployeurCSV() throws SQLException {
+    public List<EmployeurCSV> getDataEmployeurCSV() throws SQLException {
 
         logger.info("Début de la requete de generation des CSV pour les employeurs");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        boolean vRetour = false;
         List<EmployeurCSV> employeurCSVList = new ArrayList<>();
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
+            String requete = "select R.id_emp, A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
                     "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
                     "R.base_retour_recalculee_emp* 0.1 AS \"Total_Cotisation_RAFP\"" +
                     "from harp_adm.rafp_retour R inner join harp_adm.rafp_agent A ON a.no_insee = r.insee " +
@@ -249,6 +248,7 @@ public class CalculDAO {
             rs = cstmt.executeQuery();
             while (rs.next()) {
                 EmployeurCSV employeur = new EmployeurCSV();
+                employeur.setId_emp(rs.getInt("id_emp"));
                 employeur.setNom_usuel(rs.getString("nom_usuel"));
                 employeur.setPrenom(rs.getString("prenom"));
                 employeur.setNo_insee(rs.getString("no_insee"));
@@ -259,14 +259,11 @@ public class CalculDAO {
                 employeur.setTotalRafp(rs.getDouble("Total_Cotisation_RAFP"));
 
                 employeurCSVList.add(employeur);
-
             }
 
             logger.info(employeurCSVList.toString());
             rs.close();
             cstmt.close();
-            vRetour = true;
-
         }
         finally {
             Sql.close(maConnexion);
@@ -274,7 +271,7 @@ public class CalculDAO {
 
         logger.info("Fin de la requete de generation des CSV pour les employeurs");
 
-        return vRetour;
+        return employeurCSVList;
     }
 
 
