@@ -157,7 +157,7 @@ public class RetourDAO {
         return noInseeList;
     }
 
-    public boolean UpdateBaseRetour1() throws SQLException {
+    public boolean updateBaseRetour1() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee1");
 
         Connection maConnexion = null;
@@ -183,7 +183,7 @@ public class RetourDAO {
         return result;
     }
 
-    public boolean UpdateBaseRetour2() throws SQLException {
+    public boolean updateBaseRetour2() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee2");
 
         Connection maConnexion = null;
@@ -268,8 +268,8 @@ public class RetourDAO {
                 cstmt.executeUpdate();
 
                 maConnexion.commit();
-                UpdateBaseRetour1();
-                UpdateBaseRetour2();
+                updateBaseRetour1();
+                updateBaseRetour2();
                 result = true;
             } else {
                 logger.warn("Aucune donnée à insérer.");

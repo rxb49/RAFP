@@ -135,11 +135,10 @@ public class PersonnelDAO {
             String requete = " select distinct R.no_individu, S.no_insee, S.nom_usuel, S.prenom, R.tbi, R.indemn, R.seuil, R.rafpp, R.retour, R.base_restante, R.base_retour_calculee  " +
                     "from harp_adm.rafp_2023 R INNER JOIN siham_adm.siham_individu_paye S " +
                     "ON S.no_individu = R.no_individu " +
-                    "where S.periode_paie like ?" +
+                    "where S.periode_paie like (select max(annee)||'%' from harp_adm.rafp_agent)" +
                     "and S.l_statut = 'Titulaire'";
             logger.info(requete);
             cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
 
             while (rs.next()) {
