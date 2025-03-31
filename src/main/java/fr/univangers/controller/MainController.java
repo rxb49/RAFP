@@ -71,6 +71,8 @@ public class MainController {
                     ajoutAgent.setAnnee(String.valueOf(anneeActuelle - 1));
                     ajoutAgent.setNo_dossier_pers(String.valueOf(rafp.getNo_individu()));
                     ajoutAgent.setNo_insee(String.valueOf(rafp.getNo_insee()));
+                    ajoutAgent.setNom_usuel(String.valueOf(rafp.getNom_usuel()));
+                    ajoutAgent.setPrenom(String.valueOf(rafp.getPrenom()));
                     ajoutAgent.setTbi(rafp.getTbi());
                     ajoutAgent.setIndemn(rafp.getIndemn());
                     ajoutAgent.setSeuil(rafp.getSeuil());
@@ -104,17 +106,6 @@ public class MainController {
             return "errorPage/errorLoad";
         }
     }
-
-    @GetMapping("/calculRafp")
-    public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
-        return "calculRafp";
-    }
-
-
-
-
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {

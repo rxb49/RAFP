@@ -118,15 +118,26 @@ public class PersonnelDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         List<RafpPrecedante> resultList = new ArrayList<>();
+        String annee ="";
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            //Récuperation de l'année n-1
+            String requeteAnnee = "select max(annee) as annee from harp_adm.rafp_agent";
+            cstmt = maConnexion.prepareStatement(requeteAnnee);
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                annee = rs.getString(1);
+                annee = annee + "%";
+                logger.info("Annee après modifictaion : " + annee);
+            }
             //Récupération des informations de l'année
-            String requete = " select distinct R.no_individu, S.no_insee, R.tbi, R.indemn, R.seuil, R.rafpp, R.retour, R.base_restante, R.base_retour_calculee " +
+            String requete = " select distinct R.no_individu, S.no_insee, S.nom_usuel, S.prenom, R.tbi, R.indemn, R.seuil, R.rafpp, R.retour, R.base_restante, R.base_retour_calculee  " +
                     "from harp_adm.rafp_2023 R INNER JOIN siham_adm.siham_individu_paye S " +
                     "ON S.no_individu = R.no_individu " +
-                    "where S.periode_paie like '2024%'" +
-                    "and S.l_statut = 'Titulaire'" +
-                    "and rownum <= 200";
+                    "where S.periode_paie like (select max(annee)||'%' from harp_adm.rafp_agent)" +
+                    "and S.l_statut = 'Titulaire'";
+            logger.info(requete);
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
 
@@ -134,6 +145,8 @@ public class PersonnelDAO {
                 RafpPrecedante vRetour = new RafpPrecedante();
                 vRetour.setNo_individu(rs.getInt("no_individu"));
                 vRetour.setNo_insee(rs.getString("no_insee"));
+                vRetour.setNom_usuel(rs.getString("nom_usuel"));
+                vRetour.setPrenom(rs.getString("prenom"));
                 vRetour.setTbi(rs.getInt("tbi"));
                 vRetour.setIndemn(rs.getInt("indemn"));
                 vRetour.setSeuil(rs.getInt("seuil"));

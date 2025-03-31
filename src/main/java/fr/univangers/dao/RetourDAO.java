@@ -13,9 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class RetourDAO {
@@ -159,6 +157,61 @@ public class RetourDAO {
         return noInseeList;
     }
 
+    public boolean updateBaseRetour1() throws SQLException {
+        logger.info("Début de la requete de calcul de la base retour recalculee1");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "update harp_adm.rafp_agent set base_retour_recalculee = total_retour where total_retour < base_restante";
+            logger.info(requete);
+            cstmt = maConnexion.prepareStatement(requete);
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne modifier en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de modification du retour");
+        return result;
+    }
+
+    public boolean updateBaseRetour2() throws SQLException {
+        logger.info("Début de la requete de calcul de la base retour recalculee2");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        boolean result = false;
+
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "update harp_adm.rafp_agent set base_retour_recalculee = base_restante where total_retour >=base_restante";
+            logger.info(requete);
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            int rowsAffected = cstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                result = true;
+            }else{
+                logger.warn("Aucune ligne modifier en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de modification du retour");
+        return result;
+    }
+
 
     private boolean validateImportTotalData() throws SQLException {
         logger.info("Validation des données et insertion en base définitive");
@@ -181,9 +234,9 @@ public class RetourDAO {
             // Vérifier si une des données est déjà présente
             String checkQuery = """
             SELECT COUNT(*) FROM harp_adm.rafp_temp t
-            INNER JOIN harp_adm.rafp_retour r ON t.id_emp = r.id_emp AND t.insee = r.insee """;
-
+            INNER JOIN harp_adm.rafp_retour r ON t.id_emp = r.id_emp AND t.insee = r.insee AND r.annee = ? """;
             cstmt = maConnexion.prepareStatement(checkQuery);
+            cstmt.setString(1, annee);
             rs = cstmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 logger.warn("Erreur : Des données existent déjà dans la table définitive !");
@@ -194,12 +247,18 @@ public class RetourDAO {
                 maConnexion.commit();
                 return result;
             }
+            // update le montant total de la table rafp_agent a faire avec les données de rrafp_retour
             // Insérer les données de la table temporaire vers la table définitive
             String insertQuery = "INSERT INTO harp_adm.rafp_retour (annee, insee, id_emp, mnt_retour) SELECT ?, insee, id_emp, retour FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(insertQuery);
             cstmt.setString(1, annee);
 
             int rowsInserted = cstmt.executeUpdate();
+            String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = ?";
+            PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
+            cstmt.setString(1, annee);
+            stmtTable3.executeUpdate();
+
 
             if (rowsInserted > 0) {
                 logger.info(rowsInserted + " lignes insérées dans rafp_retour");
@@ -209,6 +268,8 @@ public class RetourDAO {
                 cstmt.executeUpdate();
 
                 maConnexion.commit();
+                updateBaseRetour1();
+                updateBaseRetour2();
                 result = true;
             } else {
                 logger.warn("Aucune donnée à insérer.");

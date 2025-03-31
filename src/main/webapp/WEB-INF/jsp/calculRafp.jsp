@@ -13,7 +13,7 @@
             </div>
             <div class="row">
                 <div class="col mx-3">
-                    <a href="#!" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></a>
+                    <button type="submit" onclick="calculRAFP('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></button>
                     <a href="#!" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.mail" /></a>
                 </div>
             </div>
@@ -21,6 +21,8 @@
     </div>
 </c:set>
 <c:set var="jsSpec">
+<script src="${pageContext.request.contextPath}/JS/calculRAFP.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>
 
