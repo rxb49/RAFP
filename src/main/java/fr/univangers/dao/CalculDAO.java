@@ -307,6 +307,14 @@ public class CalculDAO {
 
             try (FileWriter writer = new FileWriter(csvFile)) {
                 writer.append("Nom Usuel;ID Emp;Prénom;No INSEE;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
+
+                int nbDossier = 0;
+                double totalMntRetour = 0;
+                double totalBaseRetourRecalculee = 0;
+                double totalSalarialRafp = 0;
+                double totalPatronalRafp = 0;
+                double totalTotalRafp = 0;
+
                 for (DonneesCSV d : entry.getValue()) {
                     writer.append(String.join(";",
                                     d.getNom_usuel(), String.valueOf(d.getId_emp()), d.getPrenom(), d.getNo_insee(),
@@ -316,7 +324,22 @@ public class CalculDAO {
                                     String.valueOf(d.getPatronalRafp()),
                                     String.valueOf(d.getTotalRafp())))
                             .append("\n");
+
+                    nbDossier++;
+                    totalMntRetour += d.getMnt_retour();
+                    totalBaseRetourRecalculee += d.getBase_retour_recalculee_emp();
+                    totalSalarialRafp += d.getSalaraialRafp();
+                    totalPatronalRafp += d.getPatronalRafp();
+                    totalTotalRafp += d.getTotalRafp();
                 }
+                writer.append(String.format("Nombre de dossier:%d;;;;",
+                                 nbDossier))
+                        .append(String.format("%.2f", totalMntRetour)).append(";")
+                        .append(String.format("%.2f", totalBaseRetourRecalculee)).append(";")
+                        .append(String.format("%.2f", totalSalarialRafp)).append(";")
+                        .append(String.format("%.2f", totalPatronalRafp)).append(";")
+                        .append(String.format("%.2f", totalTotalRafp)).append("\n");
+
             }
         }
 
