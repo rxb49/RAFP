@@ -5,6 +5,7 @@ import fr.univangers.dao.CalculDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class CalculService {
         return dao.getDataEmployeurCSV();
     }
 
+    public boolean generateCSV(List<DonneesCSV> donnees) throws SQLException, IOException {
+        return dao.generateCSV(donnees);
+    }
 
 
 

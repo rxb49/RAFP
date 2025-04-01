@@ -5,14 +5,22 @@ import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Component
 public class CalculDAO {
@@ -272,6 +280,70 @@ public class CalculDAO {
         logger.info("Fin de la requete de recuperation des données CSV");
 
         return donneesCSVList;
+    }
+
+    /**
+     * Génère les fichiers CSV et les met dans un zip '
+     * @return : vrai ou faux si les fichiers sont générer
+     * @throws SQLException : SQLException
+     */
+    public boolean generateCSV(List<DonneesCSV> donnees) throws SQLException, IOException {
+        logger.info("Début de la requête de génération des CSV");
+
+        Map<Integer, List<DonneesCSV>> donneesParIdEmp = donnees.stream()
+                .collect(Collectors.groupingBy(DonneesCSV::getId_emp));
+
+        String projectDir = System.getProperty("user.dir");
+        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
+        if (!tempCsvDir.exists()) {
+            tempCsvDir.mkdirs();
+        }
+
+        List<File> csvFiles = new ArrayList<>();
+        for (Map.Entry<Integer, List<DonneesCSV>> entry : donneesParIdEmp.entrySet()) {
+            int idEmp = entry.getKey();
+            File csvFile = new File(tempCsvDir, "donnees_" + idEmp + ".csv");
+            csvFiles.add(csvFile);
+
+            try (FileWriter writer = new FileWriter(csvFile)) {
+                writer.append("Nom Usuel;ID Emp;Prénom;No INSEE;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
+                for (DonneesCSV d : entry.getValue()) {
+                    writer.append(String.join(";",
+                                    d.getNom_usuel(), String.valueOf(d.getId_emp()), d.getPrenom(), d.getNo_insee(),
+                                    String.valueOf(d.getMnt_retour()),
+                                    String.valueOf(d.getBase_retour_recalculee_emp()),
+                                    String.valueOf(d.getSalaraialRafp()),
+                                    String.valueOf(d.getPatronalRafp()),
+                                    String.valueOf(d.getTotalRafp())))
+                            .append("\n");
+                }
+            }
+        }
+
+        File zipFile = new File(tempCsvDir, "donnees_csv.zip");
+        try (FileOutputStream fos = new FileOutputStream(zipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+            for (File csv : csvFiles) {
+                try (FileInputStream fis = new FileInputStream(csv)) {
+                    ZipEntry zipEntry = new ZipEntry(csv.getName());
+                    zos.putNextEntry(zipEntry);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, length);
+                    }
+                    zos.closeEntry();
+                }
+            }
+        }
+
+        for (File csv : csvFiles) {
+            csv.delete();
+        }
+
+        boolean success = zipFile.exists() && zipFile.length() > 0;
+        logger.info("Fin de la requête de génération des CSV. Succès: " + success);
+        return success;
     }
 
 
