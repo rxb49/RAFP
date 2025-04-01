@@ -3,6 +3,7 @@ package fr.univangers.classes;
 public class DonneesCSV {
 
     private int id_emp;
+    private String lib_emp;
     private String nom_usuel;
     private String prenom;
     private String no_insee;
@@ -17,6 +18,7 @@ public class DonneesCSV {
         return "DonneesCSV{" +
                 "nom_usuel='" + nom_usuel + '\'' +
                 ", id_emp='" + id_emp + '\'' +
+                ", lib_emp='" + lib_emp + '\'' +
                 ", prenom='" + prenom + '\'' +
                 ", no_insee='" + no_insee + '\'' +
                 ", mnt_retour=" + mnt_retour +
@@ -33,6 +35,14 @@ public class DonneesCSV {
 
     public void setId_emp(int id_emp) {
         this.id_emp = id_emp;
+    }
+
+    public String getLib_emp() {
+        return lib_emp;
+    }
+
+    public void setLib_emp(String lib_emp) {
+        this.lib_emp = lib_emp;
     }
 
     public String getNom_usuel() {

@@ -232,8 +232,8 @@ public class CalculDAO {
 
 
     /**
-     * Récupere les données à implémenter dans le fichier CSV '
-     * @return : les données a implémenter dans les fichier CSV
+     * Récupere les données à implémenter dans le fichier CSV employeur'
+     * @return : les données a implémenter dans les fichier CSV employeur
      * @throws SQLException : SQLException
      */
     public List<DonneesCSV> getDataEmployeurCSV() throws SQLException {
@@ -251,7 +251,7 @@ public class CalculDAO {
                     "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
                     "R.base_retour_recalculee_emp* 0.1 AS \"Total_Cotisation_RAFP\"" +
                     "from harp_adm.rafp_retour R inner join harp_adm.rafp_agent A ON a.no_insee = r.insee " +
-                    "WHERE R.annee = '2024' AND A.annee = '2024'  ORDER BY R.id_emp ";
+                    "WHERE R.annee = (select MAX(annee) from harp_adm.rafp_agent) AND A.annee = (select MAX(annee) from harp_adm.rafp_agent)  ORDER BY R.id_emp ";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             while (rs.next()) {
@@ -269,7 +269,7 @@ public class CalculDAO {
                 donneesCSVList.add(employeur);
             }
 
-            logger.info(donneesCSVList.toString());
+            logger.info("Données Employeur : " + donneesCSVList.toString());
             rs.close();
             cstmt.close();
         }
@@ -283,12 +283,64 @@ public class CalculDAO {
     }
 
     /**
-     * Génère les fichiers CSV et les met dans un zip '
+     * Récupere les données à implémenter dans le fichier CSV agent'
+     * @return : les données a implémenter dans les fichier CSV agent
+     * @throws SQLException : SQLException
+     */
+    public List<DonneesCSV> getDataAgentCSV() throws SQLException {
+
+        logger.info("Début de la requete de recuperation des données CSV");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        List<DonneesCSV> donneesCSVList = new ArrayList<>();
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "select A.nom_usuel, A.prenom, a.no_insee, e.lib_emp, R.mnt_retour, R.base_retour_recalculee_emp, " +
+                    "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
+                    "R.base_retour_recalculee_emp* 0.1 AS \"Total_Cotisation_RAFP\"" +
+                    "from harp_adm.rafp_retour R inner join harp_adm.rafp_agent A ON a.no_insee = r.insee " +
+                    "inner join harp_adm.rafp_employeur E ON e.id_emp = r.id_emp  " +
+                    "WHERE R.annee = (select MAX(annee) from harp_adm.rafp_agent) AND A.annee = (select MAX(annee) from harp_adm.rafp_agent) ORDER BY A.no_insee ";
+            cstmt = maConnexion.prepareStatement(requete);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                DonneesCSV agent = new DonneesCSV();
+                agent.setNom_usuel(rs.getString("nom_usuel"));
+                agent.setPrenom(rs.getString("prenom"));
+                agent.setNo_insee(rs.getString("no_insee"));
+                agent.setLib_emp(rs.getString("lib_emp"));
+                agent.setMnt_retour(rs.getDouble("mnt_retour"));
+                agent.setBase_retour_recalculee_emp(rs.getDouble("base_retour_recalculee_emp"));
+                agent.setSalaraialRafp(rs.getDouble("Cotisation_Salarial_RAFP"));
+                agent.setPatronalRafp(rs.getDouble("Cotisation_Patronal_RAFP"));
+                agent.setTotalRafp(rs.getDouble("Total_Cotisation_RAFP"));
+
+                donneesCSVList.add(agent);
+            }
+
+            logger.info("Données Agents: " + donneesCSVList.toString());
+            rs.close();
+            cstmt.close();
+        }
+        finally {
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requete de recuperation des données CSV");
+
+        return donneesCSVList;
+    }
+
+    /**
+     * Génère les fichiers CSV des employeurs et les met dans un zip '
      * @return : vrai ou faux si les fichiers sont générer
      * @throws SQLException : SQLException
      */
-    public boolean generateCSV(List<DonneesCSV> donnees) throws SQLException, IOException {
-        logger.info("Début de la requête de génération des CSV");
+    public boolean generateCSVEmployeur(List<DonneesCSV> donnees) throws SQLException, IOException {
+        logger.info("Début de la requête de génération des CSV employeur");
 
         Map<Integer, List<DonneesCSV>> donneesParIdEmp = donnees.stream()
                 .collect(Collectors.groupingBy(DonneesCSV::getId_emp));
@@ -343,7 +395,94 @@ public class CalculDAO {
             }
         }
 
-        File zipFile = new File(tempCsvDir, "donnees_csv.zip");
+        File zipFile = new File(tempCsvDir, "donnees_employeur_csv.zip");
+        try (FileOutputStream fos = new FileOutputStream(zipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+            for (File csv : csvFiles) {
+                try (FileInputStream fis = new FileInputStream(csv)) {
+                    ZipEntry zipEntry = new ZipEntry(csv.getName());
+                    zos.putNextEntry(zipEntry);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, length);
+                    }
+                    zos.closeEntry();
+                }
+            }
+        }
+
+        for (File csv : csvFiles) {
+            csv.delete();
+        }
+
+        boolean success = zipFile.exists() && zipFile.length() > 0;
+        logger.info("Fin de la requête de génération des CSV. Succès: " + success);
+        return success;
+    }
+
+    /**
+     * Génère les fichiers CSV des agents et les met dans un zip '
+     * @return : vrai ou faux si les fichiers sont générer
+     * @throws SQLException : SQLException
+     */
+    public boolean generateCSVagent(List<DonneesCSV> donnees) throws SQLException, IOException {
+        logger.info("Début de la requête de génération des CSV agents");
+
+        Map<String, List<DonneesCSV>> donneesParNoInsee = donnees.stream()
+                .collect(Collectors.groupingBy(DonneesCSV::getNo_insee));
+
+        String projectDir = System.getProperty("user.dir");
+        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
+        if (!tempCsvDir.exists()) {
+            tempCsvDir.mkdirs();
+        }
+
+        List<File> csvFiles = new ArrayList<>();
+        for (Map.Entry<String, List<DonneesCSV>> entry : donneesParNoInsee.entrySet()) {
+            String noInsee = entry.getKey();
+            File csvFile = new File(tempCsvDir, "donnees_" + noInsee + ".csv");
+            csvFiles.add(csvFile);
+
+            try (FileWriter writer = new FileWriter(csvFile)) {
+                writer.append("Nom Employeur;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
+
+                int nbDossier = 0;
+                double totalMntRetour = 0;
+                double totalBaseRetourRecalculee = 0;
+                double totalSalarialRafp = 0;
+                double totalPatronalRafp = 0;
+                double totalTotalRafp = 0;
+
+                for (DonneesCSV d : entry.getValue()) {
+                    writer.append(String.join(";",
+                                    d.getLib_emp(),
+                                    String.valueOf(d.getMnt_retour()),
+                                    String.valueOf(d.getBase_retour_recalculee_emp()),
+                                    String.valueOf(d.getSalaraialRafp()),
+                                    String.valueOf(d.getPatronalRafp()),
+                                    String.valueOf(d.getTotalRafp())))
+                            .append("\n");
+
+                    nbDossier++;
+                    totalMntRetour += d.getMnt_retour();
+                    totalBaseRetourRecalculee += d.getBase_retour_recalculee_emp();
+                    totalSalarialRafp += d.getSalaraialRafp();
+                    totalPatronalRafp += d.getPatronalRafp();
+                    totalTotalRafp += d.getTotalRafp();
+                }
+                writer.append(String.format("Nombre de dossier:%d;",
+                                nbDossier))
+                        .append(String.format("%.2f", totalMntRetour)).append(";")
+                        .append(String.format("%.2f", totalBaseRetourRecalculee)).append(";")
+                        .append(String.format("%.2f", totalSalarialRafp)).append(";")
+                        .append(String.format("%.2f", totalPatronalRafp)).append(";")
+                        .append(String.format("%.2f", totalTotalRafp)).append("\n");
+
+            }
+        }
+
+        File zipFile = new File(tempCsvDir, "donnees_agents_csv.zip");
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
             for (File csv : csvFiles) {

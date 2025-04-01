@@ -87,13 +87,14 @@ public class CalculController {
         try {
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
-            List<DonneesCSV> vRetour = calculService.getDataEmployeurCSV();
-            System.out.println(vRetour.toString());
-            if (vRetour.isEmpty()){
+            List<DonneesCSV> vRetourEmployeur = calculService.getDataEmployeurCSV();
+            List<DonneesCSV> vRetourAgent = calculService.getDataAgentCSV();
+            if (vRetourEmployeur.isEmpty() || vRetourAgent.isEmpty()) {
                 return new ResponseEntity<>("Problème lors de la génération des CSV ", HttpStatus.BAD_REQUEST);
             }else{
-                 boolean success = calculService.generateCSV(vRetour);
-                 if(success){
+                 boolean successEmployeur = calculService.generateCSVEmployeur(vRetourEmployeur);
+                boolean successAgent = calculService.generateCSVagent(vRetourAgent);
+                if(successEmployeur || successAgent){
                      historiqueService.insertHistoriqueExport();
                      return new ResponseEntity<>("Fichier CSV générer avec succès",HttpStatus.OK);
                  }

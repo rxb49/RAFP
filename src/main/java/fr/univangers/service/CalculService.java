@@ -43,8 +43,16 @@ public class CalculService {
         return dao.getDataEmployeurCSV();
     }
 
-    public boolean generateCSV(List<DonneesCSV> donnees) throws SQLException, IOException {
-        return dao.generateCSV(donnees);
+    public boolean generateCSVEmployeur(List<DonneesCSV> donnees) throws SQLException, IOException {
+        return dao.generateCSVEmployeur(donnees);
+    }
+
+    public List<DonneesCSV> getDataAgentCSV() throws SQLException {
+        return dao.getDataAgentCSV();
+    }
+
+    public boolean generateCSVagent(List<DonneesCSV> donnees) throws SQLException, IOException {
+        return dao.generateCSVagent(donnees);
     }
 
 
