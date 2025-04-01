@@ -4,6 +4,7 @@ import fr.univangers.classes.DonneesCSV;
 import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.CalculService;
+import fr.univangers.service.HistoriqueService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
@@ -38,12 +39,13 @@ public class CalculController {
     private static final Logger logger = LoggerFactory.getLogger(CalculController.class);
     private final AutorisationService autorisationService;
     private final CalculService calculService;
+    private final HistoriqueService historiqueService;
 
 
-
-    public CalculController(AutorisationService autorisationService, CalculService calculService) {
+    public CalculController(AutorisationService autorisationService, CalculService calculService, HistoriqueService historiqueService) {
         this.autorisationService = autorisationService;
         this.calculService = calculService;
+        this.historiqueService = historiqueService;
     }
 
 
@@ -90,6 +92,7 @@ public class CalculController {
             }else{
                  boolean success = calculService.generateCSV(vRetour);
                  if(success){
+                     historiqueService.insertHistoriqueExport();
                      return new ResponseEntity<>("Fichier CSV générer avec succès",HttpStatus.OK);
                  }
             }

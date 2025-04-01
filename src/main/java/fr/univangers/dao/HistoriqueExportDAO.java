@@ -1,0 +1,64 @@
+package fr.univangers.dao;
+
+import fr.univangers.classes.RafpAgentRetour;
+import fr.univangers.classes.RafpEmployeur;
+import fr.univangers.exceptions.UAException;
+import fr.univangers.sql.OracleConfiguration;
+import fr.univangers.sql.Sql;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class HistoriqueExportDAO {
+    private final Logger logger = LoggerFactory.getLogger(HistoriqueExportDAO.class);
+
+    private final OracleConfiguration oracleConfiguration;
+
+    public HistoriqueExportDAO(OracleConfiguration oracleConfiguration) {
+        this.oracleConfiguration = oracleConfiguration;
+    }
+
+    /**
+     * Ajoute dans rafp_historique une ligne avec la date de la generation des csv et son etat '
+     * @return : vrai ou faux si la ligne est bien insérer
+     * @throws SQLException : SQLException
+     */
+    public boolean insertHistoriqueExport() throws SQLException {
+
+        logger.info("Début de la requête d'insertion de l'hitorique d'export");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        logger.info("Date insérer", date);
+        String etat = "T";
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( ?, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setTimestamp(1, date);
+            cstmt.setString(2, etat);
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête d'insertion d'historique d'export");
+        return result;
+    }
+}
