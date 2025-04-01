@@ -30,15 +30,12 @@ public class HistoriqueExportDAO {
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         boolean result = false;
-        Timestamp date = new Timestamp(System.currentTimeMillis());
-        logger.info("Date insérer", date);
         String etat = "T";
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( ?, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
             cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setTimestamp(1, date);
-            cstmt.setString(2, etat);
+            cstmt.setString(1, etat);
 
             int rowsInserted = cstmt.executeUpdate();
             if (rowsInserted > 0) {

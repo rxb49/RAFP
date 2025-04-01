@@ -346,21 +346,22 @@ public class CalculDAO {
 
         Map<Integer, List<DonneesCSV>> donneesParIdEmp = donnees.stream()
                 .collect(Collectors.groupingBy(DonneesCSV::getId_emp));
-
+        //Initialisation du répertoire ou les fichiers CSV seront créer
         String projectDir = System.getProperty("user.dir");
         File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
         if (!tempCsvDir.exists()) {
             tempCsvDir.mkdirs();
         }
-
+        //création des fichiers CSV
         List<File> csvFiles = new ArrayList<>();
         for (Map.Entry<Integer, List<DonneesCSV>> entry : donneesParIdEmp.entrySet()) {
+            //Définit la différentiation sur l'id_emp pour chaque fichier et nommage du fichier
             int idEmp = entry.getKey();
             List<DonneesCSV> donneesList = entry.getValue();
             String libEmp = (donneesList.get(0).getLib_emp() != null) ? donneesList.get(0).getLib_emp() : "Inconnu";
             File csvFile = new File(tempCsvDir, "donnees_" + idEmp + "_" + libEmp + ".csv");
             csvFiles.add(csvFile);
-
+            //insertion des données dans le fichier CSV
             try (FileWriter writer = new FileWriter(csvFile)) {
                 writer.append("Nom Usuel;ID Emp;Prénom;No INSEE;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
 
@@ -380,7 +381,7 @@ public class CalculDAO {
                                     String.valueOf(d.getPatronalRafp()),
                                     String.valueOf(d.getTotalRafp())))
                             .append("\n");
-
+                    //Calcul du total de chaque colonne
                     nbDossier++;
                     totalMntRetour += d.getMnt_retour();
                     totalBaseRetourRecalculee += d.getBase_retour_recalculee_emp();
@@ -388,6 +389,7 @@ public class CalculDAO {
                     totalPatronalRafp += d.getPatronalRafp();
                     totalTotalRafp += d.getTotalRafp();
                 }
+                //affichage du total sur la dernière ligne
                 writer.append(String.format("Nombre de dossier:%d;;;;",
                                  nbDossier))
                         .append(String.format("%.2f", totalMntRetour)).append(";")
@@ -398,7 +400,7 @@ public class CalculDAO {
 
             }
         }
-
+        //Mettre en zip tous les fichiers CSV généré
         File zipFile = new File(tempCsvDir, "donnees_employeur_csv.zip");
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -415,7 +417,7 @@ public class CalculDAO {
                 }
             }
         }
-
+        //suppression des fichier csv quand ils on été mit en zip
         for (File csv : csvFiles) {
             csv.delete();
         }
@@ -433,6 +435,7 @@ public class CalculDAO {
     public boolean generateCSVagent(List<DonneesCSV> donnees) throws SQLException, IOException {
         logger.info("Début de la requête de génération des CSV agents");
 
+        //Initialisation du répertoire ou les fichiers CSV seront créer
         Map<String, List<DonneesCSV>> donneesParNoInsee = donnees.stream()
                 .collect(Collectors.groupingBy(DonneesCSV::getNo_insee));
 
@@ -441,19 +444,22 @@ public class CalculDAO {
         if (!tempCsvDir.exists()) {
             tempCsvDir.mkdirs();
         }
-
+        //creation des fichier CSV
         List<File> csvFiles = new ArrayList<>();
         for (Map.Entry<String, List<DonneesCSV>> entry : donneesParNoInsee.entrySet()) {
+            //Définit la différentiation sur le no_insee pour chaque fichier et nommage du fichier
             String noInsee = entry.getKey();
             List<DonneesCSV> donneesList = entry.getValue();
             String nom = (donneesList.get(0).getNom_usuel() != null) ? donneesList.get(0).getNom_usuel() : "Inconnu";
             String prenom = (donneesList.get(0).getPrenom() != null) ? donneesList.get(0).getPrenom() : "Inconnu";
             File csvFile = new File(tempCsvDir, "donnees_" + noInsee + "_" + nom + "_" + prenom + ".csv");
             csvFiles.add(csvFile);
+            //insertion des données dans le fichier CSV
 
             try (FileWriter writer = new FileWriter(csvFile)) {
                 writer.append("Nom Employeur;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
 
+                //Calcul du total de chaque colonne
                 int nbDossier = 0;
                 double totalMntRetour = 0;
                 double totalBaseRetourRecalculee = 0;
@@ -478,6 +484,8 @@ public class CalculDAO {
                     totalPatronalRafp += d.getPatronalRafp();
                     totalTotalRafp += d.getTotalRafp();
                 }
+                //affichage du total sur la dernière ligne
+
                 writer.append(String.format("Nombre de dossier:%d;",
                                 nbDossier))
                         .append(String.format("%.2f", totalMntRetour)).append(";")
@@ -489,6 +497,7 @@ public class CalculDAO {
             }
         }
 
+        //Mettre en zip tous les fichiers CSV généré
         File zipFile = new File(tempCsvDir, "donnees_agents_csv.zip");
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -505,7 +514,7 @@ public class CalculDAO {
                 }
             }
         }
-
+        //suppression des fichier csv quand ils on été mit en zip
         for (File csv : csvFiles) {
             csv.delete();
         }
