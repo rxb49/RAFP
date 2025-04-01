@@ -247,16 +247,18 @@ public class CalculDAO {
         try {
             maConnexion = oracleConfiguration.dataSource().getConnection();
 
-            String requete = "select R.id_emp, A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
+            String requete = "select R.id_emp, E.lib_emp, A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
                     "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
                     "R.base_retour_recalculee_emp* 0.1 AS \"Total_Cotisation_RAFP\"" +
                     "from harp_adm.rafp_retour R inner join harp_adm.rafp_agent A ON a.no_insee = r.insee " +
+                    "inner join harp_adm.rafp_employeur E ON e.id_emp = r.id_emp " +
                     "WHERE R.annee = (select MAX(annee) from harp_adm.rafp_agent) AND A.annee = (select MAX(annee) from harp_adm.rafp_agent)  ORDER BY R.id_emp ";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
             while (rs.next()) {
                 DonneesCSV employeur = new DonneesCSV();
                 employeur.setId_emp(rs.getInt("id_emp"));
+                employeur.setLib_emp(rs.getString("lib_emp"));
                 employeur.setNom_usuel(rs.getString("nom_usuel"));
                 employeur.setPrenom(rs.getString("prenom"));
                 employeur.setNo_insee(rs.getString("no_insee"));
@@ -354,7 +356,9 @@ public class CalculDAO {
         List<File> csvFiles = new ArrayList<>();
         for (Map.Entry<Integer, List<DonneesCSV>> entry : donneesParIdEmp.entrySet()) {
             int idEmp = entry.getKey();
-            File csvFile = new File(tempCsvDir, "donnees_" + idEmp + ".csv");
+            List<DonneesCSV> donneesList = entry.getValue();
+            String libEmp = (donneesList.get(0).getLib_emp() != null) ? donneesList.get(0).getLib_emp() : "Inconnu";
+            File csvFile = new File(tempCsvDir, "donnees_" + idEmp + "_" + libEmp + ".csv");
             csvFiles.add(csvFile);
 
             try (FileWriter writer = new FileWriter(csvFile)) {
@@ -441,7 +445,10 @@ public class CalculDAO {
         List<File> csvFiles = new ArrayList<>();
         for (Map.Entry<String, List<DonneesCSV>> entry : donneesParNoInsee.entrySet()) {
             String noInsee = entry.getKey();
-            File csvFile = new File(tempCsvDir, "donnees_" + noInsee + ".csv");
+            List<DonneesCSV> donneesList = entry.getValue();
+            String nom = (donneesList.get(0).getNom_usuel() != null) ? donneesList.get(0).getNom_usuel() : "Inconnu";
+            String prenom = (donneesList.get(0).getPrenom() != null) ? donneesList.get(0).getPrenom() : "Inconnu";
+            File csvFile = new File(tempCsvDir, "donnees_" + noInsee + "_" + nom + "_" + prenom + ".csv");
             csvFiles.add(csvFile);
 
             try (FileWriter writer = new FileWriter(csvFile)) {
