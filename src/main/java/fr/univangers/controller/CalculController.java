@@ -53,6 +53,8 @@ public class CalculController {
     public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
+        boolean isEtatTExist = historiqueService.checkEtatT();
+        model.addAttribute("isEtatTExist", isEtatTExist);
         return "calculRafp";
     }
 

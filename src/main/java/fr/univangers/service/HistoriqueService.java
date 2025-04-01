@@ -25,6 +25,10 @@ public class HistoriqueService {
         return dao.insertHistoriqueExport();
     }
 
+    public boolean checkEtatT() throws SQLException {
+        return dao.checkEtatT();
+    }
+
 
 
 }
