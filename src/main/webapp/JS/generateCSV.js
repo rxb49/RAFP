@@ -26,8 +26,8 @@ function generateCSV(path) {
         })
 }
 
-
-function downloadCSV(path) {
+// A faire après
+/*function downloadCSV(path) {
     console.log("Passage dans generateCSV");
     fetch(`${path}/calculRafp/downloadCSV`, {
         method: 'GET',
@@ -53,5 +53,5 @@ function downloadCSV(path) {
                 location.reload();
             });
         })
-}
+}*/
 
