@@ -90,21 +90,21 @@ public class HistoriqueExportDAO {
      * @return : la date recuperer
      * @throws SQLException : SQLException
      */
-    public Timestamp getLastGeneration() throws SQLException {
+    public String getLastGeneration() throws SQLException {
         logger.info("Début de la requête de récuperation de la dernier génération de CSV");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        Timestamp lastDate = null;
+        String lastDate = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "SELECT MAX(TO_CHAR(date_export, 'YYYY-mm-dd hh:mm:ss')) AS lastDate from harp_adm.rafp_his_export WHERE etat = ?";
+            String requete = "SELECT MAX(TO_CHAR(date_export, 'dd-mm-YYYY hh24:mi:ss')) AS lastDate from harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, "T");
             rs = cstmt.executeQuery();
             if (rs.next()) {
-                lastDate = rs.getTimestamp(1);
+                lastDate = rs.getString(1);
             }
             if (lastDate == null) {
                 logger.warn("Aucune génération trouvée");

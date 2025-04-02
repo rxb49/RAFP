@@ -55,7 +55,7 @@ public class CalculController {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
         boolean isEtatTExist = historiqueService.checkEtatT();
-        Timestamp lastDate = historiqueService.getLastGeneration();
+        String lastDate = historiqueService.getLastGeneration();
         model.addAttribute("isEtatTExist", isEtatTExist);
         model.addAttribute("lastDate", (lastDate != null) ? lastDate : "Aucune génération faite");
         return "calculRafp";

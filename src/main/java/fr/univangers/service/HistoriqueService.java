@@ -30,7 +30,7 @@ public class HistoriqueService {
         return dao.checkEtatT();
     }
 
-    public Timestamp getLastGeneration() throws SQLException {
+    public String getLastGeneration() throws SQLException {
         return dao.getLastGeneration();
     }
 
