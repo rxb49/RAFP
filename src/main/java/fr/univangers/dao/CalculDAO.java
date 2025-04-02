@@ -526,6 +526,11 @@ public class CalculDAO {
     }
 
 
+    /**
+     * Crée un nouveau zip avec les deux autre zip contenant les fichiers CSV '
+     * @return : Retourne le zip contenant les deux autres zip
+     * @throws IOException : IOException
+     */
     public File createZipFile() throws IOException {
         // Récupérer le dossier contenant les fichiers ZIP
         String projectDir = System.getProperty("user.dir");
@@ -535,7 +540,7 @@ public class CalculDAO {
         File[] zipFiles = tempCsvDir.listFiles((dir, name) -> name.endsWith(".zip"));
 
         if (zipFiles == null || zipFiles.length == 0) {
-            return null; // Aucun fichier ZIP à traiter
+            return null;
         }
 
         // Créer un fichier ZIP contenant tous les ZIP individuels
@@ -567,13 +572,16 @@ public class CalculDAO {
         return allZipFile;
     }
 
+    /**
+     * Supprime le zip contenant les autres zip qui à été crée dans le dossier tempCSV '
+     */
     public void deleteZipFiles() {
         String projectDir = System.getProperty("user.dir");
         File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
 
         // Récupérer tous les fichiers ZIP correspondant au format "Tous_Les_Fichiers_*.zip"
         File[] zipFiles = tempCsvDir.listFiles((dir, name) -> name.startsWith("Tous_Les_Fichiers_") && name.endsWith(".zip"));
-
+        // Supprimer le fichier
         if (zipFiles != null && zipFiles.length > 0) {
             for (File zipFile : zipFiles) {
                 if (zipFile.delete()) {
