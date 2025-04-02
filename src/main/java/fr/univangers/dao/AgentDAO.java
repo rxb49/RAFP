@@ -26,7 +26,11 @@ public class AgentDAO {
     }
 
 
-
+    /**
+     * Ajoute un agent dans la table rafp_agent à l'initialisatiin '
+     * @return : l'agent insérer
+     * @throws SQLException : SQLException
+     */
     public RafpAgent insertAgent(RafpAgent agent) throws SQLException {
         logger.info("Début de la requête d'insertion de l'agent");
         Connection maConnexion = null;
@@ -68,7 +72,11 @@ public class AgentDAO {
         return ajouterAgent;
     }
 
-
+    /**
+     * récupere tous les agents en fonction d'une année '
+     * @return : la liste des agents
+     * @throws SQLException : SQLException
+     */
     public List<RafpLibAgent> getAgent() throws SQLException {
         logger.info("Début de la requête de récuperation des agents");
 
@@ -99,6 +107,11 @@ public class AgentDAO {
     }
 
 
+    /**
+     * rechercher un agent avec son nom ou prenom '
+     * @return : le ou les agents concernés
+     * @throws SQLException : SQLException
+     */
     public List<RafpLibAgent> getAgentBySearch(String recherche) throws SQLException {
         logger.info("Début de la requête de recherche des agents");
         List<RafpLibAgent> agents = new ArrayList<>();
@@ -131,6 +144,11 @@ public class AgentDAO {
         return agents;
     }
 
+    /**
+     * Recuperer un agent avec son noInsee '
+     * @return : l'agent correspondant
+     * @throws SQLException : SQLException
+     */
     public RafpAgent getAgentByNoInsee(String no_insee) throws SQLException {
         logger.info("Début de la requête de recherche de l'agent avec no_insee");
         RafpAgent agent = new RafpAgent();
@@ -165,6 +183,12 @@ public class AgentDAO {
         return agent;
     }
 
+
+    /**
+     * Recupere les employeurs en lien avec l'agent (noInsee) dans la table rafp_retour '
+     * @return : Liste des rafp_retour en fonction du no_insee de l'agent
+     * @throws SQLException : SQLException
+     */
     public List<RafpRetour> getEmployeurByAgent(String no_insee) throws SQLException {
         logger.info("Début de la requête de récuperation des employeurs pour l'agent");
         List<RafpRetour> employeurs = new ArrayList<>();
@@ -196,6 +220,11 @@ public class AgentDAO {
         return employeurs;
     }
 
+    /**
+     * Met a jour le total_retour d'un agent en calculant la somme des retour concerner par cet agent dans la table rafp_retour '
+     * @return : vrai ou faux si l'update a fonctionné
+     * @throws SQLException : SQLException
+     */
     public boolean updateTotalRetourByAgent(String no_insee) throws SQLException, UAException {
         logger.info("Début de la requête de calcul du total_retour");
         if (no_insee == null || no_insee.isEmpty()) {

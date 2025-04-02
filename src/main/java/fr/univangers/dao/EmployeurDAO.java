@@ -25,6 +25,11 @@ public class EmployeurDAO {
         this.oracleConfiguration = oracleConfiguration;
     }
 
+    /**
+     * Ajout un employeur dans la table rafp_employeur '
+     * @return : vrai ou faux si l'employeur est ajouté ou non
+     * @throws SQLException : SQLException
+     */
     public boolean insertEmployeur(RafpEmployeur employeur) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion de l'employeur");
         if (employeur.getLib_emp() == null || employeur.getMail_emp() == null || employeur.getLib_emp().isEmpty() || employeur.getMail_emp().isEmpty()) {
@@ -85,6 +90,11 @@ public class EmployeurDAO {
         return result;
     }
 
+    /**
+     * Recupere tous les employeurs de la table rafp_employeur '
+     * @return : Une liste de tous les employeurs
+     * @throws SQLException : SQLException
+     */
     public List<RafpEmployeur> getEmployeur() throws SQLException {
         logger.info("Début de la requête de récuperation des employeurs");
 
@@ -115,6 +125,11 @@ public class EmployeurDAO {
         return employeurs;
     }
 
+    /**
+     * Récupere les employeur en fonction de leur nom et mail '
+     * @return : la liste des employeurs concernés
+     * @throws SQLException : SQLException
+     */
     public List<RafpEmployeur> getEmployeurBySearch(String recherche) throws SQLException {
         logger.info("Début de la requête de recherche des employeurs");
         List<RafpEmployeur> employeurs = new ArrayList<>();
@@ -148,6 +163,11 @@ public class EmployeurDAO {
         return employeurs;
     }
 
+    /**
+     * Modifier le nom ou le mail de l'employeur '
+     * @return : vrai ou faux si l'employeur à été modifié
+     * @throws SQLException : SQLException
+     */
     public boolean updateEmployeur(RafpEmployeur rafpEmployeur) throws SQLException, UAException {
         logger.info("Début de la requête de modification d'un employeur");
         logger.info(rafpEmployeur.getLib_emp());
@@ -195,6 +215,11 @@ public class EmployeurDAO {
         return result;
     }
 
+    /**
+     * Rechercher un employeur par son id '
+     * @return : l'employeur concerné
+     * @throws SQLException : SQLException
+     */
     public RafpEmployeur getEmployeurById(int idEmployeur) throws SQLException {
         logger.info("Début de la requête de récuperation de l'employeurs");
         RafpEmployeur employeur = new RafpEmployeur();
@@ -223,6 +248,11 @@ public class EmployeurDAO {
     }
 
 
+    /**
+     * Recherche les agents en lien avec un idemployeur  '
+     * @return : la liste des agent en lien avec un employeur
+     * @throws SQLException : SQLException
+     */
     public List<RafpAgentRetour> getAgentByEmployeurId(int idEmployeur) throws SQLException {
         logger.info("Début de la requête de récuperation des agents pour un employeur");
         logger.info("Id de l'employeur " + idEmployeur);
@@ -256,6 +286,11 @@ public class EmployeurDAO {
         return agents;
     }
 
+    /**
+     * ajoute dans rafp_retour un montant en fonction du noInsee d'un agent et de l'id de l'employeur '
+     * @return : vrai ou faux si le retour à été inséré
+     * @throws SQLException : SQLException
+     */
     public boolean insertEmployeurAdd(String no_insee, int id_emp, int montant) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion du retour");
         if (no_insee == null || no_insee.isEmpty() || id_emp == 0 || montant == 0) {
@@ -308,6 +343,11 @@ public class EmployeurDAO {
         return result;
     }
 
+    /**
+     * Supprimer un retour en fonction d'un noInsee et d'un id employeur '
+     * @return : vrai ou faux si la ligne à été supprimée
+     * @throws SQLException : SQLException
+     */
     public boolean deleteDonneeEmployeur(String no_insee, int id_emp) throws SQLException, UAException {
         logger.info("Début de la requête de suppression du retour");
         Connection maConnexion = null;

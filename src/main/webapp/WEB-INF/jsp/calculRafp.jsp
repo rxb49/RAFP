@@ -11,9 +11,18 @@
             <div class="flex-grow-1 cadre-info my-3 mx-3">
                 <h2 class="mb-1"><spring:message code="titre.rafp.calcul" /></h2>
             </div>
+            <div class="flex-grow-1 cadre-info my-3 mx-3">
+                <h3 class="mb-1">
+                    <spring:message code="rafp.calcul.generation" /> ${lastDate}
+                </h3>
+            </div>
             <div class="row">
                 <div class="col mx-3">
                     <button type="submit" onclick="calculRAFP('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></button>
+                    <button type="submit" onclick="generateCSV('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.csv" /></button>
+                    <c:if test="${isEtatTExist}">
+                        <button type="submit" onclick="downloadCSV('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15">Télécharger</button>
+                    </c:if>
                     <a href="#!" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.mail" /></a>
                 </div>
             </div>
@@ -22,6 +31,7 @@
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/calculRAFP.js"></script>
+<script src="${pageContext.request.contextPath}/JS/generateCSV.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>

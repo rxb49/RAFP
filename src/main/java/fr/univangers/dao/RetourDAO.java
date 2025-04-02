@@ -26,9 +26,15 @@ public class RetourDAO {
         this.oracleConfiguration = oracleConfiguration;
     }
 
+    /**
+     * Insere les retours d'un fichier csv dans la table rafp_retour et met  à jour le total retour des agents concerné dans la table rafp_agent '
+     * @return : vrai ou faux si les lignes sont modifié
+     * @throws SQLException : SQLException
+     */
     public boolean validateImportTotalDataFinal() throws SQLException, UAException {
         List<String> insertedNoInsee = getInsertedNoInsee();
         boolean insertionReussie = validateImportTotalData();
+        logger.info("Données: " + insertionReussie);
 
         if (insertionReussie) {
             for (String noInsee : insertedNoInsee) {
@@ -38,6 +44,11 @@ public class RetourDAO {
         return insertionReussie;
     }
 
+    /**
+     * recupere les retour de la table rafp_retour en fonction d'un noInsee et d'un employeur '
+     * @return : le retour concerné
+     * @throws SQLException : SQLException
+     */
     public RafpRetour getRetourByInseeEmployeur(int idEmployeur, String no_insee) throws SQLException {
         logger.info("Début de la requête de récuperation du retour");
         RafpRetour retour = new RafpRetour();
@@ -68,6 +79,12 @@ public class RetourDAO {
         logger.info("Fin de la requête de récuperation du retour");
         return retour;
     }
+
+    /**
+     * Modifie un retour en fonction d'un insee et d'un employeur '
+     * @return : vrai ou faux si la ligne à été modifié
+     * @throws SQLException : SQLException
+     */
 
     public boolean updateRetourByInseeEmployeur(int idEmployeur, String no_insee, int montant) throws SQLException {
         logger.info("Début de la requête de modification du retour");
@@ -104,6 +121,11 @@ public class RetourDAO {
     }
 
 
+    /**
+     * Insere dans rafp_temp les données du fichier csv '
+     * @return : vrai ou faux si la ligne à été insérée
+     * @throws SQLException : SQLException
+     */
     public boolean insertImportTotalDataTemp(int id_emp, String no_insee, double montant) throws SQLException, UAException {
         logger.info("Début de la requête d'insertion des retours totaux temporaires");
 
@@ -134,6 +156,11 @@ public class RetourDAO {
         return result;
     }
 
+    /**
+     * Recupere les noInsee qui on été insérée dans la table rafp_temp de la methode insertImportTotalDataTemp '
+     * @return : Liste des noInsee de la table rapf_temp
+     * @throws SQLException : SQLException
+     */
     private List<String> getInsertedNoInsee() throws SQLException {
         List<String> noInseeList = new ArrayList<>();
         Connection maConnexion = null;
@@ -157,6 +184,11 @@ public class RetourDAO {
         return noInseeList;
     }
 
+    /**
+     * Recalcule la base_retour_recalculee de la table rafp_agent si le total_retour est inférieur à la base_restante  '
+     * @return : vrai ou faux si la ligne à été modifie
+     * @throws SQLException : SQLException
+     */
     public boolean updateBaseRetour1() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee1");
 
@@ -183,6 +215,11 @@ public class RetourDAO {
         return result;
     }
 
+    /**
+     * Recalcule la base_retour_recalculee de la table rafp_agent si le total_retour est suprieur ou égal à la base_restant '
+     * @return : vrai ou faux si la ligne à été modifie
+     * @throws SQLException : SQLException
+     */
     public boolean updateBaseRetour2() throws SQLException {
         logger.info("Début de la requete de calcul de la base retour recalculee2");
 
@@ -213,6 +250,11 @@ public class RetourDAO {
     }
 
 
+    /**
+     * Insère dans rafp_retour les données de rafp_temp et supprime si l'insertion est effectué les données de rafp_temp '
+     * @return : vrai ou faux si les lignes on été insérées/supprimées
+     * @throws SQLException : SQLException
+     */
     private boolean validateImportTotalData() throws SQLException {
         logger.info("Validation des données et insertion en base définitive");
 
@@ -255,10 +297,9 @@ public class RetourDAO {
 
             int rowsInserted = cstmt.executeUpdate();
             String insertQueryTable3 = "UPDATE harp_adm.rafp_agent A set A.total_retour = (select sum(R.mnt_retour) from harp_adm.rafp_retour R where R.insee=A.no_insee) where A.annee = ?";
-            PreparedStatement stmtTable3 = maConnexion.prepareStatement(insertQueryTable3);
+            cstmt = maConnexion.prepareStatement(insertQueryTable3);
             cstmt.setString(1, annee);
-            stmtTable3.executeUpdate();
-
+            cstmt.executeUpdate();
 
             if (rowsInserted > 0) {
                 logger.info(rowsInserted + " lignes insérées dans rafp_retour");
@@ -283,6 +324,12 @@ public class RetourDAO {
         return result;
     }
 
+
+    /**
+     * Recupere les données de la table rafp_temp '
+     * @return : la liste des données de rafp_temp
+     * @throws SQLException : SQLException
+     */
     public List<RafpImport> getTempImportData() throws SQLException {
         logger.info("Récupération des données en attente de validation");
 
@@ -317,6 +364,11 @@ public class RetourDAO {
         return tempData;
     }
 
+    /**
+     * Supprime toutes les données de rafp_temp '
+     * @return : vrai ou faux si les lignes on été supprimé
+     * @throws SQLException : SQLException
+     */
     public boolean clearTempData() throws SQLException {
         logger.info("Suppression des données temporaires");
 
