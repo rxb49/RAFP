@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +55,9 @@ public class CalculController {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
         boolean isEtatTExist = historiqueService.checkEtatT();
+        Timestamp lastDate = historiqueService.getLastGeneration();
         model.addAttribute("isEtatTExist", isEtatTExist);
+        model.addAttribute("lastDate", lastDate);
         return "calculRafp";
     }
 

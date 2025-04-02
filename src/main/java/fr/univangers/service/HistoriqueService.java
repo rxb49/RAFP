@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -27,6 +28,10 @@ public class HistoriqueService {
 
     public boolean checkEtatT() throws SQLException {
         return dao.checkEtatT();
+    }
+
+    public Timestamp getLastGeneration() throws SQLException {
+        return dao.getLastGeneration();
     }
 
 

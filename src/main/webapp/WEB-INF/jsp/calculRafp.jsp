@@ -11,6 +11,9 @@
             <div class="flex-grow-1 cadre-info my-3 mx-3">
                 <h2 class="mb-1"><spring:message code="titre.rafp.calcul" /></h2>
             </div>
+            <div class="flex-grow-1 cadre-info my-3 mx-3">
+                <h3 class="mb-1"><spring:message code="rafp.calcul.generation" /> ${lastDate}</h3>
+            </div>
             <div class="row">
                 <div class="col mx-3">
                     <button type="submit" onclick="calculRAFP('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></button>

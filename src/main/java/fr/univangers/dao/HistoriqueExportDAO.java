@@ -2,6 +2,7 @@ package fr.univangers.dao;
 
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
+import org.bouncycastle.util.Times;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -81,5 +82,36 @@ public class HistoriqueExportDAO {
         }
         logger.info("Fin de la requête de vérification si une ligne à l'étét T" + result);
         return result;
+    }
+
+
+    /**
+     * recupere la dernière génération de fichier CSV avec l'état T de la table rafp_his_export '
+     * @return : la date recuperer
+     * @throws SQLException : SQLException
+     */
+    public Timestamp getLastGeneration() throws SQLException {
+        logger.info("Début de la requête de récuperation de la dernier génération de CSV");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        ResultSet rs = null;
+        Timestamp lastDate = null;
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "SELECT MAX(TO_CHAR(date_export, 'YYYY-mm-dd hh:mm:ss')) AS lastDate from harp_adm.rafp_his_export WHERE etat = ?";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, "T");
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                lastDate = rs.getTimestamp(1);
+            }
+            logger.info(lastDate.toString());
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête de récuperation de la dernière génération de CSV");
+        return lastDate;
     }
 }
