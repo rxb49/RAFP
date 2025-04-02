@@ -99,7 +99,7 @@ public class HistoriqueExportDAO {
         String lastDate = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "SELECT MAX(TO_CHAR(date_export, 'dd-mm-YYYY hh24:mi:ss')) AS lastDate from harp_adm.rafp_his_export WHERE etat = ?";
+            String requete = "SELECT TO_CHAR(MAX(date_export), 'DD-MM-YYYY HH24:MI:SS') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, "T");
             rs = cstmt.executeQuery();

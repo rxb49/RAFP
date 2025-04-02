@@ -1,5 +1,6 @@
 package fr.univangers.service;
 
+import fr.univangers.ZipFileUtils;
 import fr.univangers.classes.*;
 import fr.univangers.dao.CalculDAO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -61,28 +62,8 @@ public class CalculService {
 
     public void downloadAllFiles(HttpServletResponse response) throws IOException {
         File zipFile = dao.createZipFile();
-
-        if (zipFile == null || !zipFile.exists()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Aucun fichier ZIP trouvé.");
-            return;
-        }
-
-        // Configurer la réponse HTTP pour le téléchargement
-        response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=" + zipFile.getName());
-        response.setContentLength((int) zipFile.length());
-
-        // Envoyer le fichier ZIP en réponse
-        try (FileInputStream fis = new FileInputStream(zipFile);
-             OutputStream out = response.getOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-        }
+        ZipFileUtils.sendZipFile(zipFile, response);
         dao.deleteZipFiles();
-
 
     }
 
