@@ -3,6 +3,9 @@ package fr.univangers.dao;
 import fr.univangers.classes.*;
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -14,10 +17,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -523,6 +524,69 @@ public class CalculDAO {
         logger.info("Fin de la requête de génération des CSV. Succès: " + success);
         return success;
     }
+
+
+    public File createZipFile() throws IOException {
+        // Récupérer le dossier contenant les fichiers ZIP
+        String projectDir = System.getProperty("user.dir");
+        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
+
+        // Récupérer tous les fichiers ZIP
+        File[] zipFiles = tempCsvDir.listFiles((dir, name) -> name.endsWith(".zip"));
+
+        if (zipFiles == null || zipFiles.length == 0) {
+            return null; // Aucun fichier ZIP à traiter
+        }
+
+        // Créer un fichier ZIP contenant tous les ZIP individuels
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+        String dateStr = dateFormat.format(new Date());
+        String zipFileName = "Tous_Les_Fichiers_" + dateStr + ".zip";
+
+        File allZipFile = new File(tempCsvDir, zipFileName);
+
+        try (FileOutputStream fos = new FileOutputStream(allZipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            for (File zipFile : zipFiles) {
+                try (FileInputStream fis = new FileInputStream(zipFile)) {
+                    ZipEntry zipEntry = new ZipEntry(zipFile.getName());
+                    zos.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, length);
+                    }
+
+                    zos.closeEntry();
+                }
+            }
+        }
+
+        return allZipFile;
+    }
+
+    public void deleteZipFiles() {
+        String projectDir = System.getProperty("user.dir");
+        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
+
+        // Récupérer tous les fichiers ZIP correspondant au format "Tous_Les_Fichiers_*.zip"
+        File[] zipFiles = tempCsvDir.listFiles((dir, name) -> name.startsWith("Tous_Les_Fichiers_") && name.endsWith(".zip"));
+
+        if (zipFiles != null && zipFiles.length > 0) {
+            for (File zipFile : zipFiles) {
+                if (zipFile.delete()) {
+                    System.out.println("Fichier supprimé : " + zipFile.getName());
+                } else {
+                    System.err.println("Erreur lors de la suppression de : " + zipFile.getName());
+                }
+            }
+        } else {
+            System.out.println("Aucun fichier à supprimer.");
+        }
+    }
+
 
 
 

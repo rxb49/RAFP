@@ -5,7 +5,9 @@ import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.CalculService;
 import fr.univangers.service.HistoriqueService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apereo.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.*;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -109,6 +108,11 @@ public class CalculController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/calculRafp/downloadAll")
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        calculService.downloadAllFiles(response);
     }
 
 
