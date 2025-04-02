@@ -21,7 +21,7 @@
                     <button type="submit" onclick="calculRAFP('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></button>
                     <button type="submit" onclick="generateCSV('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.csv" /></button>
                     <c:if test="${isEtatTExist}">
-                        <a href="calculRafp/downloadAll" download="Tous_Les_Fichiers.zip" class="btn btn-md btn-secondary g-mr-10 g-mb-15">📥 Télécharger tous les fichiers ZIP</a>
+                        <a href="calculRafp/downloadAll" download="Tous_Les_Fichiers.zip" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.calcul.telechargement" /></a>
                     </c:if>
                     <a href="#!" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.mail" /></a>
                 </div>
