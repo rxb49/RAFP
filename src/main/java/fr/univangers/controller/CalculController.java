@@ -57,7 +57,7 @@ public class CalculController {
         boolean isEtatTExist = historiqueService.checkEtatT();
         Timestamp lastDate = historiqueService.getLastGeneration();
         model.addAttribute("isEtatTExist", isEtatTExist);
-        model.addAttribute("lastDate", lastDate);
+        model.addAttribute("lastDate", (lastDate != null) ? lastDate : "Aucune génération faite");
         return "calculRafp";
     }
 

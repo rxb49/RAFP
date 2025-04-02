@@ -106,8 +106,11 @@ public class HistoriqueExportDAO {
             if (rs.next()) {
                 lastDate = rs.getTimestamp(1);
             }
-            logger.info(lastDate.toString());
-            cstmt.close();
+            if (lastDate == null) {
+                logger.warn("Aucune génération trouvée");
+            } else {
+                logger.info("Dernière génération trouvée : " + lastDate);
+            }            cstmt.close();
         }finally {
             Sql.close(maConnexion);
         }
