@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    let path = document.getElementById("pageData").getAttribute("data-path");
+    fetchTempData(path);
+});
 function importTotal(path) {
     const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];

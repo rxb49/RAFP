@@ -6,6 +6,7 @@
 <c:set var="cssSpec">
 </c:set>
 <c:set var="contenuSpec">
+<div id="pageData" data-path="${pageContext.request.contextPath}"></div>
 <div id="chargement" class="ajax-loading">
     <div id="contentLoader">
         <div id="contentLoaderImg">
