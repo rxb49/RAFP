@@ -137,32 +137,33 @@ public class RetourDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             logger.info("Verification si rafp_retour");
             // Vérification de l'existence des données dans l'autre table
-            String checkQuery = "SELECT COUNT(R.id_emp) FROM harp_adm.rafp_retour R WHERE R.id_emp = ? AND R.insee = ? " +
-                    "AND R.annee = (select max(A.annee) as annee from harp_adm.rafp_agent A)";
+            String checkQuery = "SELECT COUNT(R.id_emp) nb FROM harp_adm.rafp_retour R WHERE R.id_emp = ? AND R.insee = ? " +
+                    "AND R.annee = (select max(A.annee) from harp_adm.rafp_agent A)";
             cstmt = maConnexion.prepareStatement(checkQuery);
             cstmt.setInt(1, id_emp);
             cstmt.setString(2, no_insee);
             rs = cstmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
+            if (rs.next() && rs.getInt("nb") > 0) {
                 logger.warn("Les données existent déjà dans l'autre table, insertion annulée.");
-                rs.close();
-                return false;
             }
+            else{
 
-            String requete = "INSERT INTO harp_adm.rafp_temp (id_emp, insee, retour) VALUES ( ?, ?, ?)";
-            cstmt = maConnexion.prepareStatement(requete);
+                String requete = "INSERT INTO harp_adm.rafp_temp (id_emp, insee, retour) VALUES ( ?, ?, ?)";
+                cstmt = maConnexion.prepareStatement(requete);
 
-            cstmt.setInt(1, id_emp);
-            cstmt.setString(2, no_insee);
-            cstmt.setDouble(3, montant);
+                cstmt.setInt(1, id_emp);
+                cstmt.setString(2, no_insee);
+                cstmt.setDouble(3, montant);
 
-            int rowsInserted = cstmt.executeUpdate();
-            if (rowsInserted > 0) {
-                logger.info("Insertion en base de donnée réussie !");
-                result = true;
-            } else {
-                logger.warn("Aucune ligne insérée en base de donnée.");
+                int rowsInserted = cstmt.executeUpdate();
+                if (rowsInserted > 0) {
+                    logger.info("Insertion en base de donnée réussie !");
+                    result = true;
+                }else {
+                    logger.warn("Aucune ligne insérée en base de donnée.");
+                }
             }
+            rs.close();
             cstmt.close();
         }finally {
             Sql.close(maConnexion);

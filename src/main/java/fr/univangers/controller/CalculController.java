@@ -53,10 +53,10 @@ public class CalculController {
     public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
-        boolean isEtatTExist = historiqueService.checkEtatT("T");
-        String lastDateGeneration = historiqueService.getLastGeneration();
-        boolean isEtatCTExist = historiqueService.checkEtatT("C");
-        String lastDateCalcul = historiqueService.getLastCalcul();
+        boolean isEtatTExist = historiqueService.checkEtat("T");
+        String lastDateGeneration = historiqueService.getDernierEtat("T");
+        boolean isEtatCTExist = historiqueService.checkEtat("C");
+        String lastDateCalcul = historiqueService.getDernierEtat("C");
         model.addAttribute("isEtatTExist", isEtatTExist);
         model.addAttribute("lastDateGeneration", (lastDateGeneration != null) ? lastDateGeneration : "Aucune génération faite");
         model.addAttribute("isEtatCTExist", isEtatCTExist);

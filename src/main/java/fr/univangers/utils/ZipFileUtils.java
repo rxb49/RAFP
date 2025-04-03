@@ -1,4 +1,4 @@
-package fr.univangers;
+package fr.univangers.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
 

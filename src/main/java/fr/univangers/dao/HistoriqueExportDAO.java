@@ -57,7 +57,7 @@ public class HistoriqueExportDAO {
      * @return : vrai ou faux si la ligne est présente
      * @throws SQLException : SQLException
      */
-    public boolean checkEtatT(String etat) throws SQLException {
+    public boolean checkEtat(String etat) throws SQLException {
         logger.info("Début de la requête de vérification si un ligne a l'état T");
 
         Connection maConnexion = null;
@@ -85,12 +85,12 @@ public class HistoriqueExportDAO {
 
 
     /**
-     * recupere la dernière génération de fichier CSV avec l'état T de la table rafp_his_export '
+     * recupere le dernièr historique en fonction de l'etat '
      * @return : la date recuperer
      * @throws SQLException : SQLException
      */
-    public String getLastGeneration() throws SQLException {
-        logger.info("Début de la requête de récuperation de la dernier génération de CSV");
+    public String getDernierEtat(String etat) throws SQLException {
+        logger.info("Début de la requête de récuperation du dernier etat");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
@@ -100,7 +100,7 @@ public class HistoriqueExportDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
             String requete = "SELECT TO_CHAR(MAX(date_export), 'DD-MM-YYYY HH24:MI:SS') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, "T");
+            cstmt.setString(1, etat);
             rs = cstmt.executeQuery();
             if (rs.next()) {
                 lastDate = rs.getString(1);
@@ -113,9 +113,10 @@ public class HistoriqueExportDAO {
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requête de récuperation de la dernière génération de CSV");
+        logger.info("Fin de la requête de récuperation du dernier etat");
         return lastDate;
     }
+
 
 
     /**
@@ -152,38 +153,6 @@ public class HistoriqueExportDAO {
         return result;
     }
 
-    /**
-     * recupere le dernier calcul avec l'état CT de la table rafp_his_export '
-     * @return : la date recuperer
-     * @throws SQLException : SQLException
-     */
-    public String getLastCalcul() throws SQLException {
-        logger.info("Début de la requête de récuperation du dernier calcul de la RAFP");
-
-        Connection maConnexion = null;
-        PreparedStatement cstmt = null;
-        ResultSet rs = null;
-        String lastDate = null;
-        try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "SELECT TO_CHAR(MAX(date_export), 'DD-MM-YYYY HH24:MI:SS') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
-            cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, "C");
-            rs = cstmt.executeQuery();
-            if (rs.next()) {
-                lastDate = rs.getString(1);
-            }
-            if (lastDate == null) {
-                logger.warn("Aucune génération trouvée");
-            } else {
-                logger.info("Dernière génération trouvée : " + lastDate);
-            }            cstmt.close();
-        }finally {
-            Sql.close(maConnexion);
-        }
-        logger.info("Fin de la requête de récuperation du dernier calcul de la RAFP");
-        return lastDate;
-    }
 
     /**
      * Ajoute dans rafp_historique une ligne avec la date d'import d'un fichier CSV  '

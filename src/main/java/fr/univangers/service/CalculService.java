@@ -1,6 +1,6 @@
 package fr.univangers.service;
 
-import fr.univangers.ZipFileUtils;
+import fr.univangers.utils.ZipFileUtils;
 import fr.univangers.classes.*;
 import fr.univangers.dao.CalculDAO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 
