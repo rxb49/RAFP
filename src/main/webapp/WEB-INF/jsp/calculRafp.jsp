@@ -13,7 +13,10 @@
             </div>
             <div class="flex-grow-1 cadre-info my-3 mx-3">
                 <h3 class="mb-1">
-                    <spring:message code="rafp.calcul.generation" /> ${lastDate}
+                    <spring:message code="rafp.calcul.calcul" /> ${lastDateCalcul}
+                </h3>
+                <h3 class="mb-1">
+                    <spring:message code="rafp.calcul.generation" /> ${lastDateGeneration}
                 </h3>
             </div>
             <div class="row">
@@ -23,7 +26,6 @@
                     <c:if test="${isEtatTExist}">
                         <a href="calculRafp/downloadAll" download="Tous_Les_Fichiers.zip" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.calcul.telechargement" /></a>
                     </c:if>
-                    <a href="#!" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.mail" /></a>
                 </div>
             </div>
         </div>

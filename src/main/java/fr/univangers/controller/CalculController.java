@@ -53,10 +53,14 @@ public class CalculController {
     public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
-        boolean isEtatTExist = historiqueService.checkEtatT();
-        String lastDate = historiqueService.getLastGeneration();
+        boolean isEtatTExist = historiqueService.checkEtatT("T");
+        String lastDateGeneration = historiqueService.getLastGeneration();
+        boolean isEtatCTExist = historiqueService.checkEtatT("C");
+        String lastDateCalcul = historiqueService.getLastCalcul();
         model.addAttribute("isEtatTExist", isEtatTExist);
-        model.addAttribute("lastDate", (lastDate != null) ? lastDate : "Aucune génération faite");
+        model.addAttribute("lastDateGeneration", (lastDateGeneration != null) ? lastDateGeneration : "Aucune génération faite");
+        model.addAttribute("isEtatCTExist", isEtatCTExist);
+        model.addAttribute("lastDateCalcul", (lastDateCalcul != null) ? lastDateCalcul : "Aucun calcul faite");
         return "calculRafp";
     }
 
@@ -68,6 +72,7 @@ public class CalculController {
             System.out.println("Passage dans calculRafp/calcul");
             boolean vRetour = calculService.calculBaseRetourRecalculeeEmp();
             if (vRetour) {
+                historiqueService.insertHistoriqueCalcul();
                 return new ResponseEntity<>("le calcul de la RAFP à été effectué ",HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Problème dans le calcul de la RAFP ", HttpStatus.BAD_REQUEST);
