@@ -58,12 +58,13 @@ public class RetourController {
                 Object idEmpObj = item.get("idEmployeur");
                 int idEmp = Integer.parseInt(idEmpObj.toString());
                 vRetour = retourService.insertImportTotalDataTemp(idEmp, noInsee, montant);
+                if (!vRetour) {
+                    // Si l'insertion échoue pour une donnée, on retourne immédiatement avec un message d'erreur.
+                    return new ResponseEntity<>("Les données on déjà été importer", HttpStatus.BAD_REQUEST);
+                }
             }
-            if (vRetour) {
-                return new ResponseEntity<>("Import du fichier CSV effectué avec succès ",HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>("Erreur dans l'import du fichier CSV",HttpStatus.BAD_REQUEST);
-            }
+            return new ResponseEntity<>("Import du fichier CSV effectué avec succès ",HttpStatus.OK);
+
         } catch (UAException e) {
             logger.error("Erreur UA - insertImportTotalData - data : {} - Erreur : {}", data, e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);

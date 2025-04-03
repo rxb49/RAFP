@@ -37,21 +37,25 @@ function importTotal(path) {
                 },
                 body: JSON.stringify(jsonData)
             })
-                .then(response => response.text())
-                .then(text => {
-                    Swal.fire({
-                        icon: "success",
-                        title: text,
-                    }).then(() => {
-                        fetchTempData(path);
-                    });
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Erreur lors de l'importation",
-                        text: error,
-                    });
+                .then(response => response.text().then(text => ({ status: response.status, text })))
+                .then(({ status, text }) => {
+                    if (status === 200) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Succès",
+                            text: text,
+                        }).then(() => {
+                            fetchTempData(path);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Erreur",
+                            text: text,
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
                 })
                 .finally(() => {
                     loader.classList.remove("active");
