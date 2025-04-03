@@ -360,7 +360,7 @@ public class CalculDAO {
             int idEmp = entry.getKey();
             List<DonneesCSV> donneesList = entry.getValue();
             String libEmp = (donneesList.get(0).getLib_emp() != null) ? donneesList.get(0).getLib_emp() : "Inconnu";
-            File csvFile = new File(tempCsvDir, "donnees_" + idEmp + "_" + libEmp + ".csv");
+            File csvFile = new File(tempCsvDir,  libEmp + "_" + idEmp + ".csv");
             csvFiles.add(csvFile);
             //insertion des données dans le fichier CSV
             try (FileWriter writer = new FileWriter(csvFile)) {
@@ -453,7 +453,7 @@ public class CalculDAO {
             List<DonneesCSV> donneesList = entry.getValue();
             String nom = (donneesList.get(0).getNom_usuel() != null) ? donneesList.get(0).getNom_usuel() : "Inconnu";
             String prenom = (donneesList.get(0).getPrenom() != null) ? donneesList.get(0).getPrenom() : "Inconnu";
-            File csvFile = new File(tempCsvDir, "donnees_" + noInsee + "_" + nom + "_" + prenom + ".csv");
+            File csvFile = new File(tempCsvDir, nom + "_" + prenom + "_" + noInsee + ".csv");
             csvFiles.add(csvFile);
             //insertion des données dans le fichier CSV
 
