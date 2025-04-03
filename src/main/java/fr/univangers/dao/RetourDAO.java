@@ -145,6 +145,9 @@ public class RetourDAO {
             rs = cstmt.executeQuery();
             if (rs.next() && rs.getInt("nb") > 0) {
                 logger.warn("Les données existent déjà dans l'autre table, insertion annulée.");
+                String deleteQuery = "DELETE FROM harp_adm.rafp_temp";
+                cstmt = maConnexion.prepareStatement(deleteQuery);
+                cstmt.executeUpdate();
             }
             else{
 
