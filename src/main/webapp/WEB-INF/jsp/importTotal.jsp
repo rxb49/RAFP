@@ -6,6 +6,15 @@
 <c:set var="cssSpec">
 </c:set>
 <c:set var="contenuSpec">
+<div id="pageData" data-path="${pageContext.request.contextPath}"></div>
+<div id="chargement" class="ajax-loading">
+    <div id="contentLoader">
+        <div id="contentLoaderImg">
+            <img src="/images/images/blockLoader.gif" class="img-fluid" alt="Administration des formulaires">
+        </div>
+    <div id="contentLoaderTxt"><spring:message code="saisie.import"/></div>
+</div>
+</div>
     <div class="flex-column">
         <div class="card mb-4" id="cadre">
             <div class="container text-center">

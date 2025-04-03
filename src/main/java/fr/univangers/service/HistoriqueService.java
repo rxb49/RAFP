@@ -26,12 +26,21 @@ public class HistoriqueService {
         return dao.insertHistoriqueExport();
     }
 
-    public boolean checkEtatT() throws SQLException {
-        return dao.checkEtatT();
+    public String getDernierEtat(String etat) throws SQLException {
+        return dao.getDernierEtat(etat);
     }
 
-    public Timestamp getLastGeneration() throws SQLException {
-        return dao.getLastGeneration();
+    public boolean checkEtat(String etat) throws SQLException {
+        return dao.checkEtat(etat);
+    }
+
+    public boolean insertHistoriqueCalcul() throws SQLException {
+        return dao.insertHistoriqueCalcul();
+    }
+
+
+    public boolean insertHistoriqueImport() throws SQLException {
+        return dao.insertHistoriqueImport();
     }
 
 

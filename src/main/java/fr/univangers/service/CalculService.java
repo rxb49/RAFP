@@ -1,10 +1,13 @@
 package fr.univangers.service;
 
+import fr.univangers.utils.ZipFileUtils;
 import fr.univangers.classes.*;
 import fr.univangers.dao.CalculDAO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -53,6 +56,13 @@ public class CalculService {
 
     public boolean generateCSVagent(List<DonneesCSV> donnees) throws SQLException, IOException {
         return dao.generateCSVagent(donnees);
+    }
+
+    public void downloadAllFiles(HttpServletResponse response) throws IOException {
+        File zipFile = dao.createZipFile();
+        ZipFileUtils.sendZipFile(zipFile, response);
+        dao.deleteZipFiles();
+
     }
 
 

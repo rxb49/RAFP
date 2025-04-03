@@ -1,6 +1,11 @@
+document.addEventListener("DOMContentLoaded", function() {
+    let path = document.getElementById("pageData").getAttribute("data-path");
+    fetchTempData(path);
+});
 function importTotal(path) {
     const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];
+
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -22,6 +27,9 @@ function importTotal(path) {
                 idEmployeur: parseInt(item[2].trim())
             }));
 
+            let loader = document.getElementById("chargement");
+            loader.classList.add("active");
+
             fetch(path + '/importTotal/insert', {
                 method: 'POST',
                 headers: {
@@ -29,25 +37,39 @@ function importTotal(path) {
                 },
                 body: JSON.stringify(jsonData)
             })
-                .then(response => response.text())
-                .then(text => {
-                    Swal.fire({
-                        icon: "success",
-                        title: text,
-                    }).then(() => {
-                        fetchTempData(path);
-                    });
+                .then(response => response.text().then(text => ({ status: response.status, text })))
+                .then(({ status, text }) => {
+                    if (status === 200) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Succès",
+                            text: text,
+                        }).then(() => {
+                            fetchTempData(path);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Erreur",
+                            text: text,
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
                 })
-                .catch(error => {
-                    Swal.fire({
-                        icon: "error",
-                        title: text + error,
-                    });
+                .finally(() => {
+                    loader.classList.remove("active");
                 });
         };
         reader.readAsText(file);
+    } else {
+        Swal.fire({
+            icon: "warning",
+            title: "Veuillez sélectionner un fichier",
+        });
     }
 }
+
 
 function fetchTempData(path) {
 
@@ -111,6 +133,8 @@ function clearTempData(path) {
 }
 
 function validateImport(path) {
+    let loader = document.getElementById("chargement");
+    loader.classList.add("active");
     fetch(path + "/importTotal/validate", {
         method: "POST",
     })
@@ -140,6 +164,9 @@ function validateImport(path) {
                 title: "Erreur",
                 text: "Une erreur est survenue lors de la validation.",
             });
+        })
+        .finally(() => {
+            loader.classList.remove("active");
         });
 }
 

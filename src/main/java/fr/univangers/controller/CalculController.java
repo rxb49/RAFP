@@ -5,7 +5,9 @@ import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.CalculService;
 import fr.univangers.service.HistoriqueService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apereo.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.*;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -54,10 +53,14 @@ public class CalculController {
     public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
         String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
         autorisationService.verifAutorisation(idEncrypt);
-        boolean isEtatTExist = historiqueService.checkEtatT();
-        Timestamp lastDate = historiqueService.getLastGeneration();
+        boolean isEtatTExist = historiqueService.checkEtat("T");
+        String lastDateGeneration = historiqueService.getDernierEtat("T");
+        boolean isEtatCTExist = historiqueService.checkEtat("C");
+        String lastDateCalcul = historiqueService.getDernierEtat("C");
         model.addAttribute("isEtatTExist", isEtatTExist);
-        model.addAttribute("lastDate", (lastDate != null) ? lastDate : "Aucune génération faite");
+        model.addAttribute("lastDateGeneration", (lastDateGeneration != null) ? lastDateGeneration : "Aucune génération faite");
+        model.addAttribute("isEtatCTExist", isEtatCTExist);
+        model.addAttribute("lastDateCalcul", (lastDateCalcul != null) ? lastDateCalcul : "Aucun calcul faite");
         return "calculRafp";
     }
 
@@ -69,6 +72,7 @@ public class CalculController {
             System.out.println("Passage dans calculRafp/calcul");
             boolean vRetour = calculService.calculBaseRetourRecalculeeEmp();
             if (vRetour) {
+                historiqueService.insertHistoriqueCalcul();
                 return new ResponseEntity<>("le calcul de la RAFP à été effectué ",HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Problème dans le calcul de la RAFP ", HttpStatus.BAD_REQUEST);
@@ -109,6 +113,11 @@ public class CalculController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/calculRafp/downloadAll")
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        calculService.downloadAllFiles(response);
     }
 
 

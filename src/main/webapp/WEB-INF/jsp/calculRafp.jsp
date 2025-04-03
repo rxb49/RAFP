@@ -13,7 +13,10 @@
             </div>
             <div class="flex-grow-1 cadre-info my-3 mx-3">
                 <h3 class="mb-1">
-                    <spring:message code="rafp.calcul.generation" /> ${lastDate}
+                    <spring:message code="rafp.calcul.calcul" /> ${lastDateCalcul}
+                </h3>
+                <h3 class="mb-1">
+                    <spring:message code="rafp.calcul.generation" /> ${lastDateGeneration}
                 </h3>
             </div>
             <div class="row">
@@ -21,9 +24,8 @@
                     <button type="submit" onclick="calculRAFP('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.calcul" /></button>
                     <button type="submit" onclick="generateCSV('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15"><spring:message code="rafp.csv" /></button>
                     <c:if test="${isEtatTExist}">
-                        <button type="submit" onclick="downloadCSV('${pageContext.request.contextPath}')" class="btn btn-md btn-primary g-mr-10 g-mb-15">Télécharger</button>
+                        <a href="calculRafp/downloadAll" download="Tous_Les_Fichiers.zip" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.calcul.telechargement" /></a>
                     </c:if>
-                    <a href="#!" class="btn btn-md btn-secondary g-mr-10 g-mb-15"><spring:message code="rafp.mail" /></a>
                 </div>
             </div>
         </div>

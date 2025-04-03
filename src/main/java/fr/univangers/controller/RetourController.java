@@ -29,11 +29,13 @@ public class RetourController {
     private static final Logger logger = LoggerFactory.getLogger(RetourController.class);
     private final RetourService retourService;
     private final AutorisationService autorisationService;
+    private final HistoriqueService historiqueService;
 
 
-    public RetourController(RetourService retourService, AutorisationService autorisationService) {
+    public RetourController(RetourService retourService, AutorisationService autorisationService, HistoriqueService historiqueService) {
         this.retourService = retourService;
         this.autorisationService = autorisationService;
+        this.historiqueService = historiqueService;
     }
 
 
@@ -58,12 +60,13 @@ public class RetourController {
                 Object idEmpObj = item.get("idEmployeur");
                 int idEmp = Integer.parseInt(idEmpObj.toString());
                 vRetour = retourService.insertImportTotalDataTemp(idEmp, noInsee, montant);
+                if (!vRetour) {
+                    // Si l'insertion échoue pour une donnée, on retourne immédiatement avec un message d'erreur.
+                    return new ResponseEntity<>("Les données on déjà été importer", HttpStatus.BAD_REQUEST);
+                }
             }
-            if (vRetour) {
-                return new ResponseEntity<>("Import du fichier CSV effectué avec succès ",HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>("Erreur dans l'import du fichier CSV",HttpStatus.BAD_REQUEST);
-            }
+            return new ResponseEntity<>("Import du fichier CSV effectué avec succès ",HttpStatus.OK);
+
         } catch (UAException e) {
             logger.error("Erreur UA - insertImportTotalData - data : {} - Erreur : {}", data, e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
@@ -110,6 +113,8 @@ public class RetourController {
             autorisationService.verifAutorisation(idEncrypt);
             vRetour = retourService.validateImportTotalDataFinal();
             if(vRetour){
+                //ajouter la requete historique
+                historiqueService.insertHistoriqueImport();
                 return new ResponseEntity<>("Inseretion finale effectué ",HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Erreur dans l'insertion des données final",HttpStatus.BAD_REQUEST);

@@ -2,7 +2,6 @@ package fr.univangers.dao;
 
 import fr.univangers.sql.OracleConfiguration;
 import fr.univangers.sql.Sql;
-import org.bouncycastle.util.Times;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -58,7 +57,7 @@ public class HistoriqueExportDAO {
      * @return : vrai ou faux si la ligne est présente
      * @throws SQLException : SQLException
      */
-    public boolean checkEtatT() throws SQLException {
+    public boolean checkEtat(String etat) throws SQLException {
         logger.info("Début de la requête de vérification si un ligne a l'état T");
 
         Connection maConnexion = null;
@@ -69,7 +68,7 @@ public class HistoriqueExportDAO {
             maConnexion = oracleConfiguration.dataSource().getConnection();
                 String requete = "SELECT COUNT(etat) FROM harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, "T");
+            cstmt.setString(1, etat);
             rs = cstmt.executeQuery();
 
             if (rs.next()) {
@@ -86,25 +85,25 @@ public class HistoriqueExportDAO {
 
 
     /**
-     * recupere la dernière génération de fichier CSV avec l'état T de la table rafp_his_export '
+     * recupere le dernièr historique en fonction de l'etat '
      * @return : la date recuperer
      * @throws SQLException : SQLException
      */
-    public Timestamp getLastGeneration() throws SQLException {
-        logger.info("Début de la requête de récuperation de la dernier génération de CSV");
+    public String getDernierEtat(String etat) throws SQLException {
+        logger.info("Début de la requête de récuperation du dernier etat");
 
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         ResultSet rs = null;
-        Timestamp lastDate = null;
+        String lastDate = null;
         try{
             maConnexion = oracleConfiguration.dataSource().getConnection();
-            String requete = "SELECT MAX(TO_CHAR(date_export, 'YYYY-mm-dd hh:mm:ss')) AS lastDate from harp_adm.rafp_his_export WHERE etat = ?";
+            String requete = "SELECT TO_CHAR(MAX(date_export), 'DD-MM-YYYY HH24:MI:SS') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
-            cstmt.setString(1, "T");
+            cstmt.setString(1, etat);
             rs = cstmt.executeQuery();
             if (rs.next()) {
-                lastDate = rs.getTimestamp(1);
+                lastDate = rs.getString(1);
             }
             if (lastDate == null) {
                 logger.warn("Aucune génération trouvée");
@@ -114,7 +113,78 @@ public class HistoriqueExportDAO {
         }finally {
             Sql.close(maConnexion);
         }
-        logger.info("Fin de la requête de récuperation de la dernière génération de CSV");
+        logger.info("Fin de la requête de récuperation du dernier etat");
         return lastDate;
+    }
+
+
+
+    /**
+     * Ajoute dans rafp_historique une ligne avec la date de calcul de la RAFP  pour les agents et employeurs et son etat '
+     * @return : vrai ou faux si la ligne est bien insérer
+     * @throws SQLException : SQLException
+     */
+    public boolean insertHistoriqueCalcul() throws SQLException {
+
+        logger.info("Début de la requête d'insertion de l'hitorique de calcul");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        String etat = "C";
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, etat);
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête d'insertion d'historique de calcul");
+        return result;
+    }
+
+
+    /**
+     * Ajoute dans rafp_historique une ligne avec la date d'import d'un fichier CSV  '
+     * @return : vrai ou faux si la ligne est bien insérer
+     * @throws SQLException : SQLException
+     */
+    public boolean insertHistoriqueImport() throws SQLException {
+
+        logger.info("Début de la requête d'insertion de l'historique d'import CSV'");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        String etat = "I";
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, etat);
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête d'insertion d'historique d'import CSV");
+        return result;
     }
 }

@@ -257,7 +257,7 @@ public class ThemeUA2 extends HttpServlet {
 				"<footer class=\"footer  bg-primary\">\n" +
 				"    <div class=\"container text-center\">\n" +
 				"      <span class=\"text-white\">\n" +
-				"        This is the sticky footer.\n" +
+				"        Université d'Angers.\n" +
 				"      </span>\n" +
 				"    </div>\n" +
 				"  </footer>";
