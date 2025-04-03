@@ -292,6 +292,7 @@ public class EmployeurController {
             logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
         }catch (Exception e){
+            logger.info("Erreur Load - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
         }
     }
