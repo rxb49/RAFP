@@ -254,4 +254,43 @@ public class AgentDAO {
         logger.info("Fin de la requête de calcul du total_retour");
         return result;
     }
+
+    /**
+     * Met a jour le tbi et indemn d'un agent en ajoutant le montant mis sur le formulaire '
+     * @return : vrai ou faux si l'update a fonctionné
+     * @throws SQLException : SQLException
+     */
+    public boolean updateIndemnTBIByAgent(String no_insee, int tbi, int indemn) throws SQLException, UAException {
+        logger.info("Début de la requête de modification des indemnitées et du tbi");
+        if (no_insee == null || no_insee.isEmpty()) {
+            throw new UAException("Le numéro Insee de l'agent ne peut pas être null");
+        }
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        try {
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+
+            String requete = "update harp_adm.rafp_agent A set A.tbi = A.tbi + ?, A.indemn = A.indemn + ? " +
+                    "WHERE  A.no_insee = ? AND A.annee = (select max(A.annee) from harp_adm.rafp_agent A)";
+            cstmt = maConnexion.prepareStatement(requete);
+
+            cstmt.setInt(1, tbi);
+            cstmt.setInt(2, indemn);
+            cstmt.setString(3, no_insee);
+            int rowsAffected = cstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                result = true;
+            }
+
+        }
+        finally {
+            Sql.close(cstmt);
+            Sql.close(maConnexion);
+        }
+
+        logger.info("Fin de la requête de calcul du total_retour");
+        return result;
+    }
 }

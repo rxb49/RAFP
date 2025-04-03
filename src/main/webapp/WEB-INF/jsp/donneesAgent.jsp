@@ -39,7 +39,7 @@
                         </tr>
                     </tbody>
                 </table>
-
+                <a href="${pageContext.request.contextPath}/modifierIndemnTBIAgent/${agent.no_insee}" class="btn btn-secondary">Modifier l'agent</a>
                 <div class="flex-grow-1 cadre-info my-3 mx-3">
                     <h2 class="mb-1">Liste des employeurs</h2>
                 </div>

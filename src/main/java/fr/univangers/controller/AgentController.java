@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,5 +119,60 @@ public class AgentController {
         return "modifierAgent";
     }
 
+    @GetMapping("/modifierIndemnTBIAgent/{noInsee}")
+    public String viewModifierIndemnTBIAgent(HttpServletRequest request, @PathVariable String noInsee, Model model) throws Exception {
+        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
+        autorisationService.verifAutorisation(idEncrypt);
+        RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
+        model.addAttribute("agent", agent);
+        return "modifierIndemnTBIAgent";
+    }
+
+    @PostMapping("/modiferIndemnTBIAgent/modifier")
+    public ResponseEntity<String> ModifierIndemnTBIAgent(HttpServletRequest request, @RequestBody Map<String, String> requestBody) throws Exception {
+        try {
+            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
+            autorisationService.verifAutorisation(idEncrypt);
+
+            String noInsee = requestBody.get("noInsee");
+            String tbiStr = requestBody.get("tbi");
+            String indemnStr = requestBody.get("indemn");
+
+            if (noInsee == null || noInsee.isEmpty()) {
+                return new ResponseEntity<>("Le numéro INSEE ne peut pas être vide", HttpStatus.BAD_REQUEST);
+            }
+
+            if ((tbiStr == null || tbiStr.isEmpty()) && (indemnStr == null || indemnStr.isEmpty())) {
+                return new ResponseEntity<>("Au moins l'un des champs TBI ou Indemnité doit être renseigné", HttpStatus.BAD_REQUEST);
+            }
+
+            int tbi = 0;
+            int indemn = 0;
+
+            if (tbiStr != null && !tbiStr.isEmpty()) {
+                tbi = Integer.parseInt(tbiStr);
+            }
+            if (indemnStr != null && !indemnStr.isEmpty()) {
+                indemn = Integer.parseInt(indemnStr);
+            }
+
+            boolean vRetour = agentService.updateIndemnTBIByAgent(noInsee, tbi, indemn);
+            if (vRetour) {
+                return new ResponseEntity<>("Les montant on est ajouté", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Erreur lors de l'ajout", HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - ModifierIndemnTBIAgent - Erreur : {}", e.getMessage(), e);
+            return new ResponseEntity<>("Erreur de base de données", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Erreur - ModifierIndemnTBIAgent - Erreur : {}", e.getMessage(), e);
+            return new ResponseEntity<>("Erreur interne du serveur", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
+
 

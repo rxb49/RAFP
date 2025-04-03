@@ -43,6 +43,10 @@ public class AgentService {
         return dao.updateTotalRetourByAgent(no_insee);
     }
 
+    public boolean updateIndemnTBIByAgent(String no_insee, int tbi, int indemn) throws SQLException, UAException {
+        return dao.updateIndemnTBIByAgent(no_insee, tbi, indemn);
+    }
+
 
 
 
