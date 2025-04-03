@@ -184,4 +184,38 @@ public class HistoriqueExportDAO {
         logger.info("Fin de la requête de récuperation du dernier calcul de la RAFP");
         return lastDate;
     }
+
+    /**
+     * Ajoute dans rafp_historique une ligne avec la date d'import d'un fichier CSV  '
+     * @return : vrai ou faux si la ligne est bien insérer
+     * @throws SQLException : SQLException
+     */
+    public boolean insertHistoriqueImport() throws SQLException {
+
+        logger.info("Début de la requête d'insertion de l'historique d'import CSV'");
+
+        Connection maConnexion = null;
+        PreparedStatement cstmt = null;
+        boolean result = false;
+        String etat = "I";
+        try{
+            maConnexion = oracleConfiguration.dataSource().getConnection();
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
+            cstmt = maConnexion.prepareStatement(requete);
+            cstmt.setString(1, etat);
+
+            int rowsInserted = cstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                logger.info("Insertion en base de donnée réussie !");
+                result = true;
+            } else {
+                logger.warn("Aucune ligne insérée en base de donnée.");
+            }
+            cstmt.close();
+        }finally {
+            Sql.close(maConnexion);
+        }
+        logger.info("Fin de la requête d'insertion d'historique d'import CSV");
+        return result;
+    }
 }

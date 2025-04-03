@@ -43,6 +43,10 @@ public class HistoriqueService {
         return dao.getLastCalcul();
     }
 
+    public boolean insertHistoriqueImport() throws SQLException {
+        return dao.insertHistoriqueImport();
+    }
+
 
 
 }

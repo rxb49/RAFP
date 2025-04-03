@@ -29,11 +29,13 @@ public class RetourController {
     private static final Logger logger = LoggerFactory.getLogger(RetourController.class);
     private final RetourService retourService;
     private final AutorisationService autorisationService;
+    private final HistoriqueService historiqueService;
 
 
-    public RetourController(RetourService retourService, AutorisationService autorisationService) {
+    public RetourController(RetourService retourService, AutorisationService autorisationService, HistoriqueService historiqueService) {
         this.retourService = retourService;
         this.autorisationService = autorisationService;
+        this.historiqueService = historiqueService;
     }
 
 
@@ -111,6 +113,8 @@ public class RetourController {
             autorisationService.verifAutorisation(idEncrypt);
             vRetour = retourService.validateImportTotalDataFinal();
             if(vRetour){
+                //ajouter la requete historique
+                historiqueService.insertHistoriqueImport();
                 return new ResponseEntity<>("Inseretion finale effectué ",HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Erreur dans l'insertion des données final",HttpStatus.BAD_REQUEST);
