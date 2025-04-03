@@ -1,6 +1,7 @@
 function importTotal(path) {
     const fileInput = document.getElementById("fileInput");
     const file = fileInput.files[0];
+
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -22,6 +23,9 @@ function importTotal(path) {
                 idEmployeur: parseInt(item[2].trim())
             }));
 
+            let loader = document.getElementById("chargement");
+            loader.classList.add("active");
+
             fetch(path + '/importTotal/insert', {
                 method: 'POST',
                 headers: {
@@ -41,13 +45,23 @@ function importTotal(path) {
                 .catch(error => {
                     Swal.fire({
                         icon: "error",
-                        title: text + error,
+                        title: "Erreur lors de l'importation",
+                        text: error,
                     });
+                })
+                .finally(() => {
+                    loader.classList.remove("active");
                 });
         };
         reader.readAsText(file);
+    } else {
+        Swal.fire({
+            icon: "warning",
+            title: "Veuillez sélectionner un fichier",
+        });
     }
 }
+
 
 function fetchTempData(path) {
 
@@ -111,6 +125,8 @@ function clearTempData(path) {
 }
 
 function validateImport(path) {
+    let loader = document.getElementById("chargement");
+    loader.classList.add("active");
     fetch(path + "/importTotal/validate", {
         method: "POST",
     })
@@ -140,6 +156,9 @@ function validateImport(path) {
                 title: "Erreur",
                 text: "Une erreur est survenue lors de la validation.",
             });
+        })
+        .finally(() => {
+            loader.classList.remove("active");
         });
 }
 

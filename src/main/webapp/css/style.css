@@ -1,3 +1,54 @@
-.mystyle{
-    color:#ff0000;
+/**************loader***********************/
+.ajax-loading {
+    transition: all 0.3s;
+    opacity: 0;
+    position : fixed;
+    z-index:-1;
+    background-color:rgba(255, 255, 255, 0.7);
+    top : 0px;
+    left : 0px;
+    height : 100%;
+    width : 100%;
+}
+.ajax-loading-modal {
+    transition: all 0.3s;
+    opacity: 0;
+    position : absolute;
+    z-index:-1;
+    background-color:rgba(255, 255, 255, 0.7);
+    top : 0px;
+    left : 0px;
+    height : 100%;
+    width : 100%;
+}
+
+.ajax-loading #contentLoader, .ajax-loading-modal #contentLoader{
+    position:absolute;
+    top:30%;
+    left:50%;
+}
+.ajax-loading #contentLoaderImg, .ajax-loading-modal #contentLoaderImg{
+    width:80px;
+    height:80px;
+    position:relative;
+    left:-40px;
+}
+.ajax-loading #contentLoaderTxt, .ajax-loading-modal #contentLoaderTxt{
+    width:300px;
+    position:relative;
+    left:-150px;
+    text-align:center;
+}
+.ajax-loading.active, .ajax-loading-modal.active {
+    opacity: 1!important;
+    z-index: 9999!important;
+}
+
+/*****************Loader element********************************/
+.ajax-loading-content{
+    text-align: center;
+}
+.ajax-loading-content .waiting{
+    width: 80px;
+    height: 80px;
 }
