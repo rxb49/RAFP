@@ -11,10 +11,7 @@
             <div class="container text-center">
 
                 <div class="flex-grow-1 cadre-info my-3 mx-3">
-                    <h2 class="mb-1">Ajouer un agent pour l'employeur 1</h2>
-                </div>
-                <div class="flex-grow-1 cadre-info my-3 mx-3">
-                    <h2>Employeur : Employeur 1</h2><br>
+                    <h2 class="mb-1">Ajouter un agent pour ${employeur.lib_emp}</h2>
                 </div>
                 <div class="form-group g-mb-25 px-3">
                         <div class="custom-file">
@@ -25,7 +22,7 @@
 
                 <div class="button-group">
                     <button type="submit" class="btn btn-md btn-primary">Ajouter</button>
-                    <a href="${pageContext.request.contextPath}/donneesEmployeur?no_insee=${agent.no_insee}" class="btn btn-md btn-secondary">Annuler</a>
+                    <a href="${pageContext.request.contextPath}/donneesEmployeur/${employeur.id_emp}" class="btn btn-md btn-secondary">Annuler</a>
                 </div>
             </div>
         </div>

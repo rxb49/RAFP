@@ -39,18 +39,19 @@
                             <td>${agent.prenom}</td>
                             <td>${agent.mnt_retour} €</td>
                             <td><a href="${pageContext.request.contextPath}/modifierAgent/${employeur.id_emp}/${agent.insee}" class="text-primary">Modifier</a></td>
-                            <td><a href="#" class="text-danger" onclick="confirmDeleteAgent('${agent.insee}')">Supprimer</a></td>
+                            <td><a href="#" onclick="confirmDeleteEmployeur('${pageContext.request.contextPath}', '${employeur.lib_emp}', '${employeur.id_emp}', '${agent.insee}')">Supprimer</a></td>
                         </tr>
                     </c:forEach>
                 </tbody>
             </table>
-            <a href="${pageContext.request.contextPath}/ajoutAgent/${employeur.id_emp}" class="btn btn-secondary">Ajouter un agent</a>
+                <a href="${pageContext.request.contextPath}/ajoutAgent/${employeur.id_emp}" class="btn btn-secondary">Ajouter un employeur</a>
         </div>
     </div>
 </c:set>
 
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/confirmDelete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 
 <%@ include file="templatePageAvecMenuV.jsp"%>

@@ -11,27 +11,24 @@
             <div class="container text-center">
 
                 <div class="flex-grow-1 cadre-info my-3 mx-3">
-                    <h2 class="mb-1">Modifier un agent pour l'employeur 1</h2>
-                </div>
-                <div class="flex-grow-1 cadre-info my-3 mx-3">
-                    <h2>Employeur : Employeur 1</h2><br>
-                </div>
-               <div class="flex-grow-1 cadre-info my-3 mx-3">
-                    <h2>Agent : Agent 1</h2><br>
+                    <h2 class="mb-1">Modifier ${agent.prenom} ${agent.nom_usuel} pour ${employeur.lib_emp}</h2>
                 </div>
                 <div class="form-group g-mb-25 px-3">
-                        <input type="number" required="required" class="form-control form-control-md formUA" name="montant" id="montant" aria-describedby="montant" placeholder="Entrez un montant">
+                        <label for="montant" class="labelRequired"><spring:message code="modif.montant.retour"/></label>
+                        <input type="number" value="${retour.mnt_retour}" required="required" class="form-control form-control-md formUA" name="montant" id="montant" aria-describedby="montant" placeholder="Entrez un montant">
                 </div><br>
 
                 <div class="button-group">
-                    <button type="submit" class="btn btn-md btn-primary">Modifier</button>
-                    <a href="${pageContext.request.contextPath}/donneesEmployeur" class="btn btn-md btn-secondary">Annuler</a>
+                        <button type="submit" onclick="modifEmployeurRetour('${pageContext.request.contextPath}', '${employeur.id_emp}', '${agent.no_insee}')" class="btn btn-md btn-primary">Modifier</button>
+                    <a href="${pageContext.request.contextPath}/donneesEmployeur/${employeur.id_emp}" class="btn btn-md btn-secondary">Annuler</a>
                 </div>
             </div>
         </div>
     </div>
 </c:set>
 <c:set var="jsSpec">
+<script src="${pageContext.request.contextPath}/JS/modifEmployeurRetour.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 <%@ include file="templatePageAvecMenuV.jsp"%>
 

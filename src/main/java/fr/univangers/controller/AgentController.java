@@ -9,6 +9,7 @@ import fr.univangers.exceptions.UAException;
 import fr.univangers.service.AgentService;
 import fr.univangers.service.AutorisationService;
 import fr.univangers.service.EmployeurService;
+import fr.univangers.service.RetourService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import oracle.ucp.proxy.annotation.Post;
@@ -32,10 +33,14 @@ public class AgentController {
 
     private final AgentService agentService;
     private final AutorisationService autorisationService;
+    private final EmployeurService employeurService;
+    private final RetourService retourService;
 
-    public AgentController(AgentService agentService, AutorisationService autorisationService) {
+    public AgentController(AgentService agentService, AutorisationService autorisationService, EmployeurService employeurService, RetourService retourService) {
         this.agentService = agentService;
         this.autorisationService = autorisationService;
+        this.employeurService = employeurService;
+        this.retourService = retourService;
     }
 
 
@@ -97,26 +102,75 @@ public class AgentController {
     }
 
     @GetMapping("/ajoutAgent/{id_emp}")
-    public String viewAjoutAgent(HttpServletRequest request, @PathVariable int id_emp ) {
+    public String viewAjoutAgent(HttpServletRequest request, @PathVariable int id_emp, Model model ) throws Exception {
         try{
             String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
             autorisationService.verifAutorisation(idEncrypt);
+            RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
+            model.addAttribute("employeur", employeur);
             return "ajoutAgent";
 
         }catch (NonAutorisationException e) {
             return "errorPage/accessRefused";
-        }catch (Exception e){
+        }
+        catch (Exception e){
             return "errorPage/errorBDD";
+        }
+    }
+
+    @DeleteMapping("/ajoutAgent/delete/{noInsee}/{id_emp}")
+    public ResponseEntity<String> viewAjoutAgentDelete(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp) {
+
+        try {
+            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
+            autorisationService.verifAutorisation(idEncrypt);
+            logger.info("Suppression agent - noInsee: {} - idEmployeur: {}", noInsee, id_emp);
+            boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
+            if (vRetour) {
+                agentService.updateTotalRetourByAgent(noInsee);
+                return new ResponseEntity<>("La suppression du retour est effectuée", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Erreur dans la suppression du retour", HttpStatus.BAD_REQUEST);
+            }
+        } catch (UAException e) {
+            logger.error("Erreur UA - viewAjoutAgentDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        catch (SQLException e) {
+            logger.error("Erreur BDD - viewAjoutAgentDelete - noInsee: {} - noInsee: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>("Erreur base de données", HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            logger.error("Erreur - viewAjoutAgentDelete - noInsee: {} - idEmp: {} - Erreur : {}", noInsee, id_emp, e.getMessage());
+            return new ResponseEntity<>("Erreur inconnue",HttpStatus.BAD_REQUEST);
         }
     }
 
 
 
     @GetMapping("/modifierAgent/{id_emp}/{noInsee}")
-    public String viewModifierAgent(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
-        return "modifierAgent";
+    public String viewModifierAgent(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp, Model model) throws Exception {
+        try {
+            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
+            autorisationService.verifAutorisation(idEncrypt);
+            RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
+            RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
+            RafpRetour retour = retourService.getRetourByInseeEmployeur(id_emp, noInsee);
+            logger.info(employeur.toString());
+            model.addAttribute("employeur", employeur);
+            model.addAttribute("agent", agent);
+            model.addAttribute("retour", retour);
+            return "modifierAgent";
+
+        } catch (NonAutorisationException e) {
+            return "errorPage/accessRefused";
+        } catch (SQLException e) {
+            logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
+            return "errorPage/errorBDD";
+        } catch (Exception e) {
+            logger.info("Erreur Load - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
+            return "errorPage/errorLoad";
+        }
     }
 
     @GetMapping("/modifierIndemnTBIAgent/{noInsee}")
