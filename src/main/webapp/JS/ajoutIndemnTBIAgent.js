@@ -10,20 +10,23 @@ function ajoutIndemnTBIAgent(path) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ noInsee, tbi, indemn })
     })
-        .then(response => response.text())
-        .then(message => {
-            if (message === "Les montants ont été ajoutés") {
+        .then(response => response.text().then(text => ({ status: response.status, text })))
+        .then(({ status, text }) => {
+            if (status === 200) {
                 Swal.fire({
                     icon: "success",
-                    title: message,
-                    confirmButtonText: "OK"
+                    title: "Succès",
+                    text: text,
                 }).then(() => {
-                    window.location.href = path + "/donneesAgent/" + noInsee;
+                    fetchTempData(path);
                 });
             } else {
                 Swal.fire({
                     icon: "error",
-                    title: message
+                    title: "Erreur",
+                    text: text,
+                }).then(() => {
+                    location.reload();
                 });
             }
         })
