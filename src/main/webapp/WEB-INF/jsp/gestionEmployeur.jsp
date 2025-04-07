@@ -35,8 +35,7 @@
 </c:set>
 <c:set var="jsSpec">
 <script src="${pageContext.request.contextPath}/JS/getInfoEmployeur.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+=<script>
 window.addEventListener('load', function(event) {
     appelModifier('${pageContext.request.contextPath}');
 });

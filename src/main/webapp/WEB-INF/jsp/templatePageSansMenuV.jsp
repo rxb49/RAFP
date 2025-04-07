@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </c:set>
 <c:set var="jsGenerique">
-    <script src="${pageContext.request.contextPath}/JS/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </c:set>
 <jsp:useBean id="themeUA" class="fr.univangers.beans.ThemeUA2">
     <jsp:setProperty name="themeUA" property="request" value="${pageContext.request}"/>
