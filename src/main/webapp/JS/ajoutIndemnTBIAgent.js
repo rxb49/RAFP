@@ -18,7 +18,7 @@ function ajoutIndemnTBIAgent(path) {
                     title: "Succès",
                     text: text,
                 }).then(() => {
-                    fetchTempData(path);
+                    location.reload();
                 });
             } else {
                 Swal.fire({
