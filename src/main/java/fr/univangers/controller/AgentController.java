@@ -212,7 +212,7 @@ public class AgentController {
 
             boolean vRetour = agentService.updateIndemnTBIByAgent(noInsee, tbi, indemn);
             if (vRetour) {
-                return new ResponseEntity<>("Les montant on est ajouté", HttpStatus.OK);
+                return new ResponseEntity<>("Les montants ont été ajoutés", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Erreur lors de l'ajout", HttpStatus.BAD_REQUEST);
             }

@@ -4,7 +4,6 @@ function ajoutIndemnTBIAgent(path) {
 
     const pathSegments = window.location.pathname.split('/');
     const noInsee = pathSegments[pathSegments.length - 1];
-    console.log(noInsee, tbi, indemn);
 
     fetch(path + '/modiferIndemnTBIAgent/modifier', {
         method: 'POST',
@@ -13,7 +12,7 @@ function ajoutIndemnTBIAgent(path) {
     })
         .then(response => response.text())
         .then(message => {
-            if (message === "Le retour est ajouté") {
+            if (message === "Les montants ont été ajoutés") {
                 Swal.fire({
                     icon: "success",
                     title: message,
