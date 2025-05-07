@@ -33,7 +33,7 @@ public class HistoriqueExportDAO {
         String etat = "T";
         try{
             maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
-            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( NOW(), ?)";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, etat);
 
@@ -98,7 +98,7 @@ public class HistoriqueExportDAO {
         String lastDate = null;
         try{
             maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
-            String requete = "SELECT TO_CHAR(MAX(date_export), 'DD-MM-YYYY HH24:MI:SS') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
+            String requete = "SELECT DATE_FORMAT(MAX(date_export), '%d-%m-%Y %H:%i:%s') AS derniere_date FROM harp_adm.rafp_his_export WHERE etat = ?";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, etat);
             rs = cstmt.executeQuery();
@@ -134,7 +134,7 @@ public class HistoriqueExportDAO {
         String etat = "C";
         try{
             maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
-            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES ( sysdate, ?)";
+            String requete = "INSERT INTO harp_adm.rafp_his_export (date_export, etat) VALUES (NOW(), ?)";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.setString(1, etat);
 
