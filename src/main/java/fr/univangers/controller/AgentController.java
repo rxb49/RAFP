@@ -32,13 +32,11 @@ public class AgentController {
     private final Logger logger = LoggerFactory.getLogger(AgentController.class);
 
     private final AgentService agentService;
-    private final AutorisationService autorisationService;
     private final EmployeurService employeurService;
     private final RetourService retourService;
 
-    public AgentController(AgentService agentService, AutorisationService autorisationService, EmployeurService employeurService, RetourService retourService) {
+    public AgentController(AgentService agentService, EmployeurService employeurService, RetourService retourService) {
         this.agentService = agentService;
-        this.autorisationService = autorisationService;
         this.employeurService = employeurService;
         this.retourService = retourService;
     }
@@ -46,10 +44,7 @@ public class AgentController {
 
     @GetMapping("/donneesAgent/{no_insee}")
     public String viewDonneesAgent(HttpServletRequest request, Model model, @PathVariable String no_insee) {
-        System.out.println("Contrôleur appelé avec no_insee = " + no_insee);
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             if (no_insee == null || no_insee.isEmpty()) {
                 return "redirect:/error"; // Redirection si no_insee est absent
             }
@@ -67,8 +62,6 @@ public class AgentController {
         } catch (SQLException e) {
             logger.error("Erreur BDD - viewDonneesAgent  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
-        }catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }catch (Exception e) {
             logger.error("Erreur - viewDonneesAgent -  Erreur : {}", e.getMessage(), e);
             return "errorPage/errorLoad";
@@ -77,16 +70,12 @@ public class AgentController {
 
     @GetMapping("/rechercheAgent")
     public  String viewRechercheAgent(HttpServletRequest request) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         return "rechercheAgent";
     }
 
     @GetMapping(value = "/rechercheAgent/search", produces = "application/json")
     public ResponseEntity<List<RafpLibAgent>> viewRechercheAgentSearch(HttpServletRequest request, @RequestParam String recherche) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<RafpLibAgent> agents = agentService.getAgentBySearch(recherche);
             return ResponseEntity.ok(agents);
 
@@ -104,14 +93,10 @@ public class AgentController {
     @GetMapping("/ajoutAgent/{id_emp}")
     public String viewAjoutAgent(HttpServletRequest request, @PathVariable int id_emp, Model model ) throws Exception {
         try{
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
             model.addAttribute("employeur", employeur);
             return "ajoutAgent";
 
-        }catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }
         catch (Exception e){
             return "errorPage/errorBDD";
@@ -122,8 +107,6 @@ public class AgentController {
     public ResponseEntity<String> viewAjoutAgentDelete(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp) {
 
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             logger.info("Suppression agent - noInsee: {} - idEmployeur: {}", noInsee, id_emp);
             boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
             if (vRetour) {
@@ -151,8 +134,6 @@ public class AgentController {
     @GetMapping("/modifierAgent/{id_emp}/{noInsee}")
     public String viewModifierAgent(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp, Model model) throws Exception {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             RafpEmployeur employeur = employeurService.getEmployeurById(id_emp);
             RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
             RafpRetour retour = retourService.getRetourByInseeEmployeur(id_emp, noInsee);
@@ -162,9 +143,7 @@ public class AgentController {
             model.addAttribute("retour", retour);
             return "modifierAgent";
 
-        } catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
-        } catch (SQLException e) {
+        }  catch (SQLException e) {
             logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
         } catch (Exception e) {
@@ -175,8 +154,6 @@ public class AgentController {
 
     @GetMapping("/modifierIndemnTBIAgent/{noInsee}")
     public String viewModifierIndemnTBIAgent(HttpServletRequest request, @PathVariable String noInsee, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
         model.addAttribute("agent", agent);
         return "modifierIndemnTBIAgent";
@@ -185,8 +162,6 @@ public class AgentController {
     @PostMapping("/modiferIndemnTBIAgent/modifier")
     public ResponseEntity<String> ModifierIndemnTBIAgent(HttpServletRequest request, @RequestBody Map<String, String> requestBody) throws Exception {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
 
             String noInsee = requestBody.get("noInsee");
             String tbiStr = requestBody.get("tbi");

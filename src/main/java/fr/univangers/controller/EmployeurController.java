@@ -27,21 +27,18 @@ public class EmployeurController {
     private final EmployeurService employeurService;
     private final AgentService agentService;
     private final RetourService retourService;
-    private final AutorisationService autorisationService;
 
 
-    public EmployeurController(EmployeurService employeurService, AgentService agentService, RetourService retourService, AutorisationService autorisationService) {
+    public EmployeurController(EmployeurService employeurService, AgentService agentService, RetourService retourService) {
         this.employeurService = employeurService;
         this.agentService = agentService;
         this.retourService = retourService;
-        this.autorisationService = autorisationService;
     }
 
     @GetMapping("/donneesEmployeur/{id_emp}")
     public String viewDonneesEmployeur(HttpServletRequest request, Model model, @PathVariable int id_emp) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
+
             if (id_emp == 0 ) {
                 return "redirect:/error";
             }
@@ -57,8 +54,6 @@ public class EmployeurController {
 
 
             return "donneesEmployeur";
-        }catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }
         catch (SQLException e) {
             logger.error("ErreurBDD - viewDonneesEmployeur - Erreur : {}", e.getMessage(), e);
@@ -72,16 +67,12 @@ public class EmployeurController {
 
     @GetMapping("/rechercheEmployeur")
     public  String viewRechercheEmployeur(HttpServletRequest request) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         return "rechercheEmployeur";
     }
 
     @GetMapping(value = "/rechercheEmployeur/search", produces = "application/json")
     public ResponseEntity<List<RafpEmployeur>> viewRechercheEmployeurSearch(HttpServletRequest request, @RequestParam String recherche) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<RafpEmployeur> employeurs = employeurService.getEmployeurBySearch(recherche);
             return ResponseEntity.ok(employeurs);
 
@@ -98,22 +89,16 @@ public class EmployeurController {
 
     @GetMapping("/gestionEmployeur")
     public  String viewGestionEmployeur(HttpServletRequest request) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         return "gestionEmployeur";
     }
 
     @GetMapping("/gestionEmployeur/modifier")
     public  String viewGestionEmployeurModifier(HttpServletRequest request, Model model) {
         try{
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<RafpEmployeur> employeurs = employeurService.getEmployeur();
             model.addAttribute("employeurs", employeurs);
             return "gestionEmployeurModifier";
 
-        }catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }catch (SQLException e){
             logger.error("Erreur BDD - viewGestionEmployeurModifier  - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
@@ -129,8 +114,6 @@ public class EmployeurController {
     @PostMapping(value = "/gestionEmployeur/add", produces = "application/json")
     public ResponseEntity<String> addEmployeur(HttpServletRequest request, @RequestBody RafpEmployeur rafpEmployeur) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             boolean vRetour = employeurService.insertEmployeur(rafpEmployeur);
             if (vRetour){
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -157,8 +140,6 @@ public class EmployeurController {
     @PostMapping(value = "/gestionEmployeur/update", produces = "application/json")
     public ResponseEntity<String> updateEmployeur(HttpServletRequest request, @RequestBody RafpEmployeur rafpEmployeur) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             boolean vRetour = employeurService.updateEmployeur(rafpEmployeur);
             if (vRetour) {
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -181,8 +162,6 @@ public class EmployeurController {
     @GetMapping("/ajoutEmployeur/{noInsee}")
     public String viewAjoutEmployeur(HttpServletRequest request, Model model, @PathVariable String noInsee) {
         try{
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<RafpEmployeur> employeurs =  employeurService.getEmployeur();
             RafpAgent agent = agentService.getAgentByNoInsee(noInsee);
             logger.info(employeurs.toString());
@@ -190,8 +169,6 @@ public class EmployeurController {
             model.addAttribute("agent", agent);
             return "ajoutEmployeur";
 
-        }catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }
         catch (Exception e){
             return "errorPage/errorBDD";
@@ -200,8 +177,6 @@ public class EmployeurController {
 
     @PostMapping("/ajoutEmployeur/add")
     public ResponseEntity<String> viewAjoutEmployeurAdd(HttpServletRequest request, @RequestBody Map<String, String> requestData, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         String no_insee = requestData.get("noInsee");
         String idEmpStr = requestData.get("idEmployeur");
         String montantStr = requestData.get("montant");
@@ -245,8 +220,6 @@ public class EmployeurController {
     public ResponseEntity<String> viewAjoutEmployeurDelete(HttpServletRequest request, @PathVariable String noInsee, @PathVariable int id_emp) {
 
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             logger.info("Suppression employeur - noInsee: {} - idEmployeur: {}", noInsee, id_emp);
             boolean vRetour = employeurService.deleteDonneeEmployeur(noInsee, id_emp);
             if (vRetour) {
@@ -273,8 +246,6 @@ public class EmployeurController {
     @GetMapping("/modifierEmployeur/{no_insee}/{id_emp}")
     public String viewModifierEmployeur(HttpServletRequest request, Model model, @PathVariable String no_insee, @PathVariable int id_emp) {
         try{
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             RafpEmployeur employeur =  employeurService.getEmployeurById(id_emp);
             RafpAgent agent = agentService.getAgentByNoInsee(no_insee);
             RafpRetour retour = retourService.getRetourByInseeEmployeur(id_emp, no_insee);
@@ -284,9 +255,6 @@ public class EmployeurController {
             model.addAttribute("retour", retour);
             return "modifierEmployeur";
 
-        }
-        catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }
         catch (SQLException e){
             logger.error("Erreur BDD - ViewModifierEmployeur  - Erreur : {}", e.getMessage(), e);
@@ -300,8 +268,6 @@ public class EmployeurController {
     @PostMapping("/ajoutEmployeur/modifier")
     public ResponseEntity<String> viewModifierEmployeurModif(HttpServletRequest request, @RequestBody Map<String, String> requestData, Model model) {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             String no_insee = requestData.get("noInsee");
             String idEmpStr = requestData.get("idEmployeur");
             String montantStr = requestData.get("montant");

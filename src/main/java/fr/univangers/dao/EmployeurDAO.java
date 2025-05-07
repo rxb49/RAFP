@@ -39,7 +39,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Vérifier si l'employeur existe déjà
             String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
@@ -103,7 +103,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select id_emp, lib_emp, mail_emp from harp_adm.rafp_employeur order by lib_emp ASC";
             // Exécuter la requête de récuperation
@@ -137,7 +137,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "SELECT distinct id_emp, lib_emp, mail_emp FROM harp_adm.rafp_employeur " +
                     "WHERE lib_emp LIKE ? " +
@@ -179,7 +179,7 @@ public class EmployeurDAO {
         Connection maConnexion = null;
         PreparedStatement cstmt = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             //Vérifier si l'employeur existe déjà
             String verificationQuery = "SELECT COUNT(lib_emp) nb FROM harp_adm.rafp_employeur WHERE lib_emp = ? AND mail_emp = ?";
@@ -227,7 +227,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select E.id_emp, E.lib_emp, E.mail_emp from harp_adm.rafp_employeur E where E.id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
@@ -261,7 +261,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select distinct R.id_emp, a.nom_usuel, A.prenom ,R.insee, R.mnt_retour from harp_adm.rafp_retour R " +
                     "               inner join harp_adm.rafp_agent A on R.insee = A.no_insee where id_emp = ?";
@@ -300,7 +300,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Vérifier si le retour existe déjà
             String verificationQuery = "SELECT COUNT(insee) nb FROM harp_adm.rafp_retour WHERE  insee = ? AND id_emp = ?";
             PreparedStatement verificationStmt = maConnexion.prepareStatement(verificationQuery);
@@ -354,7 +354,7 @@ public class EmployeurDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             // Suppression du retour
             String requete = "delete from harp_adm.rafp_retour R where R.insee = ? AND R.id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);

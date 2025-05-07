@@ -48,7 +48,7 @@ public class CalculDAO {
         ResultSet rs = null;
         boolean vRetour = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent R set TBI=(" +
@@ -90,7 +90,7 @@ public class CalculDAO {
         boolean vRetour = false;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent R set Indemn=(" +
                     "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
@@ -131,7 +131,7 @@ public class CalculDAO {
         boolean vRetour = false;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent R set RAFPP=(" +
                     "(select sum(to_number(decode(sens,'A',MONTANT,'-'||MONTANT))) from siham_adm.siham_individu_paye H" +
@@ -171,7 +171,7 @@ public class CalculDAO {
         boolean vRetour = false;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Récupération des informations de l'année
             String requete = " update harp_adm.rafp_agent set seuil=nvl(tbi,0)*0.2 where annee like (select max(annee) from harp_adm.rafp_agent)";
 
@@ -205,7 +205,7 @@ public class CalculDAO {
         ResultSet rs = null;
         boolean vRetour = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "update harp_adm.rafp_retour I set base_retour_recalculee_emp=ROUND(mnt_retour* " +
                     " (select MAX(base_retour_recalculee) from harp_adm.rafp_agent R " +
@@ -246,7 +246,7 @@ public class CalculDAO {
         ResultSet rs = null;
         List<DonneesCSV> donneesCSVList = new ArrayList<>();
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select R.id_emp, E.lib_emp, A.nom_usuel, A.prenom, a.no_insee, R.mnt_retour, R.base_retour_recalculee_emp, " +
                     "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
@@ -299,7 +299,7 @@ public class CalculDAO {
         ResultSet rs = null;
         List<DonneesCSV> donneesCSVList = new ArrayList<>();
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select A.nom_usuel, A.prenom, a.no_insee, e.lib_emp, R.mnt_retour, R.base_retour_recalculee_emp, " +
                     "R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Salarial_RAFP\", R.base_retour_recalculee_emp* 0.05 AS \"Cotisation_Patronal_RAFP\"," +
@@ -343,90 +343,97 @@ public class CalculDAO {
      * @throws SQLException : SQLException
      */
     public boolean generateCSVEmployeur(List<DonneesCSV> donnees) throws SQLException, IOException {
-        logger.info("Début de la requête de génération des CSV employeur");
+    logger.info("Début de la requête de génération des CSV employeur");
 
-        Map<Integer, List<DonneesCSV>> donneesParIdEmp = donnees.stream()
-                .collect(Collectors.groupingBy(DonneesCSV::getId_emp));
-        //Initialisation du répertoire ou les fichiers CSV seront créer
-        String projectDir = System.getProperty("user.dir");
-        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
-        if (!tempCsvDir.exists()) {
-            tempCsvDir.mkdirs();
-        }
-        //création des fichiers CSV
-        List<File> csvFiles = new ArrayList<>();
-        for (Map.Entry<Integer, List<DonneesCSV>> entry : donneesParIdEmp.entrySet()) {
-            //Définit la différentiation sur l'id_emp pour chaque fichier et nommage du fichier
-            int idEmp = entry.getKey();
-            List<DonneesCSV> donneesList = entry.getValue();
-            String libEmp = (donneesList.get(0).getLib_emp() != null) ? donneesList.get(0).getLib_emp() : "Inconnu";
-            File csvFile = new File(tempCsvDir,  libEmp + "_" + idEmp + ".csv");
-            csvFiles.add(csvFile);
-            //insertion des données dans le fichier CSV
-            try (FileWriter writer = new FileWriter(csvFile)) {
-                writer.append("Nom Usuel;ID Emp;Prénom;No INSEE;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
+    Map<Integer, List<DonneesCSV>> donneesParIdEmp = donnees.stream()
+            .collect(Collectors.groupingBy(DonneesCSV::getId_emp));
 
-                int nbDossier = 0;
-                double totalMntRetour = 0;
-                double totalBaseRetourRecalculee = 0;
-                double totalSalarialRafp = 0;
-                double totalPatronalRafp = 0;
-                double totalTotalRafp = 0;
+    // Utiliser un répertoire dédié dans /var/tmp pour les fichiers CSV
+    String tempDir = "/var/tmp/rafp/tempCSV"; // Répertoire personnalisé pour les fichiers CSV
+    File tempCsvDir = new File(tempDir);
 
-                for (DonneesCSV d : entry.getValue()) {
-                    writer.append(String.join(";",
-                                    d.getNom_usuel(), String.valueOf(d.getId_emp()), d.getPrenom(), d.getNo_insee(),
-                                    String.valueOf(d.getMnt_retour()),
-                                    String.valueOf(d.getBase_retour_recalculee_emp()),
-                                    String.valueOf(d.getSalaraialRafp()),
-                                    String.valueOf(d.getPatronalRafp()),
-                                    String.valueOf(d.getTotalRafp())))
-                            .append("\n");
-                    //Calcul du total de chaque colonne
-                    nbDossier++;
-                    totalMntRetour += d.getMnt_retour();
-                    totalBaseRetourRecalculee += d.getBase_retour_recalculee_emp();
-                    totalSalarialRafp += d.getSalaraialRafp();
-                    totalPatronalRafp += d.getPatronalRafp();
-                    totalTotalRafp += d.getTotalRafp();
-                }
-                //affichage du total sur la dernière ligne
-                writer.append(String.format("Nombre de dossier:%d;;;;",
-                                 nbDossier))
-                        .append(String.format("%.2f", totalMntRetour)).append(";")
-                        .append(String.format("%.2f", totalBaseRetourRecalculee)).append(";")
-                        .append(String.format("%.2f", totalSalarialRafp)).append(";")
-                        .append(String.format("%.2f", totalPatronalRafp)).append(";")
-                        .append(String.format("%.2f", totalTotalRafp)).append("\n");
-
-            }
-        }
-        //Mettre en zip tous les fichiers CSV généré
-        File zipFile = new File(tempCsvDir, "donnees_employeur_csv.zip");
-        try (FileOutputStream fos = new FileOutputStream(zipFile);
-             ZipOutputStream zos = new ZipOutputStream(fos)) {
-            for (File csv : csvFiles) {
-                try (FileInputStream fis = new FileInputStream(csv)) {
-                    ZipEntry zipEntry = new ZipEntry(csv.getName());
-                    zos.putNextEntry(zipEntry);
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = fis.read(buffer)) > 0) {
-                        zos.write(buffer, 0, length);
-                    }
-                    zos.closeEntry();
-                }
-            }
-        }
-        //suppression des fichier csv quand ils on été mit en zip
-        for (File csv : csvFiles) {
-            csv.delete();
-        }
-
-        boolean success = zipFile.exists() && zipFile.length() > 0;
-        logger.info("Fin de la requête de génération des CSV. Succès: " + success);
-        return success;
+    // Créer le répertoire si nécessaire
+    if (!tempCsvDir.exists()) {
+        tempCsvDir.mkdirs();
     }
+
+    // Création des fichiers CSV
+    List<File> csvFiles = new ArrayList<>();
+    for (Map.Entry<Integer, List<DonneesCSV>> entry : donneesParIdEmp.entrySet()) {
+        int idEmp = entry.getKey();
+        List<DonneesCSV> donneesList = entry.getValue();
+        String libEmp = (donneesList.get(0).getLib_emp() != null) ? donneesList.get(0).getLib_emp() : "Inconnu";
+        File csvFile = new File(tempCsvDir, libEmp + "_" + idEmp + ".csv");
+        csvFiles.add(csvFile);
+
+        // Insertion des données dans le fichier CSV
+        try (FileWriter writer = new FileWriter(csvFile)) {
+            writer.append("Nom Usuel;ID Emp;Prénom;No INSEE;Montant Retour;Base Retour Recalculée;Salarial RAFP;Patronal RAFP;Total RAFP\n");
+
+            int nbDossier = 0;
+            double totalMntRetour = 0;
+            double totalBaseRetourRecalculee = 0;
+            double totalSalarialRafp = 0;
+            double totalPatronalRafp = 0;
+            double totalTotalRafp = 0;
+
+            for (DonneesCSV d : entry.getValue()) {
+                writer.append(String.join(";",
+                        d.getNom_usuel(), String.valueOf(d.getId_emp()), d.getPrenom(), d.getNo_insee(),
+                        String.valueOf(d.getMnt_retour()),
+                        String.valueOf(d.getBase_retour_recalculee_emp()),
+                        String.valueOf(d.getSalaraialRafp()),
+                        String.valueOf(d.getPatronalRafp()),
+                        String.valueOf(d.getTotalRafp())))
+                        .append("\n");
+
+                nbDossier++;
+                totalMntRetour += d.getMnt_retour();
+                totalBaseRetourRecalculee += d.getBase_retour_recalculee_emp();
+                totalSalarialRafp += d.getSalaraialRafp();
+                totalPatronalRafp += d.getPatronalRafp();
+                totalTotalRafp += d.getTotalRafp();
+            }
+
+            // Affichage du total sur la dernière ligne
+            writer.append(String.format("Nombre de dossier:%d;;;;", nbDossier))
+                    .append(String.format("%.2f", totalMntRetour)).append(";")
+                    .append(String.format("%.2f", totalBaseRetourRecalculee)).append(";")
+                    .append(String.format("%.2f", totalSalarialRafp)).append(";")
+                    .append(String.format("%.2f", totalPatronalRafp)).append(";")
+                    .append(String.format("%.2f", totalTotalRafp)).append("\n");
+
+        }
+    }
+
+    // Mettre en zip tous les fichiers CSV générés
+    File zipFile = new File(tempCsvDir, "donnees_employeur_csv.zip");
+    try (FileOutputStream fos = new FileOutputStream(zipFile);
+         ZipOutputStream zos = new ZipOutputStream(fos)) {
+        for (File csv : csvFiles) {
+            try (FileInputStream fis = new FileInputStream(csv)) {
+                ZipEntry zipEntry = new ZipEntry(csv.getName());
+                zos.putNextEntry(zipEntry);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+                zos.closeEntry();
+            }
+        }
+    }
+
+    // Suppression des fichiers CSV après avoir été mis dans le zip
+    for (File csv : csvFiles) {
+        csv.delete();
+    }
+
+    boolean success = zipFile.exists() && zipFile.length() > 0;
+    logger.info("Fin de la requête de génération des CSV. Succès: " + success);
+    return success;
+}
+
 
     /**
      * Génère les fichiers CSV des agents et les met dans un zip '
@@ -440,12 +447,15 @@ public class CalculDAO {
         Map<String, List<DonneesCSV>> donneesParNoInsee = donnees.stream()
                 .collect(Collectors.groupingBy(DonneesCSV::getNo_insee));
 
-        String projectDir = System.getProperty("user.dir");
-        File tempCsvDir = Paths.get(projectDir, "..", "..", "RAFP", "tempCSV").toFile();
+        // Utiliser un répertoire dédié dans /var/tmp pour les fichiers CSV
+        String tempDir = "/var/tmp/rafp/tempCSV"; // Répertoire personnalisé pour les fichiers CSV
+        File tempCsvDir = new File(tempDir);
+
+        // Créer le répertoire si nécessaire
         if (!tempCsvDir.exists()) {
             tempCsvDir.mkdirs();
         }
-        //creation des fichier CSV
+            //creation des fichier CSV
         List<File> csvFiles = new ArrayList<>();
         for (Map.Entry<String, List<DonneesCSV>> entry : donneesParNoInsee.entrySet()) {
             //Définit la différentiation sur le no_insee pour chaque fichier et nommage du fichier

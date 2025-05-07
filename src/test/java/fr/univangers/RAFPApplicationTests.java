@@ -46,7 +46,7 @@ class ApplicationmodeleApplicationTests {
     void personnelController() {
         try {
             mockMvc.perform(get("/lesPersonnels")
-                    .accept(MediaType.APPLICATION_JSON)) //Appel en json
+                            .accept(MediaType.APPLICATION_JSON)) //Appel en json
                     .andExpect(status().isOk()) // Status de la page OK
                     //On vérifie le retour de l'API
                     .andExpect(jsonPath("$[0].firstName").value("Laureline"))

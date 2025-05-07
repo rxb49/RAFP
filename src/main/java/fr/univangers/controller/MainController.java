@@ -33,22 +33,18 @@ public class MainController {
     private final PersonnelService personnelService;
     private final AgentService agentService;
     private final CalculService calculService;
-    private final AutorisationService autorisationService;
 
 
-    public MainController(PersonnelService personnelService, AgentService agentService, CalculService calculService, AutorisationService autorisationService) {
+    public MainController(PersonnelService personnelService, AgentService agentService, CalculService calculService) {
         this.personnelService = personnelService;
         this.agentService = agentService;
         this.calculService = calculService;
-        this.autorisationService = autorisationService;
     }
 
 
     @GetMapping(value = {"/", "/index"})
     public String index(HttpServletRequest request, Model model) throws SQLException {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
 
             RafpAgent anneeMax = personnelService.initialisation();
 
@@ -97,9 +93,6 @@ public class MainController {
         catch (SQLException e) {
             logger.error("Erreur BDD - index - Erreur : {}", e.getMessage(), e);
             return "errorPage/errorBDD";
-        }
-        catch (NonAutorisationException e) {
-            return "errorPage/accessRefused";
         }
         catch (Exception e) {
             logger.error("Erreur : {}", e.getMessage(), e);

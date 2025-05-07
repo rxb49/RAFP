@@ -56,7 +56,7 @@ public class RetourDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select R.annee, R.insee, R.id_emp, R.mnt_retour, R.base_retour_recalculee_emp from harp_adm.rafp_retour R where insee = ? AND id_emp = ?";
             cstmt = maConnexion.prepareStatement(requete);
@@ -96,7 +96,7 @@ public class RetourDAO {
         boolean result = false;
 
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "update harp_adm.rafp_retour set mnt_retour = ? where id_emp = ? AND insee = ?";
             cstmt = maConnexion.prepareStatement(requete);
@@ -134,7 +134,7 @@ public class RetourDAO {
         ResultSet rs = null;
         boolean result = false;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             logger.info("Verification si rafp_retour");
             // Vérification de l'existence des données dans l'autre table
             String checkQuery = "SELECT COUNT(R.id_emp) nb FROM harp_adm.rafp_retour R WHERE R.id_emp = ? AND R.insee = ? " +
@@ -187,7 +187,7 @@ public class RetourDAO {
         ResultSet rs = null;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             String requete = "SELECT DISTINCT insee FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(requete);
             rs = cstmt.executeQuery();
@@ -215,7 +215,7 @@ public class RetourDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "update harp_adm.rafp_agent set base_retour_recalculee = total_retour where total_retour < base_restante";
             logger.info(requete);
@@ -248,7 +248,7 @@ public class RetourDAO {
         boolean result = false;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "update harp_adm.rafp_agent set base_retour_recalculee = base_restante where total_retour >=base_restante";
             logger.info(requete);
@@ -283,7 +283,7 @@ public class RetourDAO {
         boolean result = false;
         String annee = "";
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             //Récuperation de l'année n-1
             String requete = "select max(annee) as annee from harp_adm.rafp_agent";
@@ -357,7 +357,7 @@ public class RetourDAO {
         ResultSet rs = null;
         List<RafpImport> tempData = new ArrayList<>();
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             String requete = "SELECT T.id_emp, E.lib_emp, T.insee, A.nom_usuel, A.prenom, T.retour FROM harp_adm.rafp_temp T " +
                     "INNER JOIN harp_adm.rafp_agent A ON A.no_insee = T.insee " +
                     "INNER JOIN harp_adm.rafp_employeur E ON E.id_emp = T.id_emp WHERE T.insee = A.no_insee";
@@ -396,7 +396,7 @@ public class RetourDAO {
         boolean result = false;
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             String requete = "DELETE FROM harp_adm.rafp_temp";
             cstmt = maConnexion.prepareStatement(requete);
             cstmt.executeUpdate();

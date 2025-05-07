@@ -28,13 +28,11 @@ import java.util.Map;
 public class RetourController {
     private static final Logger logger = LoggerFactory.getLogger(RetourController.class);
     private final RetourService retourService;
-    private final AutorisationService autorisationService;
     private final HistoriqueService historiqueService;
 
 
-    public RetourController(RetourService retourService, AutorisationService autorisationService, HistoriqueService historiqueService) {
+    public RetourController(RetourService retourService, HistoriqueService historiqueService) {
         this.retourService = retourService;
-        this.autorisationService = autorisationService;
         this.historiqueService = historiqueService;
     }
 
@@ -43,8 +41,6 @@ public class RetourController {
 
     @GetMapping("/importTotal")
     public String viewImportTotal(HttpServletRequest request, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         return "importTotal";
     }
 
@@ -52,8 +48,6 @@ public class RetourController {
     public ResponseEntity<String> insertImportTotalDataTemp(HttpServletRequest request, @RequestBody List<Map<String, Object>> data) {
         boolean vRetour = false;
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             for (Map<String, Object> item : data) {
                 String noInsee = (String) item.get("noInsee");
                 double montant = Double.parseDouble((item.get("montant").toString()));
@@ -84,8 +78,6 @@ public class RetourController {
     @GetMapping("/importTotal/tempData")
     public ResponseEntity<List<RafpImport>> getTempImportData(HttpServletRequest request) throws Exception {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<RafpImport> tempData = retourService.getTempImportData();
             return ResponseEntity.ok(tempData);
         } catch (Exception e) {
@@ -96,8 +88,6 @@ public class RetourController {
     @DeleteMapping("/importTotal/clearTempData")
     public ResponseEntity<String> clearTempData(HttpServletRequest request) throws Exception {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             retourService.clearTempData(); // Suppression des données
             return new ResponseEntity<>("Suppression des données temporaires effectué ",HttpStatus.OK);
         } catch (Exception e) {
@@ -109,8 +99,6 @@ public class RetourController {
     public ResponseEntity<String> InsertFinalData(HttpServletRequest request) {
         boolean vRetour = false;
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             vRetour = retourService.validateImportTotalDataFinal();
             if(vRetour){
                 //ajouter la requete historique

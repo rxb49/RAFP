@@ -37,13 +37,11 @@ import java.util.zip.ZipOutputStream;
 @Controller
 public class CalculController {
     private static final Logger logger = LoggerFactory.getLogger(CalculController.class);
-    private final AutorisationService autorisationService;
     private final CalculService calculService;
     private final HistoriqueService historiqueService;
 
 
-    public CalculController(AutorisationService autorisationService, CalculService calculService, HistoriqueService historiqueService) {
-        this.autorisationService = autorisationService;
+    public CalculController(CalculService calculService, HistoriqueService historiqueService) {
         this.calculService = calculService;
         this.historiqueService = historiqueService;
     }
@@ -51,8 +49,6 @@ public class CalculController {
 
     @GetMapping("/calculRafp")
     public String viewCalculRafp(HttpServletRequest request, Model model) throws Exception {
-        String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-        autorisationService.verifAutorisation(idEncrypt);
         boolean isEtatTExist = historiqueService.checkEtat("T");
         String lastDateGeneration = historiqueService.getDernierEtat("T");
         boolean isEtatCTExist = historiqueService.checkEtat("C");
@@ -67,8 +63,6 @@ public class CalculController {
     @GetMapping("/calculRafp/calcul")
     public ResponseEntity<String> CalculRafp(HttpServletRequest request) throws Exception {
         try{
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             System.out.println("Passage dans calculRafp/calcul");
             boolean vRetour = calculService.calculBaseRetourRecalculeeEmp();
             if (vRetour) {
@@ -77,9 +71,6 @@ public class CalculController {
             } else {
                 return new ResponseEntity<>("Problème dans le calcul de la RAFP ", HttpStatus.BAD_REQUEST);
             }
-        }catch (UAException e) {
-        logger.error("Erreur UA - CalculRafp - Erreur : {}", e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (SQLException e) {
             logger.error("Erreur BDD - CalculRafp - Erreur : {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -92,8 +83,6 @@ public class CalculController {
     @GetMapping("/calculRafp/generateCSV")
     public ResponseEntity<String> GenerateCSV(HttpServletRequest request) throws Exception {
         try {
-            String idEncrypt = ((AttributePrincipal) request.getUserPrincipal()).getAttributes().get("supannRefId").toString();
-            autorisationService.verifAutorisation(idEncrypt);
             List<DonneesCSV> vRetourEmployeur = calculService.getDataEmployeurCSV();
             List<DonneesCSV> vRetourAgent = calculService.getDataAgentCSV();
             if (vRetourEmployeur.isEmpty() || vRetourAgent.isEmpty()) {

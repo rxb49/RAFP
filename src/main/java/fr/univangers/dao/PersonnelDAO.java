@@ -43,7 +43,7 @@ public class PersonnelDAO {
         Personnel vRetour = new Personnel();
 
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Récupération des informations du personnel
             String requete = " select A.nom_usuel, A.prenom " +
                     " from annuang.aua_personnel A          " +
@@ -83,7 +83,7 @@ public class PersonnelDAO {
         ResultSet rs = null;
         RafpAgent vRetour = new RafpAgent();
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             //Récupération des informations de l'année
             String requete = " select distinct MAX(A.annee) AS annee_max from harp_adm.rafp_agent A";
             cstmt = maConnexion.prepareStatement(requete);
@@ -120,7 +120,7 @@ public class PersonnelDAO {
         List<RafpPrecedante> resultList = new ArrayList<>();
         String annee ="";
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             //Récuperation de l'année n-1
             String requeteAnnee = "select max(annee) as annee from harp_adm.rafp_agent";

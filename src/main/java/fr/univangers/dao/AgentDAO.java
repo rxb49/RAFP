@@ -37,7 +37,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         RafpAgent ajouterAgent = new RafpAgent();
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
             String requete = "INSERT INTO harp_adm.rafp_agent (annee, no_dossier_pers, no_insee, tbi, indemn, seuil, rafpp," +
                     " base_restante, total_retour, base_retour_recalculee, nom_usuel, prenom) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             cstmt = maConnexion.prepareStatement(requete);
@@ -85,7 +85,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select distinct A.prenom, A.nom_usuel, A.no_insee from harp_adm.rafp_agent A where A.annee = '2023' ";
             cstmt = maConnexion.prepareStatement(requete);
@@ -119,7 +119,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select distinct A.prenom, A.nom_usuel, A.no_insee from harp_adm.rafp_agent A " +
                     "where A.prenom LIKE ? OR  A.nom_usuel LIKE ? ";
@@ -156,7 +156,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select A.no_insee, A.nom_usuel, A.prenom, A.tbi, A.indemn, A.base_restante, A.total_retour, A.base_retour_recalculee from harp_adm.rafp_agent A " +
                     "where A.no_insee = ?";
@@ -196,7 +196,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         ResultSet rs = null;
         try{
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "select e.id_emp, e.lib_emp, R.mnt_retour from harp_adm.rafp_retour R " +
                     "inner join harp_adm.rafp_employeur E on r.id_emp = e.id_emp where R.insee = ?";
@@ -234,7 +234,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             // modification de l'agent
             String requete = "update harp_adm.rafp_agent A set A.total_retour = (SELECT SUM(R.mnt_retour) FROM harp_adm.rafp_retour R " +
@@ -269,7 +269,7 @@ public class AgentDAO {
         PreparedStatement cstmt = null;
         boolean result = false;
         try {
-            maConnexion = oracleConfiguration.dataSource().getConnection();
+            maConnexion = oracleConfiguration.dataSourceSympa().getConnection();
 
             String requete = "update harp_adm.rafp_agent A set A.tbi = A.tbi + ?, A.indemn = A.indemn + ? " +
                     "WHERE  A.no_insee = ? AND A.annee = (select max(A.annee) from harp_adm.rafp_agent A)";

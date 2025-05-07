@@ -32,12 +32,10 @@ public class PDFController {
 
     private final PersonnelService personnelService;
     private final AppelExterne appelExterne;
-    private final AutorisationService autorisationService;
 
-    public PDFController(PersonnelService personnelService, AppelExterne appelExterne, AutorisationService autorisationService) {
+    public PDFController(PersonnelService personnelService, AppelExterne appelExterne) {
         this.personnelService = personnelService;
         this.appelExterne = appelExterne;
-        this.autorisationService = autorisationService;
     }
 
     /**
